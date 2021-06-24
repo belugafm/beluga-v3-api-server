@@ -1,10 +1,10 @@
 import { SortBy, SortOrder, IUsersRepository } from "../repository/Users"
 import config from "../../config/app"
-import { ModelRuntimeError } from "../error"
+import { DomainError } from "../error"
 
 export const ErrorCodes = {
     TooManyRequests: "too_many_requests",
-}
+} as const
 
 export class CheckRegistrationRateLimitService {
     private usersRepository: IUsersRepository
@@ -30,7 +30,7 @@ export class CheckRegistrationRateLimitService {
     }
     tryCheckIfRateIsLimited(ipAddress: string): void {
         if (this.isRateLimited(ipAddress)) {
-            throw new ModelRuntimeError(ErrorCodes.TooManyRequests)
+            throw new DomainError(ErrorCodes.TooManyRequests)
         }
     }
 }

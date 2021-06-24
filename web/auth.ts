@@ -41,17 +41,17 @@ export const authenticate_user = async (
         oauth_bearer_token,
     } = query
 
-    if (facts.accepted_authentication_methods.includes("OAuth")) {
+    if (facts.acceptedAuthenticationMethods.includes("OAuth")) {
         if (oauth_bearer_token && oauth_consumer_key && oauth_consumer_secret) {
             // OAuth認証
         }
     }
-    if (facts.accepted_authentication_methods.includes("AccessToken")) {
+    if (facts.acceptedAuthenticationMethods.includes("AccessToken")) {
         if (access_token && access_token_scret) {
             // アクセストークンによる認証
         }
     }
-    if (facts.accepted_authentication_methods.includes("Cookie")) {
+    if (facts.acceptedAuthenticationMethods.includes("Cookie")) {
         // Cookieを使ったログインセッション
         const [user, session] = await authenticate_user_with_cookie(cookies)
         return user

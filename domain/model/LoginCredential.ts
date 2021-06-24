@@ -1,4 +1,4 @@
-import { ModelRuntimeError } from "../error"
+import { DomainError } from "../error"
 import * as vn from "../validation"
 import bcrypt from "bcrypt"
 import config from "../../config/app"
@@ -8,7 +8,7 @@ export const ErrorCodes = {
     InvaldPasswordHash: "invalid_password_hash",
     InvaidPasswordInput: "invalid_password_input",
     PasswordNotMeetPolicy: "password_not_meet_policy",
-}
+} as const
 
 export class LoginCredentialModel {
     // @ts-ignore
@@ -18,10 +18,10 @@ export class LoginCredentialModel {
 
     static async new(userId: UserID, password: string) {
         if (vn.is_string(password) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvaidPasswordInput)
+            throw new DomainError(ErrorCodes.InvaidPasswordInput)
         }
         if (vn.password().ok(password) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.PasswordNotMeetPolicy)
+            throw new DomainError(ErrorCodes.PasswordNotMeetPolicy)
         }
         const passwordHash = await bcrypt.hash(
             password,
@@ -40,14 +40,15 @@ export class LoginCredentialModel {
         return this._passwordHash
     }
     set userId(userId: UserID) {
-        if (vn.string().ok(userId) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvalidUserId)
+        if (vn.objectId().ok(userId)) {
+            this._userId = userId
+            return
         }
-        this._userId = userId
+        throw new DomainError(ErrorCodes.InvalidUserId)
     }
     set passwordHash(passwordHash: string) {
         if (vn.string().ok(passwordHash) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvaldPasswordHash)
+            throw new DomainError(ErrorCodes.InvaldPasswordHash)
         }
         this._passwordHash = passwordHash
     }

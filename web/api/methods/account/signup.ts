@@ -1,25 +1,17 @@
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
-import {
-    MethodFacts,
-    define_method,
-    define_arguments,
-    define_expected_errors,
-} from "../../define"
+import { MethodFacts, defineMethod, defineArguments, defineErrors } from "../../define"
 import * as vs from "../../../../domain/validation"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
-import { ModelRuntimeError } from "../../../../domain/error"
+import { DomainError } from "../../../../domain/error"
 import config from "../../../../config/app"
-import { RegisterUserApplication } from "../../../../application/RegisterUser"
-import {
-    UsersRepository,
-    UserRegistrationRepository,
-} from "../../../repository"
+import { RegisterUserApplication, ErrorCodes } from "../../../../application/RegisterUser"
+import { UsersRepository, UserRegistrationRepository } from "../../../repository"
 import { UserModel } from "../../../../domain/model/User"
 
-export const argument_specs = define_arguments(
-    ["name", "password", "confirmed_password", "ip_address"] as const,
+export const argumentSpecs = defineArguments(
+    ["name", "password", "confirmationPassword", "ipAddress"] as const,
     {
         name: {
             description: ["ユーザー名"],
@@ -29,69 +21,63 @@ export const argument_specs = define_arguments(
         },
         password: {
             description: ["パスワード"],
-            examples: null,
+            examples: ["do_not_use_this_password_0123"],
             required: true,
             schema: vs.password(),
         },
-        confirmed_password: {
+        confirmationPassword: {
             description: ["確認用のパスワード"],
-            examples: null,
+            examples: ["do_not_use_this_password_0123"],
             required: true,
             schema: vs.password(),
         },
-        ip_address: {
+        ipAddress: {
             description: ["登録時のIPアドレス"],
-            examples: null,
+            examples: ["192.168.1.1"],
             required: true,
             schema: vs.ip_address(),
         },
     }
 )
 
-export const expected_error_specs = define_expected_errors(
+export const expected_error_specs = defineErrors(
     [
-        "invalid_arg_name",
-        "invalid_arg_password",
-        "invalid_arg_confirmed_password",
-        "invalid_arg_ip_address",
-        "name_taken",
+        "user_name_taken",
+        "user_name_not_meet_policy",
+        "password_not_meet_policy",
+        "confirmation_password_not_match",
         "too_many_requests",
         "internal_error",
         "unexpected_error",
     ] as const,
-    argument_specs,
+    argumentSpecs,
     {
-        invalid_arg_name: {
+        user_name_not_meet_policy: {
             description: ["ユーザー名が基準を満たしていません"],
             hint: [
                 `ユーザー名は${config.user.name.min_length}〜${config.user.name.max_length}文字の半角英数字に設定してください`,
             ],
             argument: "name",
-            code: "invalid_arg_name",
+            code: "user_name_not_meet_policy",
         },
-        invalid_arg_password: {
+        password_not_meet_policy: {
             description: ["パスワードが基準を満たしていません"],
+            hint: [
+                `パスワードは${config.user_login_credential.password.min_length}文字以上の半角英数字に設定してください`,
+            ],
             argument: "password",
-            code: "invalid_arg_password",
+            code: "password_not_meet_policy",
         },
-        invalid_arg_confirmed_password: {
+        confirmation_password_not_match: {
             description: ["確認用のパスワードが一致しません"],
             hint: ["パスワードと確認用パスワードは同じものを入力してください"],
-            argument: "confirmed_password",
-            code: "invalid_arg_confirmed_password",
+            argument: "confirmationPassword",
+            code: "confirmation_password_not_match",
         },
-        invalid_arg_ip_address: {
-            description: ["登録ユーザーのIPアドレスを正しく指定してください"],
-            hint: [],
-            argument: "ip_address",
-            code: "invalid_arg_ip_address",
-        },
-        name_taken: {
-            description: [
-                "このユーザー名はすでに取得されているため、新規作成できません",
-            ],
+        user_name_taken: {
+            description: ["このユーザー名はすでに取得されているため、新規作成できません"],
             hint: ["別のユーザー名でアカウントを作成してください"],
-            code: "name_taken",
+            code: "user_name_taken",
         },
         too_many_requests: {
             description: ["アカウントの連続作成はできません"],
@@ -105,46 +91,43 @@ export const expected_error_specs = define_expected_errors(
 
 export const facts: MethodFacts = {
     url: MethodIdentifiers.CreateAccount,
-    http_method: HttpMethods.POST,
-    rate_limiting: {},
-    accepted_content_types: [ContentTypes.ApplicationJson],
-    authentication_required: false,
-    accepted_authentication_methods: [],
-    accepted_scopes: {},
+    httpMethod: HttpMethods.POST,
+    rateLimiting: {},
+    acceptedContentTypes: [ContentTypes.ApplicationJson],
+    authenticationRequired: false,
+    acceptedAuthenticationMethods: [],
+    acceptedScopes: {},
     description: ["新規アカウントを作成します"],
 }
 
-export default define_method(
+export default defineMethod(
     facts,
-    argument_specs,
+    argumentSpecs,
     expected_error_specs,
     async (args, errors): Promise<UserModel | null> => {
-        if (args.password !== args.confirmed_password) {
-            raise(errors.invalid_arg_confirmed_password)
+        if (args.password !== args.confirmationPassword) {
+            raise(errors["confirmation_password_not_match"])
         }
         try {
             const usersRepository = new UsersRepository()
             const userRegistrationRepository = new UserRegistrationRepository()
-            const app = new RegisterUserApplication(
-                usersRepository,
-                userRegistrationRepository
-            )
+            const app = new RegisterUserApplication(usersRepository, userRegistrationRepository)
             return await app.register({
                 name: args.name,
                 password: args.password,
-                ipAddress: args.ip_address,
+                ipAddress: args.ipAddress,
             })
         } catch (error) {
-            if (error instanceof ModelRuntimeError) {
-                if (error.code === ModelErrorCodes.NameTaken) {
-                    raise(errors.name_taken, error)
-                } else if (error.code === ModelErrorCodes.TooManyRequests) {
-                    raise(errors.too_many_requests, error)
+            if (error instanceof DomainError) {
+                if (error.code === ErrorCodes.NameTaken) {
+                    raise(errors["user_name_taken"], error)
+                } else if (error.code === ErrorCodes.TooManyRequests) {
+                    raise(errors["too_many_requests"], error)
                 } else {
-                    raise(errors.internal_error, error)
+                    raise(errors["internal_error"], error)
                 }
             } else {
-                raise(errors.unexpected_error, error)
+                raise(errors["unexpected_error"], error)
             }
         }
         return null

@@ -1,4 +1,4 @@
-import { ModelRuntimeError } from "../error"
+import { DomainError } from "../error"
 import * as vn from "../validation"
 import uuid from "uuid"
 import config from "../../config/app.default"
@@ -10,7 +10,7 @@ export const ErrorCodes = {
     InvaldExpireDate: "invalid_expire_date",
     InvaldExpired: "invalid_expired",
     InvaldCreatedAt: "invalid_created_at",
-}
+} as const
 
 export class LoginSessionModel {
     // @ts-ignore
@@ -28,9 +28,7 @@ export class LoginSessionModel {
 
     static new(userId: UserID, ipAddress: string) {
         const sessionId = uuid.v4()
-        const expireDate = new Date(
-            Date.now() + config.user_login_session.lifetime * 1000
-        )
+        const expireDate = new Date(Date.now() + config.user_login_session.lifetime * 1000)
         const expired = false
         const createdAt = new Date()
         return new LoginSessionModel({
@@ -43,7 +41,7 @@ export class LoginSessionModel {
         })
     }
     constructor(params: {
-        userId: string
+        userId: UserID
         sessionId: string
         ipAddress: string
         expireDate: Date
@@ -76,39 +74,40 @@ export class LoginSessionModel {
         return this._createdAt
     }
 
-    set userId(userId: string) {
-        if (vn.string({ max_length: 128 }).ok(userId) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvalidUserId)
+    set userId(userId: UserID) {
+        if (vn.objectId().ok(userId)) {
+            this._userId = userId
+            return
         }
         this._userId = userId
     }
     set sessionId(sessionId: string) {
         if (vn.string({ max_length: 128 }).ok(sessionId) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvaldSessionId)
+            throw new DomainError(ErrorCodes.InvaldSessionId)
         }
         this._sessionId = sessionId
     }
     set ipAddress(ipAddress: string) {
         if (vn.ip_address().ok(ipAddress) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvaldIpAddress)
+            throw new DomainError(ErrorCodes.InvaldIpAddress)
         }
         this._ipAddress = ipAddress
     }
     set expireDate(expireDate: Date) {
         if (vn.date().ok(expireDate) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvaldExpireDate)
+            throw new DomainError(ErrorCodes.InvaldExpireDate)
         }
         this._expireDate = expireDate
     }
     set expired(expired: boolean) {
         if (vn.boolean().ok(expired) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvaldExpired)
+            throw new DomainError(ErrorCodes.InvaldExpired)
         }
         this._expired = expired
     }
     set createdAt(createdAt: Date) {
         if (vn.date().ok(createdAt) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvaldCreatedAt)
+            throw new DomainError(ErrorCodes.InvaldCreatedAt)
         }
         this._createdAt = createdAt
     }

@@ -16,4 +16,4 @@ export const TokenTypeSpecs = {
     },
 }
 
-export type TokenTypesLiteralUnion = keyof typeof TokenTypes
+export type TokenTypesUnion = keyof typeof TokenTypes

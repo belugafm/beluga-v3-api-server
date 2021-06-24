@@ -75,11 +75,7 @@ declare module "find-my-way" {
         (path: string, handler: Handler, store: any): void
     }
     interface Instance {
-        on(
-            method: HTTPMethod | HTTPMethod[],
-            path: string,
-            handler: Handler
-        ): void
+        on(method: HTTPMethod | HTTPMethod[], path: string, handler: Handler): void
         lookup(req: Request, res: Response, ctx?: any): void
         get: ShortHandRoute
         post: ShortHandRoute
@@ -129,10 +125,8 @@ export class TurboServer {
         })
     }
     get(facts: MethodFacts, handler: Router.Handler, options: Options = {}) {
-        if (facts.http_method !== "GET") {
-            throw new Error(
-                "POSTリクエストが要求されているendpointをGETに登録することはできません"
-            )
+        if (facts.httpMethod !== "GET") {
+            throw new Error("POSTリクエストが要求されているendpointをGETに登録することはできません")
         }
         this.router.get(base_url + facts.url, async (req, res, params) => {
             res.setHeader("Content-Type", ContentType.JSON)
@@ -142,13 +136,9 @@ export class TurboServer {
                 })
                 req.query = query
 
-                if (facts.authentication_required) {
+                if (facts.authenticationRequired) {
                     // ユーザー認証をここで行う
-                    const auth_user = await authenticate_user(
-                        facts,
-                        req.query,
-                        req.cookies
-                    )
+                    const auth_user = await authenticate_user(facts, req.query, req.cookies)
                     params["auth_user"] = auth_user
                 }
                 const data = await handler(req, res, params)
@@ -185,10 +175,8 @@ export class TurboServer {
         })
     }
     post(facts: MethodFacts, handler: Router.Handler, options: Options = {}) {
-        if (facts.http_method !== "POST") {
-            throw new Error(
-                "GETリクエストが要求されているendpointをPOSTに登録することはできません"
-            )
+        if (facts.httpMethod !== "POST") {
+            throw new Error("GETリクエストが要求されているendpointをPOSTに登録することはできません")
         }
         this.router.post(base_url + facts.url, async (req, res, params) => {
             res.setHeader("Content-Type", ContentType.JSON)
@@ -199,21 +187,13 @@ export class TurboServer {
                 const content_type = req.headers["content-type"].split(
                     ";"
                 )[0] as ContentTypesLiteralUnion
-                if (
-                    facts.accepted_content_types.includes(content_type) !== true
-                ) {
-                    throw new WebApiRuntimeError(
-                        new InvalidContentTypeErrorSpec()
-                    )
+                if (facts.acceptedContentTypes.includes(content_type) !== true) {
+                    throw new WebApiRuntimeError(new InvalidContentTypeErrorSpec())
                 }
 
-                if (facts.authentication_required) {
+                if (facts.authenticationRequired) {
                     // ユーザー認証をここで行う
-                    const auth_user = await authenticate_user(
-                        facts,
-                        req.body,
-                        req.cookies
-                    )
+                    const auth_user = await authenticate_user(facts, req.body, req.cookies)
                     if (auth_user) {
                         // activeなユーザーにする
                         await activate_user(auth_user)
@@ -238,9 +218,7 @@ export class TurboServer {
                             apply_rule: rule,
                         })) !== true
                     ) {
-                        throw new WebApiRuntimeError(
-                            new FraudPreventionAccessDeniedErrorSpec()
-                        )
+                        throw new WebApiRuntimeError(new FraudPreventionAccessDeniedErrorSpec())
                     }
                 }
 

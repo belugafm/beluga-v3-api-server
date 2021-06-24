@@ -1,9 +1,9 @@
 import { IUsersRepository } from "../repository/Users"
-import { ModelRuntimeError } from "../error"
+import { DomainError } from "../error"
 
 export const ErrorCodes = {
     NameTaken: "name_taken",
-}
+} as const
 
 export class CheckUserNameAvailabilityService {
     private usersRepository: IUsersRepository
@@ -19,7 +19,7 @@ export class CheckUserNameAvailabilityService {
     }
     tryCheckIfNameIsTaken(name: string): void {
         if (this.isNameTaken(name)) {
-            throw new ModelRuntimeError(ErrorCodes.NameTaken)
+            throw new DomainError(ErrorCodes.NameTaken)
         }
     }
 }

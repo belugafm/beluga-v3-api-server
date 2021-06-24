@@ -17,9 +17,7 @@ export const RateLimitConfiguration = {
     [RateLimits.WebTier2]: {
         limit_per_minite: 20,
         label: "Web API Tier 2",
-        description: [
-            "連続した画像アップロードなどを規制するために使用されます",
-        ],
+        description: ["連続した画像アップロードなどを規制するために使用されます"],
     },
     [RateLimits.WebTier3]: {
         limit_per_minite: 60,
@@ -38,4 +36,4 @@ export const RateLimitConfiguration = {
     },
 } as const
 
-export type RateLimitLiteralUnion = keyof typeof RateLimits
+export type RateLimitUnion = keyof typeof RateLimits

@@ -1,4 +1,4 @@
-import { ModelRuntimeError } from "../error"
+import { DomainError } from "../error"
 import * as vn from "../validation"
 import { LoginCredentialModel } from "./LoginCredential"
 import { LoginSessionModel } from "./LoginSession"
@@ -9,7 +9,7 @@ export const ErrorCodes = {
     InvalidDisplayName: "invalid_display_name",
     InvalidLoginCredential: "invalid_login_credential",
     InvalidLoginSession: "invalid_login_session",
-}
+} as const
 
 export class UserModel {
     // @ts-ignore
@@ -167,11 +167,11 @@ export class UserModel {
             this._id = id
             return
         }
-        throw new ModelRuntimeError(ErrorCodes.InvalidId)
+        throw new DomainError(ErrorCodes.InvalidId)
     }
     set name(name: string) {
         if (vn.user.name().ok(name) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvalidName)
+            throw new DomainError(ErrorCodes.InvalidName)
         }
         this._name = name
     }
@@ -181,22 +181,30 @@ export class UserModel {
             return
         }
         if (vn.user.displayName().ok(displayName) !== true) {
-            throw new ModelRuntimeError(ErrorCodes.InvalidDisplayName)
+            throw new DomainError(ErrorCodes.InvalidDisplayName)
         }
         this._displayName = displayName
     }
-    set loginCredential(loginCredential: LoginCredentialModel) {
+    set loginCredential(loginCredential: LoginCredentialModel | null) {
+        if (loginCredential === null) {
+            this._loginCredential = null
+            return
+        }
         if (loginCredential instanceof LoginCredentialModel) {
             this._loginCredential = loginCredential
-        } else {
-            throw new ModelRuntimeError(ErrorCodes.InvalidLoginCredential)
+            return
         }
+        throw new DomainError(ErrorCodes.InvalidLoginCredential)
     }
-    set LoginSession(LoginSession: LoginSessionModel) {
-        if (LoginSession instanceof LoginSessionModel) {
-            this._LoginSession = LoginSession
-        } else {
-            throw new ModelRuntimeError(ErrorCodes.InvalidLoginSession)
+    set LoginSession(LoginSession: LoginSessionModel | null) {
+        if (LoginSession === null) {
+            this._loginSession = null
+            return
         }
+        if (LoginSession instanceof LoginSessionModel) {
+            this._loginSession = LoginSession
+            return
+        }
+        throw new DomainError(ErrorCodes.InvalidLoginSession)
     }
 }

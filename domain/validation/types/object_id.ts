@@ -1,26 +1,15 @@
 import { Schema } from "../schema"
-import mongoose from "mongoose"
-import { CommonErrorMessages, ValidationError } from "../error"
+import { is_number, is_string } from "../functions"
 
-export function object_id() {
-    return new Schema<mongoose.Types.ObjectId>({}, [
-        (object_id: any) => {
-            if (object_id instanceof mongoose.Types.ObjectId !== true) {
-                throw new ValidationError(CommonErrorMessages.InvalidType)
-            }
-        },
-    ])
+function isObjectId(value: any) {
+    if (is_number(value)) {
+        return true
+    }
+    if (is_string(value)) {
+        return true
+    }
+    return false
 }
-
-export function nullable_object_id() {
-    return new Schema<mongoose.Types.ObjectId | null>({}, [
-        (object_id: any) => {
-            if (object_id === null) {
-                return
-            }
-            if (object_id instanceof mongoose.Types.ObjectId !== true) {
-                throw new ValidationError(CommonErrorMessages.InvalidType)
-            }
-        },
-    ])
+export function objectId() {
+    return new Schema<ObjectID>({}, [isObjectId])
 }
