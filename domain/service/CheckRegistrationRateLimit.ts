@@ -1,6 +1,6 @@
 import { SortBy, SortOrder, IUsersRepository } from "../repository/Users"
 import config from "../../config/app"
-import { DomainError } from "../error"
+import { DomainError } from "../DomainError"
 
 export const ErrorCodes = {
     TooManyRequests: "too_many_requests",

@@ -1,4 +1,4 @@
-import { DomainError } from "../domain/error"
+import { DomainError } from "../domain/DomainError"
 import {
     LoginCredentialEntity,
     ErrorCodes as LoginCredentialErrorCodes,
@@ -15,7 +15,7 @@ import {
     CheckUserNameAvailabilityService,
     ErrorCodes as UserNameAvailabilityErrorCodes,
 } from "../domain/service/CheckUserNameAvailability"
-import { ApplicationError } from "./error"
+import { ApplicationError } from "./ApplicationError"
 
 type Argument = {
     name: string

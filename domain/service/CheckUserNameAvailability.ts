@@ -1,5 +1,5 @@
 import { IUsersRepository } from "../repository/Users"
-import { DomainError } from "../error"
+import { DomainError } from "../DomainError"
 
 export const ErrorCodes = {
     NameTaken: "name_taken",

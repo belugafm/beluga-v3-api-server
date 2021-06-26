@@ -1,4 +1,4 @@
-import { DomainError } from "../error"
+import { DomainError } from "../DomainError"
 import { Validator } from "./Validator"
 
 interface ValidateByOptions {

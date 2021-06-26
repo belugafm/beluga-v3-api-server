@@ -1,4 +1,4 @@
-import { DomainError } from "../error"
+import { DomainError } from "../DomainError"
 import * as vn from "../validation"
 import bcrypt from "bcrypt"
 import config from "../../config/app"

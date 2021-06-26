@@ -1,4 +1,4 @@
-import { DomainError } from "../error"
+import { DomainError } from "../DomainError"
 import * as vn from "../validation"
 import { ValidateBy } from "../validation/decorators"
 import { LoginCredentialEntity } from "./LoginCredential"
@@ -51,7 +51,7 @@ export class UserEntity {
     @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidLocation })
     location: string | null
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidUrl })
+    @ValidateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidUrl })
     url: string | null
 
     @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidDescription })
@@ -60,7 +60,7 @@ export class UserEntity {
     @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidThemeColor })
     themeColor: string | null
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidBackgroundImageUrl })
+    @ValidateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidBackgroundImageUrl })
     backgroundImageUrl: string | null
 
     @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
