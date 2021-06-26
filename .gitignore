@@ -2,7 +2,7 @@ node_modules/
 build/
 volumes/
 www/
-core/config/app.ts
+config/app.ts
 .vscode/
 .DS_Store
 npm-debug.log
