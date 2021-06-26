@@ -1,9 +1,9 @@
-import { is_string } from "../../functions"
-import { ValidationError, CommonErrorMessages } from "../../error"
+import { isString } from "../../functions"
+import { ValidationError, CommonErrorMessages } from "../../ValidationError"
 
 export type Options = {}
-export function check_is_string(value: string, options: Options): void {
-    if (is_string(value) !== true) {
+export function checkIsString(value: string, options: Options): void {
+    if (isString(value) !== true) {
         throw new ValidationError(CommonErrorMessages.InvalidType)
     }
 }

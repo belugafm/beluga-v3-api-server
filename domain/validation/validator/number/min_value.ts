@@ -1,19 +1,17 @@
-import { is_number } from "../../functions"
-import { ValidationError, CommonErrorMessages } from "../../error"
+import { isNumber } from "../../functions"
+import { ValidationError, CommonErrorMessages } from "../../ValidationError"
 
 export type Options = {
-    min_value?: number
+    minValue?: number
 }
-export function check_min_value(value: string, options: Options): void {
-    if (options.min_value == null) {
+export function checkMinValue(value: number, options: Options): void {
+    if (options.minValue == null) {
         return
     }
-    if (is_number(value) !== true) {
+    if (isNumber(value) !== true) {
         throw new ValidationError(CommonErrorMessages.InvalidType)
     }
-    if (value.length < options.min_value) {
-        throw new ValidationError(
-            `${options.min_value}以上の値に設定してください`
-        )
+    if (value < options.minValue) {
+        throw new ValidationError(`${options.minValue}以上の値に設定してください`)
     }
 }

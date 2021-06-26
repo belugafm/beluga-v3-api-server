@@ -10,14 +10,14 @@ export const ErrorCodes = {
     PasswordNotMeetPolicy: "password_not_meet_policy",
 } as const
 
-export class LoginCredentialModel {
+export class LoginCredentialEntity {
     // @ts-ignore
     private _userId: UserID
     // @ts-ignore
     private _passwordHash: string
 
     static async new(userId: UserID, password: string) {
-        if (vn.is_string(password) !== true) {
+        if (vn.isString(password) !== true) {
             throw new DomainError(ErrorCodes.InvaidPasswordInput)
         }
         if (vn.password().ok(password) !== true) {
@@ -27,7 +27,7 @@ export class LoginCredentialModel {
             password,
             config.user_login_credential.password.salt_rounds
         )
-        return new LoginCredentialModel(userId, passwordHash)
+        return new LoginCredentialEntity(userId, passwordHash)
     }
     constructor(userId: UserID, passwordHash: string) {
         this.userId = userId

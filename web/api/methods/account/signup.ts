@@ -8,7 +8,7 @@ import { DomainError } from "../../../../domain/error"
 import config from "../../../../config/app"
 import { RegisterUserApplication, ErrorCodes } from "../../../../application/RegisterUser"
 import { UsersRepository, UserRegistrationRepository } from "../../../repository"
-import { UserModel } from "../../../../domain/model/User"
+import { UserEntity } from "../../../../domain/entity/User"
 
 export const argumentSpecs = defineArguments(
     ["name", "password", "confirmationPassword", "ipAddress"] as const,
@@ -104,7 +104,7 @@ export default defineMethod(
     facts,
     argumentSpecs,
     expected_error_specs,
-    async (args, errors): Promise<UserModel | null> => {
+    async (args, errors): Promise<UserEntity | null> => {
         if (args.password !== args.confirmationPassword) {
             raise(errors["confirmation_password_not_match"])
         }

@@ -1,19 +1,17 @@
-import { is_string } from "../../functions"
-import { ValidationError, CommonErrorMessages } from "../../error"
+import { isString } from "../../functions"
+import { ValidationError, CommonErrorMessages } from "../../ValidationError"
 
 export type Options = {
-    min_length?: number
+    minLength?: number
 }
-export function check_min_length(value: string, options: Options): void {
-    if (options.min_length == null) {
+export function checkMinLength(value: string, options: Options): void {
+    if (options.minLength == null) {
         return
     }
-    if (is_string(value) !== true) {
+    if (isString(value) !== true) {
         throw new ValidationError(CommonErrorMessages.InvalidType)
     }
-    if (value.length < options.min_length) {
-        throw new ValidationError(
-            `${options.min_length}文字以上に設定してください`
-        )
+    if (value.length < options.minLength) {
+        throw new ValidationError(`${options.minLength}文字以上に設定してください`)
     }
 }

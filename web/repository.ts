@@ -1,2 +1,2 @@
-export { UserRegistrationRepository } from "../infrastructure/mongodb/UserRegistration"
-export { UsersRepository } from "../infrastructure/mongodb/Users"
+export { UserRegistrationRepository } from "../infrastructure/mongodb/repositoryimpl/UserRegistration"
+export { UsersRepository } from "../infrastructure/mongodb/repositoryimpl/Users"

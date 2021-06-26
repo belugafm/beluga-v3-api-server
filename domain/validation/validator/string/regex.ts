@@ -1,14 +1,14 @@
-import { is_string } from "../../functions"
-import { ValidationError, CommonErrorMessages } from "../../error"
+import { isString } from "../../functions"
+import { ValidationError, CommonErrorMessages } from "../../ValidationError"
 
 export type Options = {
     regexp?: RegExp
 }
-export function check_regex_pattern(value: string, options: Options): void {
+export function checkRegexPattern(value: string, options: Options): void {
     if (options.regexp == null) {
         return
     }
-    if (is_string(value) !== true) {
+    if (isString(value) !== true) {
         throw new ValidationError(CommonErrorMessages.InvalidType)
     }
     if (options.regexp.test(value) !== true) {

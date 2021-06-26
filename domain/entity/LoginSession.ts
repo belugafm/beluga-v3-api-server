@@ -12,7 +12,7 @@ export const ErrorCodes = {
     InvaldCreatedAt: "invalid_created_at",
 } as const
 
-export class LoginSessionModel {
+export class LoginSessionEntity {
     // @ts-ignore
     private _userId: UserID
     // @ts-ignore
@@ -31,7 +31,7 @@ export class LoginSessionModel {
         const expireDate = new Date(Date.now() + config.user_login_session.lifetime * 1000)
         const expired = false
         const createdAt = new Date()
-        return new LoginSessionModel({
+        return new LoginSessionEntity({
             userId,
             ipAddress,
             sessionId,
@@ -82,7 +82,7 @@ export class LoginSessionModel {
         this._userId = userId
     }
     set sessionId(sessionId: string) {
-        if (vn.string({ max_length: 128 }).ok(sessionId) !== true) {
+        if (vn.string({ maxLength: 128 }).ok(sessionId) !== true) {
             throw new DomainError(ErrorCodes.InvaldSessionId)
         }
         this._sessionId = sessionId

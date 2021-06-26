@@ -1,4 +1,4 @@
-import { UserModel } from "../model/User"
+import { UserEntity } from "../entity/User"
 
 export const SortBy = {
     CreatedAt: "CreatedAt",
@@ -10,14 +10,14 @@ export const SortOrder = {
 } as const
 
 export interface IUsersRepository {
-    add(user: UserModel): UserID
-    updateProfile(user: UserModel): boolean
-    delete(user: UserModel): boolean
-    findById(userId: UserID): UserModel | null
-    findByName(name: string): UserModel | null
+    add(user: UserEntity): Promise<UserID>
+    delete(user: UserEntity): Promise<boolean>
+    updateProfile(user: UserEntity): Promise<boolean>
+    findById(userId: UserID): Promise<UserEntity | null>
+    findByName(name: string): Promise<UserEntity | null>
     findByIpAddress(
         ipAddress: string,
         sortBy: typeof SortBy[keyof typeof SortBy],
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
-    ): UserModel[]
+    ): Promise<UserEntity[]>
 }

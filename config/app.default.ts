@@ -37,6 +37,10 @@ const config: {
             min_length: number
             max_length: number
         }
+        description: {
+            min_length: number
+            max_length: number
+        }
     }
     reserved_user_names: string[]
     channel_group: {
@@ -140,6 +144,10 @@ const config: {
         display_name: {
             min_length: 1,
             max_length: 32,
+        },
+        description: {
+            min_length: 1,
+            max_length: 1000,
         },
     },
     reserved_user_names: ["admin"],

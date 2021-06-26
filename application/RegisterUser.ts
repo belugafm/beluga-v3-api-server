@@ -1,10 +1,10 @@
 import { DomainError } from "../domain/error"
 import {
-    LoginCredentialModel,
+    LoginCredentialEntity,
     ErrorCodes as LoginCredentialErrorCodes,
-} from "../domain/model/LoginCredential"
-import { LoginSessionModel } from "../domain/model/LoginSession"
-import { UserModel, ErrorCodes as UserModelErrorCodes } from "../domain/model/User"
+} from "../domain/entity/LoginCredential"
+import { LoginSessionEntity } from "../domain/entity/LoginSession"
+import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../domain/entity/User"
 import { IUserRegistrationRepository } from "../domain/repository/UserRegistration"
 import { IUsersRepository } from "../domain/repository/Users"
 import {
@@ -45,18 +45,18 @@ export class RegisterUserApplication {
         this.registrationRateLimitService = new CheckRegistrationRateLimitService(usersRepository)
         this.userNameAvailabilityService = new CheckUserNameAvailabilityService(usersRepository)
     }
-    async register({ name, password, ipAddress }: Argument): UserModel {
+    async register({ name, password, ipAddress }: Argument): UserEntity {
         try {
             this.registrationRateLimitService.tryCheckIfRateIsLimited(ipAddress)
             this.userNameAvailabilityService.tryCheckIfNameIsTaken(name)
-            const user = new UserModel(-1, name)
-            user.id = this.usersRepository.add(user)
+            const user = new UserEntity(-1, name)
+            user.id = await this.usersRepository.add(user)
             try {
-                user.loginCredential = await LoginCredentialModel.new(user.id, password)
-                user.LoginSession = LoginSessionModel.new(user.id, ipAddress)
+                user.loginCredential = await LoginCredentialEntity.new(user.id, password)
+                user.LoginSession = LoginSessionEntity.new(user.id, ipAddress)
                 this.userRegistrationRepository.register(user)
             } catch (error) {
-                this.usersRepository.delete(user)
+                await this.usersRepository.delete(user)
                 throw error
             }
             return user

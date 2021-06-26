@@ -4,10 +4,10 @@ import { HttpMethodUnion } from "./facts/http_method"
 import { RateLimitUnion } from "./facts/rate_limit"
 import { ContentTypesLiteralUnion } from "./facts/content_type"
 import { AuthenticationMethodsLiteralUnion } from "./facts/authentication_method"
-import { Schema } from "../../domain/validation/schema"
-import { ValidationError } from "../../domain/validation/error"
+import { Validator } from "../../domain/validation/Validator"
+import { ValidationError } from "../../domain/validation/ValidationError"
 import { WebApiRuntimeError, InternalErrorSpec, InvalidAuth } from "./error"
-import { UserModel } from "../../domain/model/User"
+import { UserEntity } from "../../domain/entity/User"
 
 // Web APIの仕様を定義
 export interface MethodFacts {
@@ -57,7 +57,7 @@ type Argument = {
     examples: string[] | null
     required: boolean
     defaultValue?: any
-    schema: Schema<any>
+    schema: Validator<any>
 }
 
 export function defineArguments<
@@ -141,10 +141,10 @@ export function defineMethod<
     callback: (
         args: Args,
         errors: ExpectedErrorSpecs<ArgumentSpecs, ErrorCodes>,
-        authUser: UserModel | null
+        authUser: UserEntity | null
     ) => Promise<CallbackReturnType>
-): (args: Args, authUser: UserModel | null) => Promise<CallbackReturnType> {
-    return (args: Args, authUser: UserModel | null) => {
+): (args: Args, authUser: UserEntity | null) => Promise<CallbackReturnType> {
+    return (args: Args, authUser: UserEntity | null) => {
         if (facts.authenticationRequired) {
             if (authUser === null) {
                 throw new WebApiRuntimeError(new InvalidAuth())

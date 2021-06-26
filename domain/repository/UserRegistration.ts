@@ -1,5 +1,5 @@
-import { UserModel } from "../model/User"
+import { UserEntity } from "../entity/User"
 
 export interface IUserRegistrationRepository {
-    register(user: UserModel): boolean
+    register(user: UserEntity): boolean
 }

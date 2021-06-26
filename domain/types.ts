@@ -1,4 +1,4 @@
-type ObjectID = number | string
-type UserID = ObjectID
+type EntityId = number | string
+type UserID = EntityId
 type ChannelID = UserID
 type ChannelGroupdID = UserID

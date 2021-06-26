@@ -1,9 +1,9 @@
-import { is_number } from "../../functions"
-import { ValidationError, CommonErrorMessages } from "../../error"
+import { isNumber } from "../../functions"
+import { ValidationError, CommonErrorMessages } from "../../ValidationError"
 
 export type Options = {}
-export function check_is_number(value: number, options: Options): void {
-    if (is_number(value) !== true) {
+export function checkIsNumber(value: number, options: Options): void {
+    if (isNumber(value) !== true) {
         throw new ValidationError(CommonErrorMessages.InvalidType)
     }
 }

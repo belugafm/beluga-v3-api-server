@@ -5,10 +5,10 @@ import { checkMaxLength } from "../../validator/string/max_length"
 import { Options } from "../string"
 import config from "../../../../config/app"
 
-export function text() {
+export function description() {
     const options: Options = {
-        minLength: config.status.text.min_length,
-        maxLength: config.status.text.max_length,
+        minLength: config.user.description.min_length,
+        maxLength: config.user.description.max_length,
     }
     return new Validator<string>(options, [checkIsString, checkMinLength, checkMaxLength])
 }

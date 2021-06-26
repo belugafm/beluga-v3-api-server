@@ -1,19 +1,17 @@
-import { is_string } from "../../functions"
-import { ValidationError, CommonErrorMessages } from "../../error"
+import { isString } from "../../functions"
+import { ValidationError, CommonErrorMessages } from "../../ValidationError"
 
 export type Options = {
-    max_length?: number
+    maxLength?: number
 }
-export function check_max_length(value: string, options: Options): void {
-    if (options.max_length == null) {
+export function checkMaxLength(value: string, options: Options): void {
+    if (options.maxLength == null) {
         return
     }
-    if (is_string(value) !== true) {
+    if (isString(value) !== true) {
         throw new ValidationError(CommonErrorMessages.InvalidType)
     }
-    if (value.length > options.max_length) {
-        throw new ValidationError(
-            `${options.max_length + 1}文字以上に設定することはできません`
-        )
+    if (value.length > options.maxLength) {
+        throw new ValidationError(`${options.maxLength + 1}文字以上に設定することはできません`)
     }
 }
