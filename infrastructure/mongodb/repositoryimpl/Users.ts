@@ -1,7 +1,7 @@
 import * as mongo from "../mongoose"
 
 import { IUsersRepository, SortBy, SortOrder } from "../../../domain/repository/Users"
-import { UserModel, schemaVersion } from "../schema/user"
+import { UserModel, schemaVersion } from "../schema/User"
 
 import { MongoError } from "mongodb"
 import { RepositoryError } from "../../../domain/repository/RepositoryError"
@@ -36,7 +36,8 @@ export class UsersRepository implements IUsersRepository {
                 last_activity_date: user.lastActivityDate,
                 terms_of_service_agreement_date: user.termsOfServiceAgreementDate,
                 terms_of_service_agreement_version: user.termsOfServiceAgreementVersion,
-                schemaVersion,
+                registration_ip_address: user.registrationIpAddress,
+                schema_version: schemaVersion,
             })
             return result._id.toHexString()
         } catch (error) {

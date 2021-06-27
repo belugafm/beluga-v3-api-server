@@ -113,36 +113,52 @@ export class UserEntity extends Entity {
     @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidValue })
     termsOfServiceAgreementVersion: string | null // 同意した利用規約のバージョン
 
-    constructor(id: UserId, name: string) {
+    @ValidateBy(vn.ipAddress(), { errorCode: ErrorCodes.InvalidValue })
+    registrationIpAddress: string // 登録時のIPアドレス
+
+    constructor(
+        params: {
+            id: UserEntity["id"]
+            name: UserEntity["name"]
+            registrationIpAddress: UserEntity["registrationIpAddress"]
+        } & Partial<UserEntity>
+    ) {
         super()
-        this.id = id
-        this.name = name
-        this.twitterUserId = null
+        this.id = params.id
+        this.name = params.name
+        this.twitterUserId = params.twitterUserId ? params.twitterUserId : null
         this.loginCredential = null
         this.loginSession = null
-        this.displayName = null
-        this.profileImageUrl = null
-        this.location = null
-        this.url = null
-        this.description = null
-        this.themeColor = null
-        this.backgroundImageUrl = null
-        this.defaultProfile = true
-        this.createdAt = new Date()
-        this.statusCount = 0
-        this.favoritesCount = 0
-        this.favoritedCount = 0
-        this.likesCount = 0
-        this.likedCount = 0
-        this.channelsCount = 0
-        this.followingChannelsCount = 0
-        this.active = false
-        this.dormant = false
-        this.suspended = false
-        this.trustLevel = 0
-        this.lastActivityDate = null
-        this.termsOfServiceAgreementDate = null
-        this.termsOfServiceAgreementVersion = null
+        this.displayName = params.displayName ? params.displayName : null
+        this.profileImageUrl = params.profileImageUrl ? params.profileImageUrl : null
+        this.location = params.location ? params.location : null
+        this.url = params.url ? params.url : null
+        this.description = params.description ? params.description : null
+        this.themeColor = params.themeColor ? params.themeColor : null
+        this.backgroundImageUrl = params.backgroundImageUrl ? params.backgroundImageUrl : null
+        this.defaultProfile = params.defaultProfile === false ? false : true
+        this.createdAt = params.createdAt ? params.createdAt : new Date()
+        this.statusCount = params.statusCount ? params.statusCount : 0
+        this.favoritesCount = params.favoritesCount ? params.favoritesCount : 0
+        this.favoritedCount = params.favoritedCount ? params.favoritedCount : 0
+        this.likesCount = params.likesCount ? params.likesCount : 0
+        this.likedCount = params.likedCount ? params.likedCount : 0
+        this.channelsCount = params.channelsCount ? params.channelsCount : 0
+        this.followingChannelsCount = params.followingChannelsCount
+            ? params.followingChannelsCount
+            : 0
+        this.active = params.active ? params.active : false
+        this.dormant = params.dormant ? params.dormant : false
+        this.suspended = params.suspended ? params.suspended : false
+        this.trustLevel = params.trustLevel ? params.trustLevel : 0
+        this.lastActivityDate = params.lastActivityDate ? params.lastActivityDate : null
+        this.termsOfServiceAgreementDate = params.termsOfServiceAgreementDate
+            ? params.termsOfServiceAgreementDate
+            : null
+        this.termsOfServiceAgreementVersion = params.termsOfServiceAgreementVersion
+            ? params.termsOfServiceAgreementVersion
+            : null
+        this.registrationIpAddress = params.registrationIpAddress
     }
     get loginCredential() {
         return this._loginCredential

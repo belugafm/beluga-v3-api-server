@@ -1,5 +1,5 @@
 import { ErrorCodes, RegisterUserApplication } from "../../application/RegisterUser"
-import { UserRegistrationRepository, UsersRepository } from "../../web/repository"
+import { LoginCredentialsRepository, UsersRepository } from "../../web/repository"
 
 import { ApplicationError } from "../../application/ApplicationError"
 import { db } from "../env"
@@ -15,8 +15,8 @@ describe("RegisterUserApplication", () => {
     })
     test("Normal", async () => {
         const usersRepository = new UsersRepository()
-        const userRegistrationRepository = new UserRegistrationRepository()
-        const app = new RegisterUserApplication(usersRepository, userRegistrationRepository)
+        const loginCredentialRepository = new LoginCredentialsRepository()
+        const app = new RegisterUserApplication(usersRepository, loginCredentialRepository)
         const name = "admin"
         const user = await app.register({
             name,
@@ -28,8 +28,8 @@ describe("RegisterUserApplication", () => {
     })
     test("NameTaken", async () => {
         const usersRepository = new UsersRepository()
-        const userRegistrationRepository = new UserRegistrationRepository()
-        const app = new RegisterUserApplication(usersRepository, userRegistrationRepository)
+        const loginCredentialRepository = new LoginCredentialsRepository()
+        const app = new RegisterUserApplication(usersRepository, loginCredentialRepository)
         const name = "admin"
         const user = await app.register({
             name,
@@ -52,8 +52,8 @@ describe("RegisterUserApplication", () => {
     })
     test("UserNameNotMeetPolicy", async () => {
         const usersRepository = new UsersRepository()
-        const userRegistrationRepository = new UserRegistrationRepository()
-        const app = new RegisterUserApplication(usersRepository, userRegistrationRepository)
+        const loginCredentialRepository = new LoginCredentialsRepository()
+        const app = new RegisterUserApplication(usersRepository, loginCredentialRepository)
         try {
             await app.register({
                 name: "admin-1234",
@@ -69,8 +69,8 @@ describe("RegisterUserApplication", () => {
     })
     test("PasswordNotMeetPolicy", async () => {
         const usersRepository = new UsersRepository()
-        const userRegistrationRepository = new UserRegistrationRepository()
-        const app = new RegisterUserApplication(usersRepository, userRegistrationRepository)
+        const loginCredentialRepository = new LoginCredentialsRepository()
+        const app = new RegisterUserApplication(usersRepository, loginCredentialRepository)
         try {
             await app.register({
                 name: "admin",

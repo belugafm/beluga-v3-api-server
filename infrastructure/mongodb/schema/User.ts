@@ -31,6 +31,7 @@ export interface UserSchema extends Document {
     last_activity_date: Date | null
     terms_of_service_agreement_date: Date | null
     terms_of_service_agreement_version: string | null
+    registration_ip_address: string
     schema_version: number
     toModel: () => UserEntity
 }
@@ -88,6 +89,9 @@ function defineSchema(): any {
             default: null,
         },
         terms_of_service_agreement_version: NullableString,
+        registration_ip_address: {
+            type: String,
+        },
         schema_version: {
             type: Number,
             default: schemaVersion,
@@ -100,32 +104,35 @@ const userSchema: Schema<UserSchema> = new Schema(defineSchema(), {
 })
 
 userSchema.methods.toModel = function () {
-    const user = new UserEntity(this._id.toHexString(), this.name)
-    user.twitterUserId = this.twitter_user_id
-    user.displayName = this.display_name
-    user.profileImageUrl = this.profile_image_url
-    user.location = this.location
-    user.url = this.url
-    user.description = this.description
-    user.themeColor = this.theme_color
-    user.backgroundImageUrl = this.background_image_url
-    user.defaultProfile = this.default_profile
-    user.statusCount = this.status_count
-    user.favoritesCount = this.favorites_count
-    user.favoritedCount = this.favorited_count
-    user.likesCount = this.likes_count
-    user.likedCount = this.liked_count
-    user.channelsCount = this.channels_count
-    user.followingChannelsCount = this.following_channels_count
-    user.createdAt = this.created_at
-    user.active = this.active
-    user.dormant = this.dormant
-    user.suspended = this.suspended
-    user.trustLevel = this.trust_level
-    user.lastActivityDate = this.last_activity_date
-    user.termsOfServiceAgreementDate = this.terms_of_service_agreement_date
-    user.termsOfServiceAgreementVersion = this.terms_of_service_agreement_version
-    return user
+    return new UserEntity({
+        id: this._id.toHexString(),
+        name: this.name,
+        twitterUserId: this.twitter_user_id,
+        displayName: this.display_name,
+        profileImageUrl: this.profile_image_url,
+        location: this.location,
+        url: this.url,
+        description: this.description,
+        themeColor: this.theme_color,
+        backgroundImageUrl: this.background_image_url,
+        defaultProfile: this.default_profile,
+        statusCount: this.status_count,
+        favoritesCount: this.favorites_count,
+        favoritedCount: this.favorited_count,
+        likesCount: this.likes_count,
+        likedCount: this.liked_count,
+        channelsCount: this.channels_count,
+        followingChannelsCount: this.following_channels_count,
+        createdAt: this.created_at,
+        active: this.active,
+        dormant: this.dormant,
+        suspended: this.suspended,
+        trustLevel: this.trust_level,
+        lastActivityDate: this.last_activity_date,
+        termsOfServiceAgreementDate: this.terms_of_service_agreement_date,
+        termsOfServiceAgreementVersion: this.terms_of_service_agreement_version,
+        registrationIpAddress: this.registration_ip_address,
+    })
 }
 
-export const UserModel = mongoose.model<UserSchema>("user", userSchema)
+export const UserModel = mongoose.model<UserSchema>("User", userSchema)

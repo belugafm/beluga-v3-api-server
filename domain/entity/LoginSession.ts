@@ -89,7 +89,7 @@ export class LoginSessionEntity {
         this._sessionId = sessionId
     }
     set ipAddress(ipAddress: string) {
-        if (vn.ip_address().ok(ipAddress) !== true) {
+        if (vn.ipAddress().ok(ipAddress) !== true) {
             throw new DomainError(ErrorCodes.InvaldIpAddress)
         }
         this._ipAddress = ipAddress

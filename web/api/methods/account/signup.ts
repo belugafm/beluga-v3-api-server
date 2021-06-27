@@ -1,14 +1,16 @@
+import * as vs from "../../../../domain/validation"
+
+import { ErrorCodes, RegisterUserApplication } from "../../../../application/RegisterUser"
+import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
+import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
+import { UserRegistrationRepository, UsersRepository } from "../../../repository"
+
 import { ContentTypes } from "../../facts/content_type"
+import { DomainError } from "../../../../domain/DomainError"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
-import { MethodFacts, defineMethod, defineArguments, defineErrors } from "../../define"
-import * as vs from "../../../../domain/validation"
-import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
-import { DomainError } from "../../../../domain/DomainError"
-import config from "../../../../config/app"
-import { RegisterUserApplication, ErrorCodes } from "../../../../application/RegisterUser"
-import { UsersRepository, UserRegistrationRepository } from "../../../repository"
 import { UserEntity } from "../../../../domain/entity/User"
+import config from "../../../../config/app"
 
 export const argumentSpecs = defineArguments(
     ["name", "password", "confirmationPassword", "ipAddress"] as const,
@@ -35,7 +37,7 @@ export const argumentSpecs = defineArguments(
             description: ["登録時のIPアドレス"],
             examples: ["192.168.1.1"],
             required: true,
-            schema: vs.ip_address(),
+            schema: vs.ipAddress(),
         },
     }
 )

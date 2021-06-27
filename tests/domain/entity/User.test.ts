@@ -17,20 +17,28 @@ function generateRandomStringWithLength(length: number, charset?: string) {
     return ret
 }
 
+const id = 1
+const name = "example"
+const registrationIpAddress = "192.168.1.1"
+
 describe("UserEntity::constructor", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({
+            id: "507f1f77bcf86cd799439011",
+            name,
+            registrationIpAddress,
+        })
         expect(user).toBeInstanceOf(UserEntity)
     })
     test("Normal", async () => {
-        const user = new UserEntity(1, "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect(user).toBeInstanceOf(UserEntity)
     })
     test("Errors", async () => {
         expect.assertions(2)
         try {
             // @ts-ignore
-            const user = new UserEntity(null, "hoge")
+            const user = new UserEntity({ id: null, name, registrationIpAddress })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
             if (error instanceof DomainError) {
@@ -42,7 +50,7 @@ describe("UserEntity::constructor", () => {
         expect.assertions(2)
         try {
             // @ts-ignore
-            const user = new UserEntity(true, "hoge")
+            const user = new UserEntity({ id: true, name, registrationIpAddress })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
             if (error instanceof DomainError) {
@@ -54,7 +62,7 @@ describe("UserEntity::constructor", () => {
         expect.assertions(2)
         try {
             // @ts-ignore
-            const user = new UserEntity("0000", true)
+            const user = new UserEntity({ id, name: true, registrationIpAddress })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
             if (error instanceof DomainError) {
@@ -66,7 +74,7 @@ describe("UserEntity::constructor", () => {
         expect.assertions(2)
         try {
             // @ts-ignore
-            const user = new UserEntity("0000", null)
+            const user = new UserEntity({ id, name: null, registrationIpAddress })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
             if (error instanceof DomainError) {
@@ -78,7 +86,31 @@ describe("UserEntity::constructor", () => {
         expect.assertions(2)
         try {
             // @ts-ignore
-            const user = new UserEntity(new Date(), "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress: 1 })
+        } catch (error) {
+            expect(error).toBeInstanceOf(DomainError)
+            if (error instanceof DomainError) {
+                expect(error.code).toMatch(ErrorCodes.InvalidValue)
+            }
+        }
+    })
+    test("Errors", async () => {
+        expect.assertions(2)
+        try {
+            // @ts-ignore
+            const user = new UserEntity({ id, name, registrationIpAddress: "hoge" })
+        } catch (error) {
+            expect(error).toBeInstanceOf(DomainError)
+            if (error instanceof DomainError) {
+                expect(error.code).toMatch(ErrorCodes.InvalidValue)
+            }
+        }
+    })
+    test("Errors", async () => {
+        expect.assertions(2)
+        try {
+            // @ts-ignore
+            const user = new UserEntity({ id: new Date(), name, registrationIpAddress })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
             if (error instanceof DomainError) {
@@ -90,7 +122,7 @@ describe("UserEntity::constructor", () => {
         expect.assertions(2)
         try {
             // @ts-ignore
-            const user = new UserEntity("0000", new Date())
+            const user = new UserEntity({ id: 1, name: new Date(), registrationIpAddress })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
             if (error instanceof DomainError) {
@@ -102,38 +134,26 @@ describe("UserEntity::constructor", () => {
         expect.assertions(2)
         try {
             // @ts-ignore
-            const user = new UserEntity(new Date(), new Date())
+            const user = new UserEntity({ id, name, registrationIpAddress: new Date() })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
             if (error instanceof DomainError) {
-                expect(error.code).toMatch(ErrorCodes.InvalidId)
-            }
-        }
-    })
-    test("Errors", async () => {
-        expect.assertions(2)
-        try {
-            // @ts-ignore
-            const user = new UserEntity(true, true)
-        } catch (error) {
-            expect(error).toBeInstanceOf(DomainError)
-            if (error instanceof DomainError) {
-                expect(error.code).toMatch(ErrorCodes.InvalidId)
+                expect(error.code).toMatch(ErrorCodes.InvalidValue)
             }
         }
     })
 })
 describe("UserEntity::id", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.id = "1111"
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.id = 1
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -146,7 +166,7 @@ describe("UserEntity::id", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -159,7 +179,7 @@ describe("UserEntity::id", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -175,22 +195,22 @@ describe("UserEntity::id", () => {
 
 describe("UserEntity::name", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.name = generateRandomStringWithLength(config.user.name.min_length, CHARSET_USERNAME)
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.name = generateRandomStringWithLength(
             config.user.name.max_length - config.user.name.min_length,
             CHARSET_USERNAME
         )
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.name = generateRandomStringWithLength(config.user.name.max_length, CHARSET_USERNAME)
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.name = "user-1234"
@@ -202,7 +222,7 @@ describe("UserEntity::name", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.name = generateRandomStringWithLength(
@@ -217,7 +237,7 @@ describe("UserEntity::name", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.name = generateRandomStringWithLength(
@@ -232,7 +252,7 @@ describe("UserEntity::name", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.name = ""
@@ -244,7 +264,7 @@ describe("UserEntity::name", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.name =
@@ -257,7 +277,7 @@ describe("UserEntity::name", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -270,7 +290,7 @@ describe("UserEntity::name", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -283,7 +303,7 @@ describe("UserEntity::name", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -296,7 +316,7 @@ describe("UserEntity::name", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -312,25 +332,25 @@ describe("UserEntity::name", () => {
 
 describe("UserEntity::displayName", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.displayName = generateRandomStringWithLength(config.user.display_name.min_length)
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.displayName = generateRandomStringWithLength(config.user.display_name.max_length)
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.displayName = generateRandomStringWithLength(
             config.user.display_name.max_length - config.user.display_name.min_length
         )
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.displayName = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.displayName = generateRandomStringWithLength(
@@ -344,7 +364,7 @@ describe("UserEntity::displayName", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.displayName = generateRandomStringWithLength(
@@ -358,7 +378,7 @@ describe("UserEntity::displayName", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -371,7 +391,7 @@ describe("UserEntity::displayName", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -384,7 +404,7 @@ describe("UserEntity::displayName", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -400,15 +420,15 @@ describe("UserEntity::displayName", () => {
 
 describe("UserEntity::twitterUserId", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.twitterUserId = "1111"
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.twitterUserId = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -421,7 +441,7 @@ describe("UserEntity::twitterUserId", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -434,7 +454,7 @@ describe("UserEntity::twitterUserId", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -450,15 +470,15 @@ describe("UserEntity::twitterUserId", () => {
 
 describe("UserEntity::profileImageUrl", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.profileImageUrl = "http://example.com/example.png"
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.profileImageUrl = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.profileImageUrl = "hoge"
@@ -470,7 +490,7 @@ describe("UserEntity::profileImageUrl", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -483,7 +503,7 @@ describe("UserEntity::profileImageUrl", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -496,7 +516,7 @@ describe("UserEntity::profileImageUrl", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -512,25 +532,25 @@ describe("UserEntity::profileImageUrl", () => {
 
 describe("UserEntity::location", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.location = generateRandomStringWithLength(config.user.location.min_length)
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.location = generateRandomStringWithLength(config.user.location.max_length)
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.location = generateRandomStringWithLength(
             config.user.location.max_length - config.user.location.min_length
         )
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.location = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.location = generateRandomStringWithLength(config.user.location.max_length + 1)
@@ -542,7 +562,7 @@ describe("UserEntity::location", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.location = generateRandomStringWithLength(config.user.location.min_length - 1)
@@ -554,7 +574,7 @@ describe("UserEntity::location", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -567,7 +587,7 @@ describe("UserEntity::location", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -580,7 +600,7 @@ describe("UserEntity::location", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -596,19 +616,19 @@ describe("UserEntity::location", () => {
 
 describe("UserEntity::url", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.url = "http://example.com"
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.url = "https://example.com"
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.url = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.url = ""
@@ -620,7 +640,7 @@ describe("UserEntity::url", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.url = "http://"
@@ -632,7 +652,7 @@ describe("UserEntity::url", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.url = "https://"
@@ -644,7 +664,7 @@ describe("UserEntity::url", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.url = "http://example"
@@ -656,7 +676,7 @@ describe("UserEntity::url", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.url = "https://example"
@@ -668,7 +688,7 @@ describe("UserEntity::url", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -681,7 +701,7 @@ describe("UserEntity::url", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -694,7 +714,7 @@ describe("UserEntity::url", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -710,19 +730,19 @@ describe("UserEntity::url", () => {
 
 describe("UserEntity::description", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.description = generateRandomStringWithLength(config.user.description.min_length)
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.description = generateRandomStringWithLength(config.user.description.max_length)
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.description = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.description = generateRandomStringWithLength(
@@ -736,7 +756,7 @@ describe("UserEntity::description", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.description = generateRandomStringWithLength(
@@ -750,7 +770,7 @@ describe("UserEntity::description", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -763,7 +783,7 @@ describe("UserEntity::description", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -776,7 +796,7 @@ describe("UserEntity::description", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -792,15 +812,15 @@ describe("UserEntity::description", () => {
 
 describe("UserEntity::themeColor", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.themeColor = "#aa00ff"
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.themeColor = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.themeColor = ""
@@ -812,7 +832,7 @@ describe("UserEntity::themeColor", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.themeColor = "example"
@@ -824,7 +844,7 @@ describe("UserEntity::themeColor", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.themeColor = "#zzzzzz"
@@ -836,7 +856,7 @@ describe("UserEntity::themeColor", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -849,7 +869,7 @@ describe("UserEntity::themeColor", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -862,7 +882,7 @@ describe("UserEntity::themeColor", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -878,19 +898,19 @@ describe("UserEntity::themeColor", () => {
 
 describe("UserEntity::backgroundImageUrl", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.backgroundImageUrl = "http://example.com"
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.backgroundImageUrl = "https://example.com"
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.backgroundImageUrl = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.backgroundImageUrl = ""
@@ -902,7 +922,7 @@ describe("UserEntity::backgroundImageUrl", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.backgroundImageUrl = "http://"
@@ -914,7 +934,7 @@ describe("UserEntity::backgroundImageUrl", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.backgroundImageUrl = "https://"
@@ -926,7 +946,7 @@ describe("UserEntity::backgroundImageUrl", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.backgroundImageUrl = "http://example"
@@ -938,7 +958,7 @@ describe("UserEntity::backgroundImageUrl", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             user.backgroundImageUrl = "https://example"
@@ -950,7 +970,7 @@ describe("UserEntity::backgroundImageUrl", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -963,7 +983,7 @@ describe("UserEntity::backgroundImageUrl", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -976,7 +996,7 @@ describe("UserEntity::backgroundImageUrl", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1002,17 +1022,17 @@ for (const key of [
 ]) {
     describe(`UserEntity::${key}`, () => {
         test("Normal", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             // @ts-ignore
             user[key] = 0
         })
         test("Normal", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             // @ts-ignore
             user[key] = 1000
         })
         test("Errors", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
                 // @ts-ignore
@@ -1025,7 +1045,7 @@ for (const key of [
             }
         })
         test("Errors", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
                 // @ts-ignore
@@ -1038,7 +1058,7 @@ for (const key of [
             }
         })
         test("Errors", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
                 // @ts-ignore
@@ -1051,7 +1071,7 @@ for (const key of [
             }
         })
         test("Errors", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
                 // @ts-ignore
@@ -1069,17 +1089,17 @@ for (const key of [
 for (const key of ["defaultProfile", "active", "dormant", "suspended"]) {
     describe(`UserEntity::${key}`, () => {
         test("Normal", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             // @ts-ignore
             user[key] = true
         })
         test("Normal", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             // @ts-ignore
             user[key] = false
         })
         test("Errors", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
                 // @ts-ignore
@@ -1092,7 +1112,7 @@ for (const key of ["defaultProfile", "active", "dormant", "suspended"]) {
             }
         })
         test("Errors", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
                 // @ts-ignore
@@ -1105,7 +1125,7 @@ for (const key of ["defaultProfile", "active", "dormant", "suspended"]) {
             }
         })
         test("Errors", async () => {
-            const user = new UserEntity("0000", "hoge")
+            const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
                 // @ts-ignore
@@ -1122,11 +1142,11 @@ for (const key of ["defaultProfile", "active", "dormant", "suspended"]) {
 
 describe("UserEntity::createdAt", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.createdAt = new Date()
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1139,7 +1159,7 @@ describe("UserEntity::createdAt", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1152,7 +1172,7 @@ describe("UserEntity::createdAt", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1168,15 +1188,15 @@ describe("UserEntity::createdAt", () => {
 
 describe("UserEntity::lastActivityDate", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.lastActivityDate = new Date()
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.lastActivityDate = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1189,7 +1209,7 @@ describe("UserEntity::lastActivityDate", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1202,7 +1222,7 @@ describe("UserEntity::lastActivityDate", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1218,15 +1238,15 @@ describe("UserEntity::lastActivityDate", () => {
 
 describe("UserEntity::termsOfServiceAgreementDate", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.termsOfServiceAgreementDate = new Date()
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.termsOfServiceAgreementDate = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1239,7 +1259,7 @@ describe("UserEntity::termsOfServiceAgreementDate", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1252,7 +1272,7 @@ describe("UserEntity::termsOfServiceAgreementDate", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1268,15 +1288,15 @@ describe("UserEntity::termsOfServiceAgreementDate", () => {
 
 describe("UserEntity::termsOfServiceAgreementVersion", () => {
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.termsOfServiceAgreementVersion = "example"
     })
     test("Normal", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         user.termsOfServiceAgreementVersion = null
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1289,7 +1309,7 @@ describe("UserEntity::termsOfServiceAgreementVersion", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -1302,7 +1322,7 @@ describe("UserEntity::termsOfServiceAgreementVersion", () => {
         }
     })
     test("Errors", async () => {
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
             // @ts-ignore

@@ -14,7 +14,7 @@ import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../domain/entity/
 
 import { ApplicationError } from "./ApplicationError"
 import { DomainError } from "../domain/DomainError"
-import { IUserRegistrationRepository } from "../domain/repository/UserRegistration"
+import { ILoginCredentialsRepository } from "../domain/repository/LoginCredentials"
 import { IUsersRepository } from "../domain/repository/Users"
 import { LoginSessionEntity } from "../domain/entity/LoginSession"
 
@@ -34,15 +34,15 @@ export const ErrorCodes = {
 
 export class RegisterUserApplication {
     private usersRepository: IUsersRepository
-    private userRegistrationRepository: IUserRegistrationRepository
+    private loginCredentialsRepository: ILoginCredentialsRepository
     private registrationRateLimitService: CheckRegistrationRateLimitService
     private userNameAvailabilityService: CheckUserNameAvailabilityService
     constructor(
         usersRepository: IUsersRepository,
-        userRegistrationRepository: IUserRegistrationRepository
+        loginCredentialsRepository: ILoginCredentialsRepository
     ) {
         this.usersRepository = usersRepository
-        this.userRegistrationRepository = userRegistrationRepository
+        this.loginCredentialsRepository = loginCredentialsRepository
         this.registrationRateLimitService = new CheckRegistrationRateLimitService(usersRepository)
         this.userNameAvailabilityService = new CheckUserNameAvailabilityService(usersRepository)
     }
@@ -50,16 +50,20 @@ export class RegisterUserApplication {
         try {
             await this.registrationRateLimitService.tryCheckIfRateIsLimited(ipAddress)
             await this.userNameAvailabilityService.tryCheckIfNameIsTaken(name)
-            const user = new UserEntity(-1, name)
+            const user = new UserEntity({
+                id: -1,
+                name: name,
+                registrationIpAddress: ipAddress,
+            })
             user.id = await this.usersRepository.add(user)
             try {
-                user.loginCredential = await LoginCredentialEntity.new(user.id, password)
-                user.loginSession = LoginSessionEntity.new(user.id, ipAddress)
-                this.userRegistrationRepository.register(user)
+                const loginCredential = await LoginCredentialEntity.new(user.id, password)
+                this.loginCredentialsRepository.add(loginCredential)
             } catch (error) {
                 await this.usersRepository.delete(user.id)
                 throw error
             }
+            user.loginSession = LoginSessionEntity.new(user.id, ipAddress)
             return user
         } catch (error) {
             if (error instanceof DomainError) {

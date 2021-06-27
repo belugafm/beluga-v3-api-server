@@ -22,6 +22,7 @@ const config: {
         password: {
             salt_rounds: number
             min_length: number
+            max_length: number
         }
     }
     user_login_session: {
@@ -137,6 +138,7 @@ const config: {
         password: {
             salt_rounds: 10,
             min_length: 8,
+            max_length: 72, // bcryptは72文字までが有効らしい
         },
     },
     user_login_session: {

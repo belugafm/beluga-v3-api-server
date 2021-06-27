@@ -1,5 +1,7 @@
-import { DomainError } from "../DomainError"
 import * as vn from "../validation"
+
+import { DomainError } from "../DomainError"
+import { ValidateBy } from "../validation/ValidateBy"
 import bcrypt from "bcrypt"
 import config from "../../config/app"
 
@@ -12,9 +14,12 @@ export const ErrorCodes = {
 
 export class LoginCredentialEntity {
     // @ts-ignore
-    private _userId: UserId
+
+    @ValidateBy(vn.objectId(), ErrorCodes.InvalidUserId)
+    userId: UserId
     // @ts-ignore
-    private _passwordHash: string
+    @ValidateBy(vn.string(), ErrorCodes.InvaidPasswordInput)
+    passwordHash: string
 
     static async new(userId: UserId, password: string) {
         if (vn.isString(password) !== true) {
@@ -27,29 +32,10 @@ export class LoginCredentialEntity {
             password,
             config.user_login_credential.password.salt_rounds
         )
-        return new LoginCredentialEntity(userId, passwordHash)
+        return new LoginCredentialEntity({ userId, passwordHash })
     }
-    constructor(userId: UserId, passwordHash: string) {
-        this.userId = userId
-        this.passwordHash = passwordHash
-    }
-    get userId() {
-        return this._userId
-    }
-    get passwordHash() {
-        return this._passwordHash
-    }
-    set userId(userId: UserId) {
-        if (vn.objectId().ok(userId)) {
-            this._userId = userId
-            return
-        }
-        throw new DomainError(ErrorCodes.InvalidUserId)
-    }
-    set passwordHash(passwordHash: string) {
-        if (vn.string().ok(passwordHash) !== true) {
-            throw new DomainError(ErrorCodes.InvaldPasswordHash)
-        }
-        this._passwordHash = passwordHash
+    constructor(params: { userId: UserId; passwordHash: string }) {
+        this.userId = params.userId
+        this.passwordHash = params.passwordHash
     }
 }

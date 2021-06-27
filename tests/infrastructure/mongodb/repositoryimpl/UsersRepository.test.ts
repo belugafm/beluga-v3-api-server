@@ -18,7 +18,7 @@ describe("UsersRepository", () => {
     })
     test("Add and Delete", async () => {
         const repository = new UsersRepository()
-        const user = new UserEntity("0000", "hoge")
+        const user = new UserEntity({ id: 1, name: "hoge", registrationIpAddress: "192.168.1.1" })
         user.twitterUserId = uuid.v4()
         user.displayName = uuid.v4().substr(0, config.user.display_name.max_length)
         user.description = uuid.v4()
@@ -130,11 +130,15 @@ describe("UsersRepository", () => {
         expect.assertions(2)
         const repository = new UsersRepository()
 
-        const user1 = new UserEntity("0000", "hoge")
+        const user1 = new UserEntity({ id: 1, name: "hoge", registrationIpAddress: "192.168.1.1" })
         user1.id = await repository.add(user1)
 
         try {
-            const user2 = new UserEntity("0000", "hoge")
+            const user2 = new UserEntity({
+                id: 1,
+                name: "hoge",
+                registrationIpAddress: "192.168.1.1",
+            })
             user2.id = await repository.add(user2)
         } catch (error) {
             expect(error).toBeInstanceOf(RepositoryError)

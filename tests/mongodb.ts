@@ -1,5 +1,5 @@
 import { MongoMemoryReplSet } from "mongodb-memory-server"
-import { UserModel } from "../infrastructure/mongodb/schema/user"
+import { UserModel } from "../infrastructure/mongodb/schema/User"
 import mongoose from "mongoose"
 import { sleep } from "./functions"
 
