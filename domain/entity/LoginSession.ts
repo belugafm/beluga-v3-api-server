@@ -1,7 +1,8 @@
-import { DomainError } from "../DomainError"
 import * as vn from "../validation"
-import uuid from "uuid"
+
+import { DomainError } from "../DomainError"
 import config from "../../config/app.default"
+import { v4 } from "uuid"
 
 export const ErrorCodes = {
     InvalidUserId: "invalid_user_id",
@@ -27,7 +28,7 @@ export class LoginSessionEntity {
     private _createdAt: Date
 
     static new(userId: UserId, ipAddress: string) {
-        const sessionId = uuid.v4()
+        const sessionId = v4()
         const expireDate = new Date(Date.now() + config.user_login_session.lifetime * 1000)
         const expired = false
         const createdAt = new Date()

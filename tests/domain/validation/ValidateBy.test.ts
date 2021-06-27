@@ -3,7 +3,7 @@ import * as vn from "../../../domain/validation"
 import { ValidateBy, storage } from "../../../domain/validation/decorators"
 
 import { Entity } from "../../../domain/entity/Entity"
-import { sleep } from "../../mongodb"
+import { sleep } from "../../env"
 
 jest.setTimeout(30000)
 

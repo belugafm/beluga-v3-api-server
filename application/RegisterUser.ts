@@ -46,10 +46,10 @@ export class RegisterUserApplication {
         this.registrationRateLimitService = new CheckRegistrationRateLimitService(usersRepository)
         this.userNameAvailabilityService = new CheckUserNameAvailabilityService(usersRepository)
     }
-    async register({ name, password, ipAddress }: Argument): UserEntity {
+    async register({ name, password, ipAddress }: Argument): Promise<UserEntity> {
         try {
-            this.registrationRateLimitService.tryCheckIfRateIsLimited(ipAddress)
-            this.userNameAvailabilityService.tryCheckIfNameIsTaken(name)
+            await this.registrationRateLimitService.tryCheckIfRateIsLimited(ipAddress)
+            await this.userNameAvailabilityService.tryCheckIfNameIsTaken(name)
             const user = new UserEntity(-1, name)
             user.id = await this.usersRepository.add(user)
             try {
@@ -76,6 +76,7 @@ export class RegisterUserApplication {
                     throw new ApplicationError(ErrorCodes.PasswordNotMeetPolicy)
                 }
             }
+            console.log(error)
             throw new ApplicationError(ErrorCodes.InternalError)
         }
     }

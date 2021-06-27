@@ -1,11 +1,11 @@
 import * as uuid from "uuid"
 
-import { db, sleep } from "../../../mongodb"
-
 import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UsersRepository } from "../../../../infrastructure/mongodb/repositoryimpl/Users"
 import config from "../../../../config/app"
+import { db } from "../../../mongodb"
+import { sleep } from "../../../env"
 
 jest.setTimeout(30000)
 

@@ -1,7 +1,8 @@
 import { IUserRegistrationRepository } from "../../../domain/repository/UserRegistration"
+import { UserEntity } from "../../../domain/entity/User"
 
 export class UserRegistrationRepository implements IUserRegistrationRepository {
-    register(user: UserModel): boolean {
+    register(user: UserEntity): boolean {
         return true
     }
 }

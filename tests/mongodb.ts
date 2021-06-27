@@ -1,14 +1,7 @@
 import { MongoMemoryReplSet } from "mongodb-memory-server"
-import mongoose from "mongoose"
 import { UserModel } from "../infrastructure/mongodb/schema/user"
-
-export async function sleep(sec: number) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(null)
-        }, sec * 1000)
-    })
-}
+import mongoose from "mongoose"
+import { sleep } from "./functions"
 
 class MongoDBTestEnvironment {
     replSet?: MongoMemoryReplSet

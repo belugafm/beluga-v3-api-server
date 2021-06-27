@@ -1,5 +1,5 @@
-import { IUsersRepository } from "../repository/Users"
 import { DomainError } from "../DomainError"
+import { IUsersRepository } from "../repository/Users"
 
 export const ErrorCodes = {
     NameTaken: "name_taken",
@@ -10,15 +10,15 @@ export class CheckUserNameAvailabilityService {
     constructor(usersRepository: IUsersRepository) {
         this.usersRepository = usersRepository
     }
-    isNameTaken(name: string): boolean {
-        const user = this.usersRepository.findByName(name)
+    async isNameTaken(name: string) {
+        const user = await this.usersRepository.findByName(name)
         if (user === null) {
             return false
         }
         return true
     }
-    tryCheckIfNameIsTaken(name: string): void {
-        if (this.isNameTaken(name)) {
+    async tryCheckIfNameIsTaken(name: string) {
+        if (await this.isNameTaken(name)) {
             throw new DomainError(ErrorCodes.NameTaken)
         }
     }

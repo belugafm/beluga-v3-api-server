@@ -1,6 +1,7 @@
-import { SortBy, SortOrder, IUsersRepository } from "../repository/Users"
-import config from "../../config/app"
+import { IUsersRepository, SortBy, SortOrder } from "../repository/Users"
+
 import { DomainError } from "../DomainError"
+import config from "../../config/app"
 
 export const ErrorCodes = {
     TooManyRequests: "too_many_requests",
@@ -11,8 +12,8 @@ export class CheckRegistrationRateLimitService {
     constructor(usersRepository: IUsersRepository) {
         this.usersRepository = usersRepository
     }
-    isRateLimited(ipAddress: string): boolean {
-        const existingUsers = this.usersRepository.findByIpAddress(
+    async isRateLimited(ipAddress: string) {
+        const existingUsers = await this.usersRepository.findByIpAddress(
             ipAddress,
             SortBy.CreatedAt,
             SortOrder.Descending
@@ -28,8 +29,8 @@ export class CheckRegistrationRateLimitService {
         }
         return false
     }
-    tryCheckIfRateIsLimited(ipAddress: string): void {
-        if (this.isRateLimited(ipAddress)) {
+    async tryCheckIfRateIsLimited(ipAddress: string) {
+        if (await this.isRateLimited(ipAddress)) {
             throw new DomainError(ErrorCodes.TooManyRequests)
         }
     }
