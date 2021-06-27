@@ -14,7 +14,7 @@ export const ErrorCodes = {
 
 export class LoginSessionEntity {
     // @ts-ignore
-    private _userId: UserID
+    private _userId: UserId
     // @ts-ignore
     private _sessionId: string
     // @ts-ignore
@@ -26,7 +26,7 @@ export class LoginSessionEntity {
     // @ts-ignore
     private _createdAt: Date
 
-    static new(userId: UserID, ipAddress: string) {
+    static new(userId: UserId, ipAddress: string) {
         const sessionId = uuid.v4()
         const expireDate = new Date(Date.now() + config.user_login_session.lifetime * 1000)
         const expired = false
@@ -41,7 +41,7 @@ export class LoginSessionEntity {
         })
     }
     constructor(params: {
-        userId: UserID
+        userId: UserId
         sessionId: string
         ipAddress: string
         expireDate: Date
@@ -74,7 +74,7 @@ export class LoginSessionEntity {
         return this._createdAt
     }
 
-    set userId(userId: UserID) {
+    set userId(userId: UserId) {
         if (vn.objectId().ok(userId)) {
             this._userId = userId
             return

@@ -10,10 +10,10 @@ export const SortOrder = {
 } as const
 
 export interface IUsersRepository {
-    add(user: UserEntity): Promise<UserID>
-    delete(user: UserEntity): Promise<boolean>
+    add(user: UserEntity): Promise<UserId>
+    delete(userId: UserId): Promise<boolean>
     updateProfile(user: UserEntity): Promise<boolean>
-    findById(userId: UserID): Promise<UserEntity | null>
+    findById(userId: UserId): Promise<UserEntity | null>
     findByName(name: string): Promise<UserEntity | null>
     findByIpAddress(
         ipAddress: string,

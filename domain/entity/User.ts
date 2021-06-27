@@ -1,8 +1,10 @@
-import { DomainError } from "../DomainError"
 import * as vn from "../validation"
-import { ValidateBy } from "../validation/decorators"
+
+import { DomainError } from "../DomainError"
+import { Entity } from "./Entity"
 import { LoginCredentialEntity } from "./LoginCredential"
 import { LoginSessionEntity } from "./LoginSession"
+import { ValidateBy } from "../validation/decorators"
 
 export const ErrorCodes = {
     InvalidId: "invalid_id",
@@ -23,14 +25,14 @@ export const ErrorCodes = {
     InvalidLocation: "invalid_location",
 } as const
 
-export class UserEntity {
+export class UserEntity extends Entity {
     private _loginCredential: LoginCredentialEntity | null
     private _loginSession: LoginSessionEntity | null
 
     // 一意なid DBの実装に依存する
     // 変更不可
-    @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidDate })
-    id: UserID
+    @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidId })
+    id: UserId
 
     // ログイン時に使う一意な英数字
     // idのエイリアス
@@ -42,22 +44,22 @@ export class UserEntity {
     @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidTwitterId })
     twitterUserId: string | null
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidDisplayName })
+    @ValidateBy(vn.user.displayName(), { nullable: true, errorCode: ErrorCodes.InvalidDisplayName })
     displayName: string | null
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidProfileImageUrl })
+    @ValidateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidProfileImageUrl })
     profileImageUrl: string | null
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidLocation })
+    @ValidateBy(vn.user.location(), { nullable: true, errorCode: ErrorCodes.InvalidLocation })
     location: string | null
 
-    @ValidateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidUrl })
+    @ValidateBy(vn.user.url(), { nullable: true, errorCode: ErrorCodes.InvalidUrl })
     url: string | null
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidDescription })
+    @ValidateBy(vn.user.description(), { nullable: true, errorCode: ErrorCodes.InvalidDescription })
     description: string | null
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidThemeColor })
+    @ValidateBy(vn.colorCode(), { nullable: true, errorCode: ErrorCodes.InvalidThemeColor })
     themeColor: string | null
 
     @ValidateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidBackgroundImageUrl })
@@ -99,7 +101,7 @@ export class UserEntity {
     @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
     suspended: boolean // 凍結されたかどうか
 
-    @ValidateBy(vn.number(), { errorCode: ErrorCodes.InvalidNumber })
+    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     trustLevel: number // 信用レベル
 
     @ValidateBy(vn.date(), { nullable: true, errorCode: ErrorCodes.InvalidDate })
@@ -111,7 +113,8 @@ export class UserEntity {
     @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidValue })
     termsOfServiceAgreementVersion: string | null // 同意した利用規約のバージョン
 
-    constructor(id: UserID, name: string) {
+    constructor(id: UserId, name: string) {
+        super()
         this.id = id
         this.name = name
         this.twitterUserId = null

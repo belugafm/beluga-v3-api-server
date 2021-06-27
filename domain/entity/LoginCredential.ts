@@ -12,11 +12,11 @@ export const ErrorCodes = {
 
 export class LoginCredentialEntity {
     // @ts-ignore
-    private _userId: UserID
+    private _userId: UserId
     // @ts-ignore
     private _passwordHash: string
 
-    static async new(userId: UserID, password: string) {
+    static async new(userId: UserId, password: string) {
         if (vn.isString(password) !== true) {
             throw new DomainError(ErrorCodes.InvaidPasswordInput)
         }
@@ -29,7 +29,7 @@ export class LoginCredentialEntity {
         )
         return new LoginCredentialEntity(userId, passwordHash)
     }
-    constructor(userId: UserID, passwordHash: string) {
+    constructor(userId: UserId, passwordHash: string) {
         this.userId = userId
         this.passwordHash = passwordHash
     }
@@ -39,7 +39,7 @@ export class LoginCredentialEntity {
     get passwordHash() {
         return this._passwordHash
     }
-    set userId(userId: UserID) {
+    set userId(userId: UserId) {
         if (vn.objectId().ok(userId)) {
             this._userId = userId
             return

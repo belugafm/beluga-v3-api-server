@@ -2,72 +2,99 @@ import { IUsersRepository, SortBy, SortOrder } from "../../../domain/repository/
 import { UserEntity } from "../../../domain/entity/User"
 import * as mongo from "../mongoose"
 import { UserModel, schemaVersion } from "../schema/user"
+import { MongoError } from "mongodb"
+import { RepositoryError } from "../../../domain/repository/RepositoryError"
 
 export class UsersRepository implements IUsersRepository {
-    async add(user: UserEntity) {
-        const result = await UserModel.create({
-            name: user.name,
-            twitterUserId: user.twitterUserId,
-            displayName: user.displayName,
-            profileImageUrl: user.profileImageUrl,
-            location: user.location,
-            url: user.url,
-            description: user.description,
-            themeColor: user.themeColor,
-            backgroundImageUrl: user.backgroundImageUrl,
-            defaultProfile: user.defaultProfile,
-            statusCount: user.statusCount,
-            favoritesCount: user.favoritesCount,
-            favoritedCount: user.favoritedCount,
-            likesCount: user.likesCount,
-            likedCount: user.likedCount,
-            channelsCount: user.channelsCount,
-            followingChannelsCount: user.followingChannelsCount,
-            createdAt: user.createdAt,
-            active: user.active,
-            dormant: user.dormant,
-            suspended: user.suspended,
-            trustLevel: user.trustLevel,
-            lastActivityDate: user.lastActivityDate,
-            termsOfServiceAgreementDate: user.termsOfServiceAgreementDate,
-            termsOfServiceAgreementVersion: user.termsOfServiceAgreementVersion,
-            schemaVersion,
-        })
-        return result._id.toHexString()
+    async add(user: UserEntity): Promise<UserId> {
+        try {
+            const result = await UserModel.create({
+                twitter_user_id: user.twitterUserId,
+                name: user.name,
+                display_name: user.displayName,
+                profile_image_url: user.profileImageUrl,
+                location: user.location,
+                url: user.url,
+                description: user.description,
+                theme_color: user.themeColor,
+                background_image_url: user.backgroundImageUrl,
+                default_profile: user.defaultProfile,
+                status_count: user.statusCount,
+                favorites_count: user.favoritesCount,
+                favorited_count: user.favoritedCount,
+                likes_count: user.likesCount,
+                liked_count: user.likedCount,
+                channels_count: user.channelsCount,
+                following_channels_count: user.followingChannelsCount,
+                created_at: user.createdAt,
+                active: user.active,
+                dormant: user.dormant,
+                suspended: user.suspended,
+                trust_level: user.trustLevel,
+                last_activity_date: user.lastActivityDate,
+                terms_of_service_agreement_date: user.termsOfServiceAgreementDate,
+                terms_of_service_agreement_version: user.termsOfServiceAgreementVersion,
+                schemaVersion,
+            })
+            return result._id.toHexString()
+        } catch (error) {
+            if (error instanceof MongoError) {
+                throw new RepositoryError(error.message, error.stack, error.code)
+            }
+            throw new RepositoryError(error.message, error.stack)
+        }
     }
     async updateProfile(user: UserEntity) {
         return true
     }
-    async findById(userId: string) {
-        const result = await UserModel.findOne({ _id: mongo.toObjectId(userId) })
-            .collation({
-                locale: "en_US",
-                strength: 2,
-            })
-            .exec()
-        if (result == null) {
-            return null
+    async delete(userId: string) {
+        try {
+            const _id = mongo.toObjectId(userId)
+            const result = await UserModel.deleteOne({ _id }).exec()
+            if (result.deletedCount === 1) {
+                return true
+            }
+            return false
+        } catch (error) {
+            if (error instanceof MongoError) {
+                throw new RepositoryError(error.message, error.stack, error.code)
+            }
+            throw new RepositoryError(error.message, error.stack)
         }
-        return result.toModel()
+    }
+    async findById(userId: string) {
+        try {
+            const _id = mongo.toObjectId(userId)
+            const result = await UserModel.findOne({ _id }).exec()
+            if (result == null) {
+                return null
+            }
+            return result.toModel()
+        } catch (error) {
+            if (error instanceof MongoError) {
+                throw new RepositoryError(error.message, error.stack, error.code)
+            }
+            throw new RepositoryError(error.message, error.stack)
+        }
     }
     async findByName(name: string) {
-        const result = await mongo.findOne(
-            UserModel,
-            { name },
-            {
-                // case-insensitive
-                additionalQueryFunc: (query) => {
-                    return query.collation({
-                        locale: "en_US",
-                        strength: 2,
-                    })
-                },
+        try {
+            const result = await UserModel.findOne({ name })
+                .collation({
+                    locale: "en_US",
+                    strength: 2,
+                })
+                .exec()
+            if (result == null) {
+                return null
             }
-        )
-        if (result == null) {
-            return null
+            return result.toModel()
+        } catch (error) {
+            if (error instanceof MongoError) {
+                throw new RepositoryError(error.message, error.stack, error.code)
+            }
+            throw new RepositoryError(error.message, error.stack)
         }
-        return result.toModel()
     }
     async findByIpAddress(
         ipAddress: string,

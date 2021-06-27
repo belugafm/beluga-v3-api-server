@@ -22,13 +22,13 @@ export interface UserSchema extends Document {
     liked_count: number
     channels_count: number
     following_channels_count: number
-    created_at: date
+    created_at: Date
     active: boolean
     dormant: boolean
     suspended: boolean
     trust_level: number
-    last_activity_date: date | null
-    terms_of_service_agreement_date: date | null
+    last_activity_date: Date | null
+    terms_of_service_agreement_date: Date | null
     terms_of_service_agreement_version: string | null
     schema_version: number
     toModel: () => UserEntity

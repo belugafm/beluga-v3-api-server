@@ -41,6 +41,14 @@ const config: {
             min_length: number
             max_length: number
         }
+        location: {
+            min_length: number
+            max_length: number
+        }
+        url: {
+            min_length: number
+            max_length: number
+        }
     }
     reserved_user_names: string[]
     channel_group: {
@@ -138,16 +146,24 @@ const config: {
     user: {
         name: {
             min_length: 1,
-            max_length: 32,
+            max_length: 30,
             regexp: new RegExp(/^[a-zA-Z0-9_]+$/),
         },
         display_name: {
             min_length: 1,
-            max_length: 32,
+            max_length: 30,
         },
         description: {
             min_length: 1,
             max_length: 1000,
+        },
+        location: {
+            min_length: 1,
+            max_length: 30,
+        },
+        url: {
+            min_length: 1,
+            max_length: 200,
         },
     },
     reserved_user_names: ["admin"],

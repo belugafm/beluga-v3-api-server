@@ -1,12 +1,3 @@
-import { DomainError } from "../domain/DomainError"
-import {
-    LoginCredentialEntity,
-    ErrorCodes as LoginCredentialErrorCodes,
-} from "../domain/entity/LoginCredential"
-import { LoginSessionEntity } from "../domain/entity/LoginSession"
-import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../domain/entity/User"
-import { IUserRegistrationRepository } from "../domain/repository/UserRegistration"
-import { IUsersRepository } from "../domain/repository/Users"
 import {
     CheckRegistrationRateLimitService,
     ErrorCodes as RegistrationRateLimitErrorCodes,
@@ -15,7 +6,17 @@ import {
     CheckUserNameAvailabilityService,
     ErrorCodes as UserNameAvailabilityErrorCodes,
 } from "../domain/service/CheckUserNameAvailability"
+import {
+    LoginCredentialEntity,
+    ErrorCodes as LoginCredentialErrorCodes,
+} from "../domain/entity/LoginCredential"
+import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../domain/entity/User"
+
 import { ApplicationError } from "./ApplicationError"
+import { DomainError } from "../domain/DomainError"
+import { IUserRegistrationRepository } from "../domain/repository/UserRegistration"
+import { IUsersRepository } from "../domain/repository/Users"
+import { LoginSessionEntity } from "../domain/entity/LoginSession"
 
 type Argument = {
     name: string
@@ -53,10 +54,10 @@ export class RegisterUserApplication {
             user.id = await this.usersRepository.add(user)
             try {
                 user.loginCredential = await LoginCredentialEntity.new(user.id, password)
-                user.LoginSession = LoginSessionEntity.new(user.id, ipAddress)
+                user.loginSession = LoginSessionEntity.new(user.id, ipAddress)
                 this.userRegistrationRepository.register(user)
             } catch (error) {
-                await this.usersRepository.delete(user)
+                await this.usersRepository.delete(user.id)
                 throw error
             }
             return user

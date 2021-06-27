@@ -1,3 +1,5 @@
 export { name } from "./user/name"
 export { displayName } from "./user/display_name"
 export { description } from "./user/description"
+export { location } from "./user/location"
+export { url } from "./user/url"
