@@ -1,9 +1,11 @@
-import { IUsersRepository, SortBy, SortOrder } from "../../../domain/repository/Users"
-import { UserEntity } from "../../../domain/entity/User"
 import * as mongo from "../mongoose"
+
+import { IUsersRepository, SortBy, SortOrder } from "../../../domain/repository/Users"
 import { UserModel, schemaVersion } from "../schema/user"
+
 import { MongoError } from "mongodb"
 import { RepositoryError } from "../../../domain/repository/RepositoryError"
+import { UserEntity } from "../../../domain/entity/User"
 
 export class UsersRepository implements IUsersRepository {
     async add(user: UserEntity): Promise<UserId> {
@@ -47,9 +49,9 @@ export class UsersRepository implements IUsersRepository {
     async updateProfile(user: UserEntity) {
         return true
     }
-    async delete(userId: string) {
+    async delete(userId: UserId) {
         try {
-            const _id = mongo.toObjectId(userId)
+            const _id = mongo.toObjectId(userId as string)
             const result = await UserModel.deleteOne({ _id }).exec()
             if (result.deletedCount === 1) {
                 return true
@@ -62,9 +64,9 @@ export class UsersRepository implements IUsersRepository {
             throw new RepositoryError(error.message, error.stack)
         }
     }
-    async findById(userId: string) {
+    async findById(userId: UserId) {
         try {
-            const _id = mongo.toObjectId(userId)
+            const _id = mongo.toObjectId(userId as string)
             const result = await UserModel.findOne({ _id }).exec()
             if (result == null) {
                 return null
