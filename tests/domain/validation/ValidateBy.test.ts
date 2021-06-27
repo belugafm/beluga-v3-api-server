@@ -1,6 +1,6 @@
 import * as vn from "../../../domain/validation"
 
-import { ValidateBy, storage } from "../../../domain/validation/decorators"
+import { ValidateBy, storage } from "../../../domain/validation/ValidateBy"
 
 import { Entity } from "../../../domain/entity/Entity"
 import { sleep } from "../../env"

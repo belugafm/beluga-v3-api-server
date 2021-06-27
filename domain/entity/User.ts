@@ -4,7 +4,7 @@ import { DomainError } from "../DomainError"
 import { Entity } from "./Entity"
 import { LoginCredentialEntity } from "./LoginCredential"
 import { LoginSessionEntity } from "./LoginSession"
-import { ValidateBy } from "../validation/decorators"
+import { ValidateBy } from "../validation/ValidateBy"
 
 export const ErrorCodes = {
     InvalidId: "invalid_id",
