@@ -74,13 +74,13 @@ describe("UsersRepository", () => {
             expect(_user?.likedCount).toBe(user.likedCount)
             expect(_user?.channelsCount).toBe(user.channelsCount)
             expect(_user?.followingChannelsCount).toBe(user.followingChannelsCount)
-            expect(_user?.createdAt).toBe(user.createdAt)
+            expect(_user?.createdAt).toEqual(user.createdAt)
             expect(_user?.active).toBe(user.active)
             expect(_user?.dormant).toBe(user.dormant)
             expect(_user?.suspended).toBe(user.suspended)
             expect(_user?.trustLevel).toBe(user.trustLevel)
-            expect(_user?.lastActivityDate).toBe(user.lastActivityDate)
-            expect(_user?.termsOfServiceAgreementDate).toBe(user.termsOfServiceAgreementDate)
+            expect(_user?.lastActivityDate).toEqual(user.lastActivityDate)
+            expect(_user?.termsOfServiceAgreementDate).toEqual(user.termsOfServiceAgreementDate)
             expect(_user?.termsOfServiceAgreementVersion).toBe(user.termsOfServiceAgreementVersion)
         }
         {
@@ -104,13 +104,13 @@ describe("UsersRepository", () => {
             expect(_user?.likedCount).toBe(user.likedCount)
             expect(_user?.channelsCount).toBe(user.channelsCount)
             expect(_user?.followingChannelsCount).toBe(user.followingChannelsCount)
-            expect(_user?.createdAt).toBe(user.createdAt)
+            expect(_user?.createdAt).toEqual(user.createdAt)
             expect(_user?.active).toBe(user.active)
             expect(_user?.dormant).toBe(user.dormant)
             expect(_user?.suspended).toBe(user.suspended)
             expect(_user?.trustLevel).toBe(user.trustLevel)
-            expect(_user?.lastActivityDate).toBe(user.lastActivityDate)
-            expect(_user?.termsOfServiceAgreementDate).toBe(user.termsOfServiceAgreementDate)
+            expect(_user?.lastActivityDate).toEqual(user.lastActivityDate)
+            expect(_user?.termsOfServiceAgreementDate).toEqual(user.termsOfServiceAgreementDate)
             expect(_user?.termsOfServiceAgreementVersion).toBe(user.termsOfServiceAgreementVersion)
         }
 
@@ -127,13 +127,11 @@ describe("UsersRepository", () => {
         }
     })
     test("Duplicated name", async () => {
-        expect.assertions(1)
+        expect.assertions(2)
         const repository = new UsersRepository()
 
         const user1 = new UserEntity("0000", "hoge")
-        console.log(user1.id)
         user1.id = await repository.add(user1)
-        console.log(user1.id)
 
         try {
             const user2 = new UserEntity("0000", "hoge")
@@ -141,21 +139,7 @@ describe("UsersRepository", () => {
         } catch (error) {
             expect(error).toBeInstanceOf(RepositoryError)
         }
-
-        console.log(user1.id)
         const succeeded = await repository.delete(user1.id as string)
         expect(succeeded).toBeTruthy()
-    })
-    test("Case-sensitive", async () => {
-        expect.assertions(1)
-        const repository = new UsersRepository()
-
-        const user1 = new UserEntity("0000", "hoge")
-        user1.id = await repository.add(user1)
-
-        try {
-            const user2 = new UserEntity("0000", "Hoge")
-            user2.id = await repository.add(user2)
-        } catch (error) {}
     })
 })
