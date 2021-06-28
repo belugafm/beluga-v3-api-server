@@ -56,6 +56,7 @@ export class RegisterUserApplication {
                 registrationIpAddress: ipAddress,
             })
             user.id = await this.usersRepository.add(user)
+
             try {
                 const loginCredential = await LoginCredentialEntity.new(user.id, password)
                 this.loginCredentialsRepository.add(loginCredential)
