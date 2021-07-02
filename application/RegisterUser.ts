@@ -107,6 +107,8 @@ export class RegisterUserApplication {
             user.loginSession = loginSession
             return user
         } catch (error) {
+            console.log(error)
+            console.log(error.stack)
             if (error instanceof DomainError) {
                 if (error.code === RegistrationRateLimitErrorCodes.TooManyRequests) {
                     throw new ApplicationError(ErrorCodes.TooManyRequests)

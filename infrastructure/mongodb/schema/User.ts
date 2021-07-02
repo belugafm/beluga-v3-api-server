@@ -102,6 +102,7 @@ function defineSchema(): any {
 const schema: Schema<UserSchema> = new Schema(defineSchema(), {
     collection: "users",
 })
+schema.index({ registration_ip_address: -1 })
 
 schema.methods.toEntity = function () {
     return new UserEntity({

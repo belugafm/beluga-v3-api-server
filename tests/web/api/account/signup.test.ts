@@ -19,11 +19,12 @@ describe("account/signup", () => {
         await db.disconnect()
     })
     test("Normal", async () => {
-        expect.assertions(9)
+        expect.assertions(10)
+        const name = "admin"
         try {
             await signup(
                 {
-                    name: "admin",
+                    name: name,
                     password: "password",
                     confirmationPassword: "hoge",
                     ipAddress: "192.168.1.1",
@@ -58,7 +59,7 @@ describe("account/signup", () => {
         }
         const user = await signup(
             {
-                name: "admin",
+                name: name,
                 password: "password",
                 confirmationPassword: "password",
                 ipAddress: "192.168.1.1",
@@ -71,7 +72,7 @@ describe("account/signup", () => {
         try {
             await signup(
                 {
-                    name: "admin",
+                    name: name,
                     password: "password",
                     confirmationPassword: "password",
                     ipAddress: "192.168.1.1",
@@ -89,7 +90,7 @@ describe("account/signup", () => {
         try {
             await signup(
                 {
-                    name: "admin",
+                    name: name,
                     password: "password",
                     confirmationPassword: "password",
                     ipAddress: "192.168.1.2",
@@ -113,6 +114,11 @@ describe("account/signup", () => {
                 loginCredentialsRepository,
                 loginSessionsRepository
             ).delete(user.id)
+        }
+        {
+            const usersRepository = new UsersRepository()
+            const user = await usersRepository.findByName(name)
+            expect(user).toBeNull()
         }
     })
 })

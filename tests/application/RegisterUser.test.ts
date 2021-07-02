@@ -10,6 +10,7 @@ import { ApplicationError } from "../../application/ApplicationError"
 import { LoginCredentialEntity } from "../../domain/entity/LoginCredential"
 import { LoginSessionEntity } from "../../domain/entity/LoginSession"
 import { RepositoryError } from "../../domain/repository/RepositoryError"
+import { UserEntity } from "../../domain/entity/User"
 import config from "../../config/app"
 import { db } from "../env"
 import { sleep } from "../functions"
@@ -24,35 +25,39 @@ describe("RegisterUserApplication", () => {
         await db.disconnect()
     })
     test("Normal", async () => {
-        expect.assertions(3)
-        const transaction = await TransactionRepository.new()
-        const usersRepository = new UsersRepository(transaction)
-        const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
-        const loginSessionsRepository = new LoginSessionsRepository(transaction)
-        const app = new RegisterUserApplication(
-            usersRepository,
-            loginCredentialsRepository,
-            loginSessionsRepository
-        )
-        const name = "admin"
-        await transaction.begin()
-        const user = await app.register({
-            name,
-            password: "password",
-            ipAddress: "192.168.1.1",
-            lastLocation: null,
-            device: null,
-        })
-        await transaction.commit()
-        await transaction.end()
-        {
+        const repeat = 100
+        const userNames: string[] = []
+        expect.assertions(2 * repeat)
+        for (let k = 0; k < repeat; k++) {
+            const transaction = await TransactionRepository.new()
+            const usersRepository = new UsersRepository(transaction)
+            const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
+            const loginSessionsRepository = new LoginSessionsRepository(transaction)
+            const app = new RegisterUserApplication(
+                usersRepository,
+                loginCredentialsRepository,
+                loginSessionsRepository
+            )
+            const name = `admin_${k}`
+            await transaction.begin()
+            const user = await app.register({
+                name,
+                password: "password",
+                ipAddress: `192.168.1.${k}`,
+                lastLocation: null,
+                device: null,
+            })
+            expect(user).toBeInstanceOf(UserEntity)
+            await transaction.commit()
+            await transaction.end()
+            userNames.push(name)
+        }
+        for (const name of userNames) {
             const usersRepository = new UsersRepository()
             const _user = await usersRepository.findByName(name)
             expect(_user).not.toBeNull()
             if (_user) {
-                expect(user.id).toBe(user.id)
-                expect(user.name).toBe(user.name)
-                await usersRepository.delete(user.id)
+                await usersRepository.delete(_user.id)
             }
         }
     })
