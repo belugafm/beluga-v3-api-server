@@ -9,8 +9,8 @@ import {
 } from "../../../repository"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
+import { ApplicationError } from "../../../../application/ApplicationError"
 import { ContentTypes } from "../../facts/content_type"
-import { DomainError } from "../../../../domain/DomainError"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
 import { TransactionRepository } from "../../../../infrastructure/mongodb/repositoryimpl/Transaction"
@@ -59,7 +59,7 @@ export const argumentSpecs = defineArguments(
     }
 )
 
-export const expected_error_specs = defineErrors(
+export const expectedErrorSpecs = defineErrors(
     [
         "user_name_taken",
         "user_name_not_meet_policy",
@@ -122,13 +122,14 @@ export const facts: MethodFacts = {
 export default defineMethod(
     facts,
     argumentSpecs,
-    expected_error_specs,
+    expectedErrorSpecs,
     async (args, errors): Promise<UserEntity | null> => {
         if (args.password !== args.confirmationPassword) {
             raise(errors["confirmation_password_not_match"])
         }
+        const transaction = await TransactionRepository.new()
+        await transaction.begin()
         try {
-            const transaction = await TransactionRepository.new()
             const usersRepository = new UsersRepository(transaction)
             const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
             const loginSessionsRepository = new LoginSessionsRepository(transaction)
@@ -137,7 +138,6 @@ export default defineMethod(
                 loginCredentialsRepository,
                 loginSessionsRepository
             )
-            await transaction.begin()
             const user = await app.register({
                 name: args.name,
                 password: args.password,
@@ -149,7 +149,9 @@ export default defineMethod(
             await transaction.end()
             return user
         } catch (error) {
-            if (error instanceof DomainError) {
+            await transaction.rollback()
+            await transaction.end()
+            if (error instanceof ApplicationError) {
                 if (error.code === ErrorCodes.NameTaken) {
                     raise(errors["user_name_taken"], error)
                 } else if (error.code === ErrorCodes.TooManyRequests) {

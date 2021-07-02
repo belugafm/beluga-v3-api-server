@@ -55,8 +55,8 @@ export class LoginSessionsRepository implements ILoginSessionsRepository {
             const user_id = mongo.toObjectId(userId as string)
             const session = this._transaction.getSession()
             const result = await (session
-                ? LoginSessionModel.deleteOne({ user_id }, { session }).exec()
-                : LoginSessionModel.deleteOne({ user_id }).exec())
+                ? LoginSessionModel.deleteMany({ user_id }, { session }).exec()
+                : LoginSessionModel.deleteMany({ user_id }).exec())
             return result.deletedCount ? result.deletedCount : 0
         } catch (error) {
             if (error instanceof MongoError) {
