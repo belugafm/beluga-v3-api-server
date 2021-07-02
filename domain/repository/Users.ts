@@ -15,7 +15,7 @@ export interface IUsersRepository {
     updateProfile(user: UserEntity): Promise<boolean>
     findById(userId: UserId): Promise<UserEntity | null>
     findByName(name: string): Promise<UserEntity | null>
-    findByIpAddress(
+    findByRegistrationIpAddress(
         ipAddress: string,
         sortBy: typeof SortBy[keyof typeof SortBy],
         sortOrder: typeof SortOrder[keyof typeof SortOrder]

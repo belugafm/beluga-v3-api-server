@@ -1,15 +1,17 @@
-import { Validator } from "../Validator"
+import { CommonErrorMessages, ValidationError } from "../ValidationError"
 import { isNumber, isString } from "../functions"
 
-function isObjectId(value: any) {
+import { Validator } from "../Validator"
+
+function checkIsObjectId(value: any) {
     if (isNumber(value)) {
-        return true
+        return
     }
     if (isString(value)) {
-        return true
+        return
     }
-    return false
+    throw new ValidationError(CommonErrorMessages.InvalidType)
 }
 export function objectId() {
-    return new Validator<EntityId>({}, [isObjectId])
+    return new Validator<EntityId>({}, [checkIsObjectId])
 }

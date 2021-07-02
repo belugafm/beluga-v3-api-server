@@ -1,3 +1,5 @@
+import { LoginCredentialModel } from "../infrastructure/mongodb/schema/LoginCredential"
+import { LoginSessionModel } from "../infrastructure/mongodb/schema/LoginSession"
 import { MongoMemoryReplSet } from "mongodb-memory-server"
 import { UserModel } from "../infrastructure/mongodb/schema/User"
 import mongoose from "mongoose"
@@ -24,6 +26,8 @@ class MongoDBTestEnvironment {
                         // 最初に作っておく
                         try {
                             await UserModel.createCollection()
+                            await LoginCredentialModel.createCollection()
+                            await LoginSessionModel.createCollection()
                         } catch (error) {}
 
                         // 数秒待機する

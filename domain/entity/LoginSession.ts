@@ -1,115 +1,59 @@
 import * as vn from "../validation"
 
-import { DomainError } from "../DomainError"
-import config from "../../config/app.default"
+import { ValidateBy } from "../validation/ValidateBy"
+import config from "../../config/app"
 import { v4 } from "uuid"
 
 export const ErrorCodes = {
     InvalidUserId: "invalid_user_id",
-    InvaldSessionId: "invalid_session_id",
-    InvaldIpAddress: "invalid_ip_address",
-    InvaldExpireDate: "invalid_expire_date",
-    InvaldExpired: "invalid_expired",
-    InvaldCreatedAt: "invalid_created_at",
+    InvalidSessionId: "invalid_session_id",
+    InvalidIpAddress: "invalid_ip_address",
+    InvalidExpireDate: "invalid_expire_date",
+    InvalidExpired: "invalid_expired",
+    InvalidCreatedAt: "invalid_created_at",
+    InvalidLastLocation: "invalid_last_location",
+    InvalidDevice: "invalid_device",
 } as const
 
 export class LoginSessionEntity {
-    // @ts-ignore
-    private _userId: UserId
-    // @ts-ignore
-    private _sessionId: string
-    // @ts-ignore
-    private _ipAddress: string
-    // @ts-ignore
-    private _expireDate: Date
-    // @ts-ignore
-    private _expired: boolean
-    // @ts-ignore
-    private _createdAt: Date
+    @ValidateBy(vn.objectId(), { errorCode: ErrorCodes.InvalidUserId })
+    userId: UserId
 
-    static new(userId: UserId, ipAddress: string) {
-        const sessionId = v4()
-        const expireDate = new Date(Date.now() + config.user_login_session.lifetime * 1000)
-        const expired = false
-        const createdAt = new Date()
-        return new LoginSessionEntity({
-            userId,
-            ipAddress,
-            sessionId,
-            expireDate,
-            expired,
-            createdAt,
-        })
-    }
-    constructor(params: {
-        userId: UserId
-        sessionId: string
-        ipAddress: string
-        expireDate: Date
-        expired: boolean
-        createdAt: Date
-    }) {
+    @ValidateBy(vn.string({ maxLength: 128 }), { errorCode: ErrorCodes.InvalidSessionId })
+    sessionId: string
+
+    @ValidateBy(vn.ipAddress(), { nullable: true, errorCode: ErrorCodes.InvalidIpAddress })
+    ipAddress: string | null
+
+    @ValidateBy(vn.date(), { errorCode: ErrorCodes.InvalidExpireDate })
+    expireDate: Date
+
+    @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidExpired })
+    expired: boolean
+
+    @ValidateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
+    createdAt: Date
+
+    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidCreatedAt })
+    lastLocation: string | null
+
+    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidDevice })
+    device: string | null
+
+    constructor(
+        params: {
+            userId: LoginSessionEntity["userId"]
+        } & Partial<LoginSessionEntity>
+    ) {
         this.userId = params.userId
-        this.sessionId = params.sessionId
-        this.ipAddress = params.ipAddress
+        this.sessionId = params.sessionId ? params.sessionId : v4()
+        this.ipAddress = params.ipAddress ? params.ipAddress : null
         this.expireDate = params.expireDate
-        this.expired = params.expired
-        this.createdAt = params.createdAt
-    }
-    get userId() {
-        return this._userId
-    }
-    get sessionId() {
-        return this._sessionId
-    }
-    get ipAddress() {
-        return this._ipAddress
-    }
-    get expireDate() {
-        return this._expireDate
-    }
-    get expired() {
-        return this._expired
-    }
-    get createdAt() {
-        return this._createdAt
-    }
-
-    set userId(userId: UserId) {
-        if (vn.objectId().ok(userId)) {
-            this._userId = userId
-            return
-        }
-        this._userId = userId
-    }
-    set sessionId(sessionId: string) {
-        if (vn.string({ maxLength: 128 }).ok(sessionId) !== true) {
-            throw new DomainError(ErrorCodes.InvaldSessionId)
-        }
-        this._sessionId = sessionId
-    }
-    set ipAddress(ipAddress: string) {
-        if (vn.ipAddress().ok(ipAddress) !== true) {
-            throw new DomainError(ErrorCodes.InvaldIpAddress)
-        }
-        this._ipAddress = ipAddress
-    }
-    set expireDate(expireDate: Date) {
-        if (vn.date().ok(expireDate) !== true) {
-            throw new DomainError(ErrorCodes.InvaldExpireDate)
-        }
-        this._expireDate = expireDate
-    }
-    set expired(expired: boolean) {
-        if (vn.boolean().ok(expired) !== true) {
-            throw new DomainError(ErrorCodes.InvaldExpired)
-        }
-        this._expired = expired
-    }
-    set createdAt(createdAt: Date) {
-        if (vn.date().ok(createdAt) !== true) {
-            throw new DomainError(ErrorCodes.InvaldCreatedAt)
-        }
-        this._createdAt = createdAt
+            ? params.expireDate
+            : new Date(Date.now() + config.user_login_session.lifetime * 1000)
+        this.expired = params.expired ? params.expired : false
+        this.createdAt = params.createdAt ? params.createdAt : new Date()
+        this.lastLocation = params.lastLocation ? params.lastLocation : null
+        this.device = params.device ? params.device : null
     }
 }

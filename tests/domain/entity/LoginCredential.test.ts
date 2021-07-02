@@ -13,7 +13,7 @@ function generateRandomPassword(length: number) {
     return ret
 }
 
-describe("LoginCredentialEntity::new", () => {
+describe("LoginCredentialEntity", () => {
     test("Normal", async () => {
         const userId = 1
         const password = generateRandomPassword(config.user_login_credential.password.min_length)

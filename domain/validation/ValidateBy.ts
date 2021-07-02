@@ -38,6 +38,7 @@ export function ValidateBy<T>(validator: Validator<T>, options?: ValidateByOptio
         Object.defineProperty(target, propertyKey, {
             get: getter,
             set: setter,
+            enumerable: true,
         })
     }
 }

@@ -1,5 +1,10 @@
 import * as mongo from "../mongoose"
 
+import {
+    EmptyTransactionRepository,
+    TransactionRepository,
+    TransactionRepositoryInterface,
+} from "./Transaction"
 import { IUsersRepository, SortBy, SortOrder } from "../../../domain/repository/Users"
 import { UserModel, schemaVersion } from "../schema/User"
 
@@ -8,9 +13,15 @@ import { RepositoryError } from "../../../domain/repository/RepositoryError"
 import { UserEntity } from "../../../domain/entity/User"
 
 export class UsersRepository implements IUsersRepository {
+    private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
+    constructor(transaction?: TransactionRepository) {
+        if (transaction) {
+            this._transaction = transaction
+        }
+    }
     async add(user: UserEntity): Promise<UserId> {
         try {
-            const result = await UserModel.create({
+            const doc = {
                 twitter_user_id: user.twitterUserId,
                 name: user.name,
                 display_name: user.displayName,
@@ -38,8 +49,12 @@ export class UsersRepository implements IUsersRepository {
                 terms_of_service_agreement_version: user.termsOfServiceAgreementVersion,
                 registration_ip_address: user.registrationIpAddress,
                 schema_version: schemaVersion,
-            })
-            return result._id.toHexString()
+            }
+            const session = this._transaction.getSession()
+            const results = await (session
+                ? UserModel.create([doc], { session })
+                : UserModel.create([doc]))
+            return results[0]._id.toHexString()
         } catch (error) {
             if (error instanceof MongoError) {
                 throw new RepositoryError(error.message, error.stack, error.code)
@@ -53,7 +68,10 @@ export class UsersRepository implements IUsersRepository {
     async delete(userId: UserId) {
         try {
             const _id = mongo.toObjectId(userId as string)
-            const result = await UserModel.deleteOne({ _id }).exec()
+            const session = this._transaction.getSession()
+            const result = await (session
+                ? UserModel.deleteOne({ _id }, { session }).exec()
+                : UserModel.deleteOne({ _id }).exec())
             if (result.deletedCount === 1) {
                 return true
             }
@@ -68,11 +86,14 @@ export class UsersRepository implements IUsersRepository {
     async findById(userId: UserId) {
         try {
             const _id = mongo.toObjectId(userId as string)
-            const result = await UserModel.findOne({ _id }).exec()
+            const session = this._transaction.getSession()
+            const result = await (session
+                ? UserModel.findOne({ _id }, null, { session }).exec()
+                : UserModel.findOne({ _id }).exec())
             if (result == null) {
                 return null
             }
-            return result.toModel()
+            return result.toEntity()
         } catch (error) {
             if (error instanceof MongoError) {
                 throw new RepositoryError(error.message, error.stack, error.code)
@@ -82,7 +103,11 @@ export class UsersRepository implements IUsersRepository {
     }
     async findByName(name: string) {
         try {
-            const result = await UserModel.findOne({ name })
+            const session = this._transaction.getSession()
+            const result = await (session
+                ? UserModel.findOne({ name }, null, { session })
+                : UserModel.findOne({ name })
+            )
                 .collation({
                     locale: "en_US",
                     strength: 2,
@@ -91,7 +116,7 @@ export class UsersRepository implements IUsersRepository {
             if (result == null) {
                 return null
             }
-            return result.toModel()
+            return result.toEntity()
         } catch (error) {
             if (error instanceof MongoError) {
                 throw new RepositoryError(error.message, error.stack, error.code)
@@ -99,11 +124,26 @@ export class UsersRepository implements IUsersRepository {
             throw new RepositoryError(error.message, error.stack)
         }
     }
-    async findByIpAddress(
+    async findByRegistrationIpAddress(
         ipAddress: string,
         sortBy: typeof SortBy[keyof typeof SortBy],
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
     ) {
-        return []
+        try {
+            const session = this._transaction.getSession()
+            const docs = await (session
+                ? UserModel.find({ registration_ip_address: ipAddress }, null, { session }).exec()
+                : UserModel.find({ registration_ip_address: ipAddress }).exec())
+            const ret: UserEntity[] = []
+            docs.forEach((user) => {
+                ret.push(user.toEntity())
+            })
+            return ret
+        } catch (error) {
+            if (error instanceof MongoError) {
+                throw new RepositoryError(error.message, error.stack, error.code)
+            }
+            throw new RepositoryError(error.message, error.stack)
+        }
     }
 }

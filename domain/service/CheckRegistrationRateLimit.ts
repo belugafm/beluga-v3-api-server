@@ -13,7 +13,7 @@ export class CheckRegistrationRateLimitService {
         this.usersRepository = usersRepository
     }
     async isRateLimited(ipAddress: string) {
-        const existingUsers = await this.usersRepository.findByIpAddress(
+        const existingUsers = await this.usersRepository.findByRegistrationIpAddress(
             ipAddress,
             SortBy.CreatedAt,
             SortOrder.Descending

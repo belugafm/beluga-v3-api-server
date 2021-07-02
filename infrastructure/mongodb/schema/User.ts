@@ -33,7 +33,7 @@ export interface UserSchema extends Document {
     terms_of_service_agreement_version: string | null
     registration_ip_address: string
     schema_version: number
-    toModel: () => UserEntity
+    toEntity: () => UserEntity
 }
 
 const NullableString = {
@@ -99,11 +99,11 @@ function defineSchema(): any {
     }
 }
 
-const userSchema: Schema<UserSchema> = new Schema(defineSchema(), {
+const schema: Schema<UserSchema> = new Schema(defineSchema(), {
     collection: "users",
 })
 
-userSchema.methods.toModel = function () {
+schema.methods.toEntity = function () {
     return new UserEntity({
         id: this._id.toHexString(),
         name: this.name,
@@ -135,4 +135,4 @@ userSchema.methods.toModel = function () {
     })
 }
 
-export const UserModel = mongoose.model<UserSchema>("User", userSchema)
+export const UserModel = mongoose.model<UserSchema>("User", schema)

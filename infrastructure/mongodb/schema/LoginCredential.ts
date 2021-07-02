@@ -10,7 +10,7 @@ export interface LoginCredentialSchema extends Document {
     user_id: mongoose.Types.ObjectId
     password_hash: string
     schema_version: number
-    toModel: () => LoginCredentialEntity
+    toEntity: () => LoginCredentialEntity
 }
 
 function defineSchema(): any {
@@ -29,18 +29,15 @@ function defineSchema(): any {
     }
 }
 
-const loginCredentialSchema: Schema<LoginCredentialSchema> = new Schema(defineSchema(), {
+const schema: Schema<LoginCredentialSchema> = new Schema(defineSchema(), {
     collection: "login_credentials",
 })
 
-loginCredentialSchema.methods.toModel = function () {
+schema.methods.toEntity = function () {
     return new LoginCredentialEntity({
         userId: this.user_id.toHexString(),
         passwordHash: this.password_hash,
     })
 }
 
-export const LoginCredentialModel = mongoose.model<LoginCredentialSchema>(
-    "LoginCredential",
-    loginCredentialSchema
-)
+export const LoginCredentialModel = mongoose.model<LoginCredentialSchema>("LoginCredential", schema)

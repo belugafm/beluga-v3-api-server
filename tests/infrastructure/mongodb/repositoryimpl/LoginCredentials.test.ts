@@ -13,7 +13,6 @@ describe("LoginCredentialsRepository", () => {
     })
     test("Add and Delete", async () => {
         const repository = new LoginCredentialsRepository()
-
         const userId = "507f1f77bcf86cd799439011"
         const password = "password"
         const credential = await LoginCredentialEntity.new(userId, password)

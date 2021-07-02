@@ -2,13 +2,18 @@ import * as vs from "../../../../domain/validation"
 
 import { ErrorCodes, RegisterUserApplication } from "../../../../application/RegisterUser"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
+import {
+    LoginCredentialsRepository,
+    LoginSessionsRepository,
+    UsersRepository,
+} from "../../../repository"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
-import { UserRegistrationRepository, UsersRepository } from "../../../repository"
 
 import { ContentTypes } from "../../facts/content_type"
 import { DomainError } from "../../../../domain/DomainError"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
+import { TransactionRepository } from "../../../../infrastructure/mongodb/repositoryimpl/Transaction"
 import { UserEntity } from "../../../../domain/entity/User"
 import config from "../../../../config/app"
 
@@ -19,25 +24,37 @@ export const argumentSpecs = defineArguments(
             description: ["ユーザー名"],
             examples: ["beluga"],
             required: true,
-            schema: vs.user.name(),
+            validator: vs.user.name(),
         },
         password: {
             description: ["パスワード"],
             examples: ["do_not_use_this_password_0123"],
             required: true,
-            schema: vs.password(),
+            validator: vs.password(),
         },
         confirmationPassword: {
             description: ["確認用のパスワード"],
             examples: ["do_not_use_this_password_0123"],
             required: true,
-            schema: vs.password(),
+            validator: vs.password(),
         },
         ipAddress: {
             description: ["登録時のIPアドレス"],
             examples: ["192.168.1.1"],
             required: true,
-            schema: vs.ipAddress(),
+            validator: vs.ipAddress(),
+        },
+        lastLocation: {
+            description: ["IP Geolocationの結果"],
+            examples: ["Shinjuku-ku, Tokyo, Japan"],
+            required: false,
+            validator: vs.string(),
+        },
+        device: {
+            description: ["User-Agentなど"],
+            examples: ["Chrome on Linux"],
+            required: false,
+            validator: vs.string(),
         },
     }
 )
@@ -111,14 +128,26 @@ export default defineMethod(
             raise(errors["confirmation_password_not_match"])
         }
         try {
-            const usersRepository = new UsersRepository()
-            const userRegistrationRepository = new UserRegistrationRepository()
-            const app = new RegisterUserApplication(usersRepository, userRegistrationRepository)
-            return await app.register({
+            const transaction = await TransactionRepository.new()
+            const usersRepository = new UsersRepository(transaction)
+            const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
+            const loginSessionsRepository = new LoginSessionsRepository(transaction)
+            const app = new RegisterUserApplication(
+                usersRepository,
+                loginCredentialsRepository,
+                loginSessionsRepository
+            )
+            await transaction.begin()
+            const user = await app.register({
                 name: args.name,
                 password: args.password,
                 ipAddress: args.ipAddress,
+                lastLocation: args.lastLocation ? args.lastLocation : null,
+                device: args.device ? args.device : null,
             })
+            await transaction.commit()
+            await transaction.end()
+            return user
         } catch (error) {
             if (error instanceof DomainError) {
                 if (error.code === ErrorCodes.NameTaken) {

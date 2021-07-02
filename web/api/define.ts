@@ -1,13 +1,14 @@
-import { TokenTypesUnion } from "./facts/token_type"
-import { ScopesLiteralUnion } from "./facts/scope"
+import { InternalErrorSpec, InvalidAuth, WebApiRuntimeError } from "./error"
+
+import { AuthenticationMethodsLiteralUnion } from "./facts/authentication_method"
+import { ContentTypesLiteralUnion } from "./facts/content_type"
 import { HttpMethodUnion } from "./facts/http_method"
 import { RateLimitUnion } from "./facts/rate_limit"
-import { ContentTypesLiteralUnion } from "./facts/content_type"
-import { AuthenticationMethodsLiteralUnion } from "./facts/authentication_method"
-import { Validator } from "../../domain/validation/Validator"
-import { ValidationError } from "../../domain/validation/ValidationError"
-import { WebApiRuntimeError, InternalErrorSpec, InvalidAuth } from "./error"
+import { ScopesLiteralUnion } from "./facts/scope"
+import { TokenTypesUnion } from "./facts/token_type"
 import { UserEntity } from "../../domain/entity/User"
+import { ValidationError } from "../../domain/validation/ValidationError"
+import { Validator } from "../../domain/validation/Validator"
 
 // Web APIの仕様を定義
 export interface MethodFacts {
@@ -57,7 +58,7 @@ type Argument = {
     examples: string[] | null
     required: boolean
     defaultValue?: any
-    schema: Validator<any>
+    validator: Validator<any>
 }
 
 export function defineArguments<
@@ -124,12 +125,12 @@ export function defineMethod<
     >,
     Args extends {
         [ArgumentName in RequiredArgNames]: ReturnType<
-            ArgumentSpecs[ArgumentName]["schema"]["type"]
+            ArgumentSpecs[ArgumentName]["validator"]["type"]
         >
     } &
         {
             [ArgumentName in OptionalArgNames]?: ReturnType<
-                ArgumentSpecs[ArgumentName]["schema"]["type"]
+                ArgumentSpecs[ArgumentName]["validator"]["type"]
             >
         },
     ErrorCodes,
@@ -178,9 +179,9 @@ export function defineMethod<
             const value = args[argumentName]
             if (required || value) {
                 try {
-                    const { schema } = methodArgumentSpecs[argumentName]
+                    const { validator } = methodArgumentSpecs[argumentName]
                     // @ts-ignore
-                    schema.check(value)
+                    validator.check(value)
                 } catch (validationError) {
                     if (validationError instanceof ValidationError) {
                         const error = errorsAssociatedWithArgs[argumentName]
