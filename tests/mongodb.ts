@@ -8,36 +8,21 @@ import { sleep } from "./functions"
 class MongoDBTestEnvironment {
     replSet?: MongoMemoryReplSet
     async connect() {
-        const replSet = new MongoMemoryReplSet({
+        this.replSet = new MongoMemoryReplSet({
             replSet: { storageEngine: "wiredTiger" },
         })
-        this.replSet = replSet
-        return new Promise(async (resolve, reject) => {
-            replSet.waitUntilRunning().then(() => {
-                replSet.getUri().then(async (uri) => {
-                    mongoose.connect(uri, {
-                        useNewUrlParser: true,
-                        useUnifiedTopology: true,
-                        useCreateIndex: true,
-                        poolSize: 100,
-                    })
-                    mongoose.connection.once("open", async () => {
-                        // トランザクション中はcollectionの作成ができないので
-                        // 最初に作っておく
-                        try {
-                            await UserModel.createCollection()
-                            await LoginCredentialModel.createCollection()
-                            await LoginSessionModel.createCollection()
-                        } catch (error) {}
-
-                        // 数秒待機する
-                        sleep(3)
-
-                        resolve(null)
-                    })
-                })
-            })
+        await this.replSet.start()
+        await this.replSet.waitUntilRunning()
+        const uri = await this.replSet.getUri()
+        await mongoose.connect(uri, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            useCreateIndex: true,
         })
+        await UserModel.createCollection()
+        await LoginCredentialModel.createCollection()
+        await LoginSessionModel.createCollection()
+        await sleep(3)
     }
     async disconnect() {
         await mongoose.disconnect()
