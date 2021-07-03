@@ -2,7 +2,11 @@ import * as vs from "../../../../domain/validation"
 
 import { ErrorCodes, RegisterUserApplication } from "../../../../application/RegisterUser"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
-import { LoginCredentialsRepository, UsersRepository } from "../../../repository"
+import {
+    LoginCredentialsRepository,
+    LoginSessionsRepository,
+    UsersRepository,
+} from "../../../repository"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
@@ -128,7 +132,12 @@ export default defineMethod(
         try {
             const usersRepository = new UsersRepository(transaction)
             const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
-            const app = new RegisterUserApplication(usersRepository, loginCredentialsRepository)
+            const loginSessionsRepository = new LoginSessionsRepository(transaction)
+            const app = new RegisterUserApplication(
+                usersRepository,
+                loginCredentialsRepository,
+                loginSessionsRepository
+            )
             const user = await app.register({
                 name: args.name,
                 password: args.password,

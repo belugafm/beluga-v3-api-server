@@ -1,12 +1,14 @@
 import { ErrorCodes, RegisterUserApplication } from "../../application/RegisterUser"
 import {
     LoginCredentialsRepository,
+    LoginSessionsRepository,
     TransactionRepository,
     UsersRepository,
 } from "../../web/repository"
 
 import { ApplicationError } from "../../application/ApplicationError"
 import { LoginCredentialEntity } from "../../domain/entity/LoginCredential"
+import { LoginSessionEntity } from "../../domain/entity/LoginSession"
 import { RepositoryError } from "../../domain/repository/RepositoryError"
 import { UserEntity } from "../../domain/entity/User"
 import config from "../../config/app"
@@ -30,7 +32,12 @@ describe("RegisterUserApplication", () => {
             const transaction = await TransactionRepository.new()
             const usersRepository = new UsersRepository(transaction)
             const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
-            const app = new RegisterUserApplication(usersRepository, loginCredentialsRepository)
+            const loginSessionsRepository = new LoginSessionsRepository(transaction)
+            const app = new RegisterUserApplication(
+                usersRepository,
+                loginCredentialsRepository,
+                loginSessionsRepository
+            )
             const name = `admin_${k}`
             await transaction.begin()
             const user = await app.register({
@@ -59,8 +66,13 @@ describe("RegisterUserApplication", () => {
         const transaction = await TransactionRepository.new()
         const usersRepository = new UsersRepository(transaction)
         const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
+        const loginSessionsRepository = new LoginSessionsRepository(transaction)
         await transaction.begin()
-        const app = new RegisterUserApplication(usersRepository, loginCredentialsRepository)
+        const app = new RegisterUserApplication(
+            usersRepository,
+            loginCredentialsRepository,
+            loginSessionsRepository
+        )
         const name = "admin"
         await app.register({
             name,
@@ -93,8 +105,13 @@ describe("RegisterUserApplication", () => {
         config.user_registration.limit = 5
         const usersRepository = new UsersRepository(transaction)
         const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
+        const loginSessionsRepository = new LoginSessionsRepository(transaction)
         await transaction.begin()
-        const app = new RegisterUserApplication(usersRepository, loginCredentialsRepository)
+        const app = new RegisterUserApplication(
+            usersRepository,
+            loginCredentialsRepository,
+            loginSessionsRepository
+        )
         const name = "admin"
         await app.register({
             name,
@@ -135,8 +152,13 @@ describe("RegisterUserApplication", () => {
         const transaction = await TransactionRepository.new()
         const usersRepository = new UsersRepository(transaction)
         const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
+        const loginSessionsRepository = new LoginSessionsRepository(transaction)
         await transaction.begin()
-        const app = new RegisterUserApplication(usersRepository, loginCredentialsRepository)
+        const app = new RegisterUserApplication(
+            usersRepository,
+            loginCredentialsRepository,
+            loginSessionsRepository
+        )
         try {
             await app.register({
                 name: "admin-1234",
@@ -159,8 +181,13 @@ describe("RegisterUserApplication", () => {
         const transaction = await TransactionRepository.new()
         const usersRepository = new UsersRepository(transaction)
         const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
+        const loginSessionsRepository = new LoginSessionsRepository(transaction)
         await transaction.begin()
-        const app = new RegisterUserApplication(usersRepository, loginCredentialsRepository)
+        const app = new RegisterUserApplication(
+            usersRepository,
+            loginCredentialsRepository,
+            loginSessionsRepository
+        )
         try {
             await app.register({
                 name: "admin",
@@ -189,7 +216,52 @@ describe("RegisterUserApplication", () => {
         const transaction = await TransactionRepository.new()
         const usersRepository = new UsersRepository(transaction)
         const loginCredentialsRepository = new TestLoginCredentialsRepository(transaction)
-        const app = new RegisterUserApplication(usersRepository, loginCredentialsRepository)
+        const loginSessionsRepository = new LoginSessionsRepository(transaction)
+        const app = new RegisterUserApplication(
+            usersRepository,
+            loginCredentialsRepository,
+            loginSessionsRepository
+        )
+        const name = "admin"
+        try {
+            await transaction.begin()
+            await app.register({
+                name: name,
+                password: "password",
+                ipAddress: "192.168.1.1",
+                lastLocation: null,
+                device: null,
+            })
+        } catch (error) {
+            expect(error).toBeInstanceOf(ApplicationError)
+            if (error instanceof ApplicationError) {
+                expect(error.code).toBe(ErrorCodes.InternalError)
+            }
+        }
+        await transaction.rollback()
+        await transaction.end()
+        {
+            const usersRepository = new UsersRepository()
+            const user = await usersRepository.findByName(name)
+            expect(user).toBeNull()
+        }
+    })
+    test("Transaction", async () => {
+        expect.assertions(3)
+        class TestLoginSessionsRepository extends LoginSessionsRepository {
+            async add(session: LoginSessionEntity) {
+                throw new RepositoryError("")
+            }
+        }
+        const transaction = await TransactionRepository.new()
+        const usersRepository = new UsersRepository(transaction)
+        const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
+        const loginSessionsRepository = new TestLoginSessionsRepository(transaction)
+        const app = new RegisterUserApplication(
+            usersRepository,
+            loginCredentialsRepository,
+            loginSessionsRepository
+        )
         const name = "admin"
         try {
             await transaction.begin()

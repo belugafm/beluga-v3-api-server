@@ -15,7 +15,9 @@ import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../domain/entity/
 import { ApplicationError } from "./ApplicationError"
 import { DomainError } from "../domain/DomainError"
 import { ILoginCredentialsRepository } from "../domain/repository/LoginCredentials"
+import { ILoginSessionsRepository } from "../domain/repository/LoginSessions"
 import { IUsersRepository } from "../domain/repository/Users"
+import { LoginSessionEntity } from "../domain/entity/LoginSession"
 
 type Argument = {
     name: string
@@ -36,14 +38,17 @@ export const ErrorCodes = {
 export class RegisterUserApplication {
     private usersRepository: IUsersRepository
     private loginCredentialsRepository: ILoginCredentialsRepository
+    private loginSessionsRepository: ILoginSessionsRepository
     private registrationRateLimitService: CheckRegistrationRateLimitService
     private userNameAvailabilityService: CheckUserNameAvailabilityService
     constructor(
         usersRepository: IUsersRepository,
-        loginCredentialsRepository: ILoginCredentialsRepository
+        loginCredentialsRepository: ILoginCredentialsRepository,
+        loginSessionsRepository: ILoginSessionsRepository
     ) {
         this.usersRepository = usersRepository
         this.loginCredentialsRepository = loginCredentialsRepository
+        this.loginSessionsRepository = loginSessionsRepository
         this.registrationRateLimitService = new CheckRegistrationRateLimitService(usersRepository)
         this.userNameAvailabilityService = new CheckUserNameAvailabilityService(usersRepository)
     }
@@ -72,8 +77,15 @@ export class RegisterUserApplication {
         device: string | null
     }) {
         const loginCredential = await LoginCredentialEntity.new(user.id, password)
+        const loginSession = new LoginSessionEntity({
+            userId: user.id,
+            ipAddress,
+            lastLocation,
+            device,
+        })
         await this.loginCredentialsRepository.add(loginCredential)
-        return loginCredential
+        await this.loginSessionsRepository.add(loginSession)
+        return { loginCredential, loginSession }
     }
     async register({
         name,
@@ -84,7 +96,7 @@ export class RegisterUserApplication {
     }: Argument): Promise<UserEntity> {
         try {
             const user = await this.createUser({ name, ipAddress })
-            const loginCredential = await this.registerUser({
+            const { loginCredential, loginSession } = await this.registerUser({
                 user,
                 password,
                 ipAddress,
@@ -92,6 +104,7 @@ export class RegisterUserApplication {
                 device,
             })
             user.loginCredential = loginCredential
+            user.loginSession = loginSession
             return user
         } catch (error) {
             if (error instanceof DomainError) {
