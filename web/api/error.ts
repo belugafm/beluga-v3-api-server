@@ -17,17 +17,6 @@ export class WebApiRuntimeError<T extends string, S> extends Error {
     }
 }
 
-// アクセス規制によるエラー
-export class FraudPreventionAccessDeniedErrorSpec {
-    description = [
-        "問題のあるネットワークからのアクセスを検出したため、処理を中断しました",
-    ]
-    hint = [
-        "荒らし対策を強化するため、VPN、プロキシ、Torからのアクセスを遮断しています",
-    ]
-    code = "fraud_prevention_access_denied" as const
-}
-
 export class InvalidContentTypeErrorSpec {
     description = ["許可されていないContent-Typeです"]
     hint = []

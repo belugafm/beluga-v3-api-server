@@ -12,6 +12,7 @@ export const SortOrder = {
 export interface ILoginSessionsRepository {
     add(session: LoginSessionEntity): Promise<void>
     deleteAll(userId: UserId): Promise<number>
+    findBySessionId(sessionId: string): Promise<LoginSessionEntity | null>
     findByUserId(
         userId: UserId,
         sortBy: typeof SortBy[keyof typeof SortBy],

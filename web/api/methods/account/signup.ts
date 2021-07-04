@@ -13,7 +13,7 @@ import { ApplicationError } from "../../../../application/ApplicationError"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
-import { TransactionRepository } from "../../../../infrastructure/mongodb/repositoryimpl/Transaction"
+import { TransactionRepository } from "../../../../infrastructure/mongodb/repository/Transaction"
 import { UserEntity } from "../../../../domain/entity/User"
 import config from "../../../../config/app"
 

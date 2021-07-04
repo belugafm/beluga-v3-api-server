@@ -1,7 +1,7 @@
 import { InternalErrorSpec, InvalidAuth, WebApiRuntimeError } from "./error"
 
 import { AuthenticationMethodsLiteralUnion } from "./facts/authentication_method"
-import { ContentTypesLiteralUnion } from "./facts/content_type"
+import { ContentTypesUnion } from "./facts/content_type"
 import { HttpMethodUnion } from "./facts/http_method"
 import { RateLimitUnion } from "./facts/rate_limit"
 import { ScopesLiteralUnion } from "./facts/scope"
@@ -29,7 +29,7 @@ export interface MethodFacts {
 
     // Web APIをリクエストするときのContent-Type
     // GETの場合は無視される
-    acceptedContentTypes: ContentTypesLiteralUnion[]
+    acceptedContentTypes: ContentTypesUnion[]
 
     // Web APIのリクエストの際に認証が必要かどうか
     // falseの場合以下のプロパティは無視される

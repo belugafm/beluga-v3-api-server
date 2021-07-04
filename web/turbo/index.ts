@@ -1,19 +1,15 @@
-import Router from "find-my-way"
-import turbo from "turbo-http"
+import { InvalidContentTypeErrorSpec, WebApiRuntimeError } from "../api/error"
 import { Request, Response, read_body } from "./turbo"
-import qs from "qs"
-import {
-    WebApiRuntimeError,
-    FraudPreventionAccessDeniedErrorSpec,
-    InvalidContentTypeErrorSpec,
-} from "../api/error"
-import config from "../../config/app"
-import * as fraud_prevention from "../../model/fraud_score/ok"
+
+import { ContentTypesUnion } from "../api/facts/content_type"
+import { IUsersRepository } from "../../domain/repository/Users"
 import { MethodFacts } from "../api/define"
-import { ContentTypesLiteralUnion } from "../api/facts/content_type"
-import { UserSchema } from "../../schema/user"
+import Router from "find-my-way"
+import { UserEntity } from "../../domain/entity/User"
 import { authenticate_user } from "../auth"
-import { update_last_activity_date } from "../../model/user/update_last_activity_date"
+import config from "../../config/app"
+import qs from "qs"
+import turbo from "turbo-http"
 
 export { Request, Response }
 
@@ -49,7 +45,7 @@ declare module "find-my-way" {
     type Handler = (
         req: Request,
         res: Response,
-        params: { ip_address: string; auth_user: UserSchema | null },
+        params: { ipAddress: string; authUser: UserEntity | null },
         store?: any
     ) => object | string
     type HTTPMethod = "GET" | "POST"
@@ -88,7 +84,7 @@ export const ContentType = {
     JSON: "application/json",
 }
 
-async function activate_user(user: UserSchema) {
+async function activate_user(user: UserEntity) {
     if (user.dormant === true) {
         return
     }
@@ -101,17 +97,17 @@ async function activate_user(user: UserSchema) {
 
 const base_url = "/api/v1/"
 
-type Options = {
-    fraud_prevention_rule?: fraud_prevention.FraudPreventionRule
-}
+type Options = {}
 
 export class TurboServer {
     router: Router.Instance
     server: turbo.Server
-    constructor(opt: Router.Config) {
+    usersRepository: IUsersRepository
+    constructor(opt: Router.Config, usersRepository: IUsersRepository) {
         if (opt.defaultRoute == null) {
             opt.defaultRoute = DefaultRoute
         }
+        this.usersRepository = usersRepository
         this.router = Router(opt)
         this.server = turbo.createServer(async (_req, _res) => {
             // アクセスがあるたびここを通る
@@ -139,7 +135,7 @@ export class TurboServer {
                 if (facts.authenticationRequired) {
                     // ユーザー認証をここで行う
                     const auth_user = await authenticate_user(facts, req.query, req.cookies)
-                    params["auth_user"] = auth_user
+                    params["authUser"] = auth_user
                 }
                 const data = await handler(req, res, params)
                 res.write(Buffer.from(JSON.stringify(data)))
@@ -184,43 +180,25 @@ export class TurboServer {
             try {
                 const body = await read_body(req) // これは必ず一番最初に呼ぶ
 
-                const content_type = req.headers["content-type"].split(
-                    ";"
-                )[0] as ContentTypesLiteralUnion
-                if (facts.acceptedContentTypes.includes(content_type) !== true) {
+                const contentType = req.headers["content-type"].split(";")[0] as ContentTypesUnion
+                if (facts.acceptedContentTypes.includes(contentType) !== true) {
                     throw new WebApiRuntimeError(new InvalidContentTypeErrorSpec())
                 }
 
                 if (facts.authenticationRequired) {
                     // ユーザー認証をここで行う
-                    const auth_user = await authenticate_user(facts, req.body, req.cookies)
-                    if (auth_user) {
+                    const authUser = await authenticate_user(facts, req.body, req.cookies)
+                    if (authUser) {
                         // activeなユーザーにする
-                        await activate_user(auth_user)
-                        await update_last_activity_date({
-                            user_id: auth_user._id,
-                            date: new Date(),
-                        })
+                        await this.usersRepository.activate(authUser)
+                        await this.usersRepository.updateLastActivityDate(authUser)
                     }
-                    params["auth_user"] = auth_user
+                    params["authUser"] = authUser
                 }
 
                 // IPアドレス等を使ってアクセス制限をする場合はここで行う
-                const ip_address = req.headers["x-real-ip"]
-                params["ip_address"] = ip_address
-                if (config.fraud_prevention.enabled) {
-                    const rule = options.fraud_prevention_rule
-                        ? options.fraud_prevention_rule
-                        : fraud_prevention.DefaultRule
-                    if (
-                        (await fraud_prevention.ok({
-                            ip_address,
-                            apply_rule: rule,
-                        })) !== true
-                    ) {
-                        throw new WebApiRuntimeError(new FraudPreventionAccessDeniedErrorSpec())
-                    }
-                }
+                const ipAddress = req.headers["x-real-ip"]
+                params["ipAddress"] = ipAddress
 
                 req.body = body
                 const data = await handler(req, res, params)

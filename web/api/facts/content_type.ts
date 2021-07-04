@@ -4,4 +4,4 @@ export const ContentTypes = {
     ApplicationJson: "application/json",
 } as const
 
-export type ContentTypesLiteralUnion = typeof ContentTypes[keyof typeof ContentTypes]
+export type ContentTypesUnion = typeof ContentTypes[keyof typeof ContentTypes]

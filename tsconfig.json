@@ -21,10 +21,10 @@
         "strict": true,
         "baseUrl": "./",
         "paths": {
-            "turbo-http": ["core/@types/turbo-http.d.ts"],
-            "cookie": ["core/@types/cookie.d.ts"],
-            "qs": ["core/@types/qs.d.ts"],
-            "find-my-way": ["core/@types/find-my-way.d.ts"]
+            "turbo-http": ["@types/turbo-http.d.ts"],
+            "cookie": ["@types/cookie.d.ts"],
+            "qs": ["@types/qs.d.ts"],
+            "find-my-way": ["@types/find-my-way.d.ts"]
         },
         "forceConsistentCasingInFileNames": true,
         "removeComments": true

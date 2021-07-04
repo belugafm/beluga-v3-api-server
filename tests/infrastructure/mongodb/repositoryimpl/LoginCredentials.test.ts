@@ -1,5 +1,5 @@
 import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
-import { LoginCredentialsRepository } from "../../../../infrastructure/mongodb/repositoryimpl/LoginCredentials"
+import { LoginCredentialsRepository } from "../../../../infrastructure/mongodb/repository/LoginCredentials"
 import { db } from "../../../mongodb"
 
 jest.setTimeout(30000)
@@ -11,7 +11,7 @@ describe("LoginCredentialsRepository", () => {
     afterAll(async () => {
         await db.disconnect()
     })
-    test("Add and Delete", async () => {
+    test("Normal", async () => {
         const repository = new LoginCredentialsRepository()
         const userId = "507f1f77bcf86cd799439011"
         const password = "password"

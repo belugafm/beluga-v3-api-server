@@ -3,6 +3,7 @@ build/
 volumes/
 www/
 config/app.ts
+infrastructure/ipqualityscore/config.ts
 .vscode/
 .DS_Store
 npm-debug.log

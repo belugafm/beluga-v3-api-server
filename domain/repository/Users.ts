@@ -13,6 +13,8 @@ export interface IUsersRepository {
     add(user: UserEntity): Promise<UserId>
     delete(userId: UserId): Promise<boolean>
     updateProfile(user: UserEntity): Promise<boolean>
+    activate(user: UserEntity): Promise<boolean>
+    updateLastActivityDate(user: UserEntity): Promise<boolean>
     findById(userId: UserId): Promise<UserEntity | null>
     findByName(name: string): Promise<UserEntity | null>
     findByRegistrationIpAddress(

@@ -8,14 +8,19 @@ import {
 import { LoginSessionModel, schemaVersion } from "../schema/LoginSession"
 import { SortBy, SortOrder } from "../../../domain/repository/LoginSessions"
 
+import { ChangeEventHandler } from "../../ChangeEventHandler"
 import { ILoginSessionsRepository } from "../../../domain/repository/LoginSessions"
 import { LoginSessionEntity } from "../../../domain/entity/LoginSession"
 import { MongoError } from "mongodb"
 import { RepositoryError } from "../../../domain/repository/RepositoryError"
 
-export class LoginSessionsRepository implements ILoginSessionsRepository {
+export class LoginSessionsRepository
+    extends ChangeEventHandler
+    implements ILoginSessionsRepository
+{
     private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
     constructor(transaction?: TransactionRepository) {
+        super(LoginSessionsRepository)
         if (transaction) {
             this._transaction = transaction
         }
@@ -64,6 +69,9 @@ export class LoginSessionsRepository implements ILoginSessionsRepository {
             }
             throw new RepositoryError(error.message, error.stack)
         }
+    }
+    async findBySessionId(sessionId: string) {
+        return null
     }
     async findByUserId(
         userId: UserId,

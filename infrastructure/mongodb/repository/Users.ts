@@ -8,13 +8,15 @@ import {
 import { IUsersRepository, SortBy, SortOrder } from "../../../domain/repository/Users"
 import { UserModel, schemaVersion } from "../schema/User"
 
+import { ChangeEventHandler } from "../../ChangeEventHandler"
 import { MongoError } from "mongodb"
 import { RepositoryError } from "../../../domain/repository/RepositoryError"
 import { UserEntity } from "../../../domain/entity/User"
 
-export class UsersRepository implements IUsersRepository {
+export class UsersRepository extends ChangeEventHandler implements IUsersRepository {
     private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
     constructor(transaction?: TransactionRepository) {
+        super(UsersRepository)
         if (transaction) {
             this._transaction = transaction
         }
@@ -62,6 +64,51 @@ export class UsersRepository implements IUsersRepository {
             throw new RepositoryError(error.message, error.stack)
         }
     }
+    async activate(user: UserEntity) {
+        try {
+            if (user.active) {
+                return true
+            }
+            const _id = mongo.toObjectId(user.id as string)
+            const result = await UserModel.updateOne(
+                { _id },
+                {
+                    $set: { active: true },
+                }
+            )
+            if (result.nModified == 1) {
+                this.emitChanges(user.id)
+                return true
+            }
+            return false
+        } catch (error) {
+            if (error instanceof MongoError) {
+                throw new RepositoryError(error.message, error.stack, error.code)
+            }
+            throw new RepositoryError(error.message, error.stack)
+        }
+    }
+    async updateLastActivityDate(user: UserEntity) {
+        try {
+            const _id = mongo.toObjectId(user.id as string)
+            const result = await UserModel.updateOne(
+                { _id },
+                {
+                    $set: { last_activity_date: new Date() },
+                }
+            )
+            if (result.nModified == 1) {
+                this.emitChanges(user.id)
+                return true
+            }
+            return false
+        } catch (error) {
+            if (error instanceof MongoError) {
+                throw new RepositoryError(error.message, error.stack, error.code)
+            }
+            throw new RepositoryError(error.message, error.stack)
+        }
+    }
     async updateProfile(user: UserEntity) {
         return true
     }
@@ -73,6 +120,7 @@ export class UsersRepository implements IUsersRepository {
                 ? UserModel.deleteOne({ _id }, { session }).exec()
                 : UserModel.deleteOne({ _id }).exec())
             if (result.deletedCount === 1) {
+                this.emitChanges(userId)
                 return true
             }
             return false

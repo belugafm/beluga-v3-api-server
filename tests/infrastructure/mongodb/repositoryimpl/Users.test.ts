@@ -1,8 +1,9 @@
 import * as uuid from "uuid"
 
+import { LoginSessionsRepository } from "../../../../web/repository"
 import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 import { UserEntity } from "../../../../domain/entity/User"
-import { UsersRepository } from "../../../../infrastructure/mongodb/repositoryimpl/Users"
+import { UsersRepository } from "../../../../infrastructure/mongodb/repository/Users"
 import config from "../../../../config/app"
 import { db } from "../../../mongodb"
 import { sleep } from "../../../env"
@@ -16,7 +17,7 @@ describe("UsersRepository", () => {
     afterAll(async () => {
         await db.disconnect()
     })
-    test("Add and Delete", async () => {
+    test("Normal", async () => {
         const repository = new UsersRepository()
         const user = new UserEntity({ id: 1, name: "hoge", registrationIpAddress: "192.168.1.1" })
         user.twitterUserId = uuid.v4()
@@ -144,6 +145,59 @@ describe("UsersRepository", () => {
             expect(error).toBeInstanceOf(RepositoryError)
         }
         const succeeded = await repository.delete(user1.id as string)
+        expect(succeeded).toBeTruthy()
+    })
+    test("activate", async () => {
+        expect.assertions(2)
+        const repository = new UsersRepository()
+
+        const user = new UserEntity({ id: 1, name: "hoge", registrationIpAddress: "192.168.1.1" })
+        user.id = await repository.add(user)
+        await repository.activate(user)
+        {
+            const _user = await repository.findById(user.id)
+            if (_user instanceof UserEntity) {
+                expect(_user.active).toBe(true)
+            }
+        }
+        const succeeded = await repository.delete(user.id as string)
+        expect(succeeded).toBeTruthy()
+    })
+    test("updateLastActivityDate", async () => {
+        expect.assertions(2)
+        const repository = new UsersRepository()
+
+        const user = new UserEntity({ id: 1, name: "hoge", registrationIpAddress: "192.168.1.1" })
+        user.id = await repository.add(user)
+        await repository.updateLastActivityDate(user)
+        {
+            const _user = await repository.findById(user.id)
+            if (_user instanceof UserEntity) {
+                expect(_user.active).not.toBeNull()
+            }
+        }
+        const succeeded = await repository.delete(user.id as string)
+        expect(succeeded).toBeTruthy()
+    })
+    test("emitChanges", async () => {
+        expect.assertions(5)
+        const repository1 = new UsersRepository()
+        const repository2 = new UsersRepository()
+
+        const user = new UserEntity({ id: 1, name: "hoge", registrationIpAddress: "192.168.1.1" })
+        user.id = await repository1.add(user)
+        UsersRepository.subscribe((userId: UserId) => {
+            expect(userId).toBe(user.id)
+        })
+        // @ts-ignore
+        expect(LoginSessionsRepository._eventListeners.length).toBe(0)
+        LoginSessionsRepository.subscribe((sessionId: string) => {
+            expect(sessionId).toBe("") // 正しく実装できていればこの行は実行されない
+        })
+
+        await repository1.updateLastActivityDate(user)
+        await repository2.updateLastActivityDate(user)
+        const succeeded = await repository2.delete(user.id as string)
         expect(succeeded).toBeTruthy()
     })
 })
