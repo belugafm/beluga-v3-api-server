@@ -1,7 +1,9 @@
+import { Entity } from "../../../domain/entity/Entity"
+
 export class CachedObject {
     expireDate: Date
-    value: any
-    constructor(value: any, expireSeconds: number) {
+    value: Entity
+    constructor(value: Entity, expireSeconds: number) {
         this.value = value
         this.expireDate = new Date(Date.now() + expireSeconds * 1000)
     }
@@ -23,7 +25,7 @@ export class InMemoryCache {
         this.defaultExpireSeconds = default_expire_seconds
         this.data = {}
     }
-    get(key: string): any {
+    get(key: string): Entity | null {
         if (key in this.data !== true) {
             return null
         }
@@ -35,8 +37,7 @@ export class InMemoryCache {
         return cachedObject.value
     }
     set(key: string, value: any, expireSeconds?: number): void {
-        // @ts-ignore
-        if (this.data.length > this.cacheLimit) {
+        if (Object.keys(this.data).length >= this.cacheLimit) {
             this.data = {}
         }
         this.data[key] = new CachedObject(
