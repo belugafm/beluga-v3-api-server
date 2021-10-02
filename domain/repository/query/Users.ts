@@ -1,4 +1,5 @@
 import { UserEntity } from "../../entity/User"
+import { UserId } from "../../types"
 
 export const SortBy = {
     CreatedAt: "CreatedAt",

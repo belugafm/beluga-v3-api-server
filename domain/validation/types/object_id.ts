@@ -1,6 +1,7 @@
 import { CommonErrorMessages, ValidationError } from "../ValidationError"
 import { isNumber, isString } from "../functions"
 
+import { EntityId } from "../../types"
 import { Validator } from "../Validator"
 
 function checkIsObjectId(value: any) {

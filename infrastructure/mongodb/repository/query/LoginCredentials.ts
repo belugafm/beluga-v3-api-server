@@ -8,6 +8,7 @@ import { ILoginCredentialsQueryRepository } from "../../../../domain/repository/
 import { LoginCredentialModel } from "../../schema/LoginCredential"
 import { MongoError } from "mongodb"
 import { RepositoryError } from "../../../../domain/repository/RepositoryError"
+import { UserId } from "../../../../domain/types"
 import mongoose from "mongoose"
 
 export class LoginCredentialsQueryRepository implements ILoginCredentialsQueryRepository {

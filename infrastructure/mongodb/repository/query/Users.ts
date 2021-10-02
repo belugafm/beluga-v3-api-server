@@ -8,6 +8,7 @@ import { IUsersQueryRepository, SortBy, SortOrder } from "../../../../domain/rep
 import { MongoError } from "mongodb"
 import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 import { UserEntity } from "../../../../domain/entity/User"
+import { UserId } from "../../../../domain/types"
 import { UserModel } from "../../schema/User"
 import mongoose from "mongoose"
 

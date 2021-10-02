@@ -1,4 +1,4 @@
-type EntityId = number | string
-type UserId = EntityId
-type ChannelId = UserId
-type ChannelGroupdId = UserId
+export type EntityId = number | string
+export type UserId = EntityId
+export type ChannelId = UserId
+export type ChannelGroupdId = UserId

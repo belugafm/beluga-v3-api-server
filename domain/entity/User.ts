@@ -1,6 +1,7 @@
 import * as vn from "../validation"
 
 import { Entity } from "./Entity"
+import { UserId } from "../types"
 import { ValidateBy } from "../validation/ValidateBy"
 
 export const ErrorCodes = {

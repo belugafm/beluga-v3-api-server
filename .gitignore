@@ -1,6 +1,7 @@
 node_modules/
 build/
 volumes/
+sandbox/
 www/
 config/app.ts
 infrastructure/ipqualityscore/config.ts

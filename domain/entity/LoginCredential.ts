@@ -1,6 +1,7 @@
 import * as vn from "../validation"
 
 import { DomainError } from "../DomainError"
+import { UserId } from "../types"
 import { ValidateBy } from "../validation/ValidateBy"
 import bcrypt from "bcrypt"
 import config from "../../config/app"

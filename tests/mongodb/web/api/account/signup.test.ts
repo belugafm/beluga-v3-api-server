@@ -1,14 +1,14 @@
-import signup, { expectedErrorSpecs } from "../../../../web/api/methods/account/signup"
+import signup, { expectedErrorSpecs } from "../../../../../web/api/methods/account/signup"
 
-import { DeleteUserApplication } from "../../../../application/DeleteUser"
-import { LoginCredentialsCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginCredentials"
-import { LoginCredentialsQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginCredentials"
-import { LoginSessionsCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginSessions"
-import { LoginSessionsQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginSessions"
-import { UsersCommandRepository } from "../../../../infrastructure/mongodb/repository/command/Users"
-import { UsersQueryRepository } from "../../../../infrastructure/mongodb/repository/query/Users"
-import { WebApiRuntimeError } from "../../../../web/api/error"
-import { db } from "../../../env"
+import { DeleteUserApplication } from "../../../../../application/DeleteUser"
+import { LoginCredentialsCommandRepository } from "../../../../../infrastructure/mongodb/repository/command/LoginCredentials"
+import { LoginCredentialsQueryRepository } from "../../../../../infrastructure/mongodb/repository/query/LoginCredentials"
+import { LoginSessionsCommandRepository } from "../../../../../infrastructure/mongodb/repository/command/LoginSessions"
+import { LoginSessionsQueryRepository } from "../../../../../infrastructure/mongodb/repository/query/LoginSessions"
+import { UsersCommandRepository } from "../../../../../infrastructure/mongodb/repository/command/Users"
+import { UsersQueryRepository } from "../../../../../infrastructure/mongodb/repository/query/Users"
+import { WebApiRuntimeError } from "../../../../../web/api/error"
+import { db } from "../../../../env"
 
 jest.setTimeout(60000)
 

@@ -10,6 +10,7 @@ import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { LoginSessionModel } from "../../schema/LoginSession"
 import { MongoError } from "mongodb"
 import { RepositoryError } from "../../../../domain/repository/RepositoryError"
+import { UserId } from "../../../../domain/types"
 import mongoose from "mongoose"
 
 export class LoginSessionsQueryRepository implements ILoginSessionsQueryRepository {

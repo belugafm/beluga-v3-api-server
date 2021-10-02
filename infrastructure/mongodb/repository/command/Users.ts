@@ -10,6 +10,7 @@ import { IUsersCommandRepository } from "../../../../domain/repository/command/U
 import { MongoError } from "mongodb"
 import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 import { UserEntity } from "../../../../domain/entity/User"
+import { UserId } from "../../../../domain/types"
 import mongoose from "mongoose"
 
 export class UsersCommandRepository extends ChangeEventHandler implements IUsersCommandRepository {

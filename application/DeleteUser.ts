@@ -10,6 +10,7 @@ import { ILoginCredentialsQueryRepository } from "../domain/repository/query/Log
 import { ILoginSessionsCommandRepository } from "../domain/repository/command/LoginSessions"
 import { IUsersCommandRepository } from "../domain/repository/command/Users"
 import { IUsersQueryRepository } from "../domain/repository/query/Users"
+import { UserId } from "../domain/types"
 
 export const ErrorCodes = {
     UserNotFound: "user_not_found",

@@ -1,5 +1,6 @@
 import * as vn from "../validation"
 
+import { UserId } from "../types"
 import { ValidateBy } from "../validation/ValidateBy"
 import config from "../../config/app"
 import { v4 } from "uuid"

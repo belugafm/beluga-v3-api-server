@@ -1,9 +1,9 @@
-import { IIPGeolocationApplication } from "../../application/IPGeolocation"
+import { IIPGeolocationQueryRepository } from "../../domain/repository/query/IPGeolocation"
 import { IPGeolocationEntity } from "../../domain/entity/IPGeolocation"
 import config from "./config"
 import fetch from "node-fetch"
 
-export class IPGeolocationApplication implements IIPGeolocationApplication {
+export class IPGeolocationQueryRepository implements IIPGeolocationQueryRepository {
     async lookup(ipAddress: string): Promise<IPGeolocationEntity | null> {
         if (config.enabled == false) {
             return null

@@ -1,3 +1,5 @@
+import { EntityId } from "../domain/types"
+
 export class ChangeEventHandler {
     static subscribe(func: any) {}
     protected static _eventListeners: ((changedId: EntityId) => void)[] = []

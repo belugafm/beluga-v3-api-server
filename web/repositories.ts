@@ -3,4 +3,4 @@ export { LoginCredentialsCommandRepository as LoginCredentialsQueryRepository } 
 export { UsersQueryRepository } from "../infrastructure/mongodb/repository/query/Users"
 export { UsersCommandRepository } from "../infrastructure/mongodb/repository/command/Users"
 export { TransactionRepository } from "../infrastructure/mongodb/repository/Transaction"
-export { IPGeolocationApplication as IPGeolocationRepository } from "../infrastructure/ipqualityscore/IPGeolocation"
+export { IPGeolocationQueryRepository as IPGeolocationQueryRepository } from "../infrastructure/ipqualityscore/IPGeolocation"
