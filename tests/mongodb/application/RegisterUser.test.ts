@@ -1,19 +1,19 @@
-import { ErrorCodes, RegisterUserApplication } from "../../application/RegisterUser"
 import {
-    LoginCredentialsRepository,
-    LoginSessionsRepository,
-    TransactionRepository,
-    UsersRepository,
-} from "../../web/repository"
+    ErrorCodes,
+    RegisterPasswordBasedUserApplication,
+} from "../../../application/registration/RegisterPasswordBasedUser"
+import { LoginCredentialsQueryRepository, TransactionRepository } from "../../../web/repositories"
 
-import { ApplicationError } from "../../application/ApplicationError"
-import { LoginCredentialEntity } from "../../domain/entity/LoginCredential"
-import { LoginSessionEntity } from "../../domain/entity/LoginSession"
-import { RepositoryError } from "../../domain/repository/RepositoryError"
-import { UserEntity } from "../../domain/entity/User"
-import config from "../../config/app"
-import { db } from "../env"
-import { sleep } from "../functions"
+import { ApplicationError } from "../../../application/ApplicationError"
+import { LoginCredentialEntity } from "../../../domain/entity/LoginCredential"
+import { LoginCredentialsCommandRepository } from "../../../infrastructure/mongodb/repository/command/LoginCredentials"
+import { RepositoryError } from "../../../domain/repository/RepositoryError"
+import { UserEntity } from "../../../domain/entity/User"
+import { UsersCommandRepository } from "../../../infrastructure/mongodb/repository/command/Users"
+import { UsersQueryRepository } from "../../../infrastructure/mongodb/repository/query/Users"
+import config from "../../../config/app"
+import { db } from "../../env"
+import { sleep } from "../../functions"
 
 jest.setTimeout(60000)
 
@@ -27,20 +27,17 @@ describe("RegisterUserApplication", () => {
     test("Normal", async () => {
         const repeat = 100
         const userNames: string[] = []
-        expect.assertions(2 * repeat)
+        expect.assertions(3 * repeat)
         for (let k = 0; k < repeat; k++) {
             const transaction = await TransactionRepository.new()
-            const usersRepository = new UsersRepository(transaction)
-            const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
-            const loginSessionsRepository = new LoginSessionsRepository(transaction)
-            const app = new RegisterUserApplication(
-                usersRepository,
-                loginCredentialsRepository,
-                loginSessionsRepository
+            const app = new RegisterPasswordBasedUserApplication(
+                new UsersQueryRepository(transaction),
+                new UsersCommandRepository(transaction),
+                new LoginCredentialsQueryRepository(transaction)
             )
             const name = `admin_${k}`
             await transaction.begin()
-            const user = await app.register({
+            const [user, loginCredential] = await app.register({
                 name,
                 password: "password",
                 ipAddress: `192.168.1.${k}`,
@@ -48,30 +45,29 @@ describe("RegisterUserApplication", () => {
                 device: null,
             })
             expect(user).toBeInstanceOf(UserEntity)
+            expect(loginCredential).toBeInstanceOf(LoginCredentialEntity)
             await transaction.commit()
             await transaction.end()
             userNames.push(name)
         }
         for (const name of userNames) {
-            const usersRepository = new UsersRepository()
-            const _user = await usersRepository.findByName(name)
+            const usersQueryRepository = new UsersQueryRepository()
+            const usersCommandRepository = new UsersCommandRepository()
+            const _user = await usersQueryRepository.findByName(name)
             expect(_user).not.toBeNull()
             if (_user) {
-                await usersRepository.delete(_user.id)
+                await usersCommandRepository.delete(_user)
             }
         }
     })
     test("NameTaken", async () => {
         expect.assertions(2)
         const transaction = await TransactionRepository.new()
-        const usersRepository = new UsersRepository(transaction)
-        const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
-        const loginSessionsRepository = new LoginSessionsRepository(transaction)
         await transaction.begin()
-        const app = new RegisterUserApplication(
-            usersRepository,
-            loginCredentialsRepository,
-            loginSessionsRepository
+        const app = new RegisterPasswordBasedUserApplication(
+            new UsersQueryRepository(transaction),
+            new UsersCommandRepository(transaction),
+            new LoginCredentialsQueryRepository(transaction)
         )
         const name = "admin"
         await app.register({
@@ -103,14 +99,11 @@ describe("RegisterUserApplication", () => {
         const transaction = await TransactionRepository.new()
         const origValue = config.user_registration.limit
         config.user_registration.limit = 5
-        const usersRepository = new UsersRepository(transaction)
-        const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
-        const loginSessionsRepository = new LoginSessionsRepository(transaction)
         await transaction.begin()
-        const app = new RegisterUserApplication(
-            usersRepository,
-            loginCredentialsRepository,
-            loginSessionsRepository
+        const app = new RegisterPasswordBasedUserApplication(
+            new UsersQueryRepository(transaction),
+            new UsersCommandRepository(transaction),
+            new LoginCredentialsQueryRepository(transaction)
         )
         const name = "admin"
         await app.register({
@@ -150,14 +143,11 @@ describe("RegisterUserApplication", () => {
     test("UserNameNotMeetPolicy", async () => {
         expect.assertions(2)
         const transaction = await TransactionRepository.new()
-        const usersRepository = new UsersRepository(transaction)
-        const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
-        const loginSessionsRepository = new LoginSessionsRepository(transaction)
         await transaction.begin()
-        const app = new RegisterUserApplication(
-            usersRepository,
-            loginCredentialsRepository,
-            loginSessionsRepository
+        const app = new RegisterPasswordBasedUserApplication(
+            new UsersQueryRepository(transaction),
+            new UsersCommandRepository(transaction),
+            new LoginCredentialsQueryRepository(transaction)
         )
         try {
             await app.register({
@@ -179,14 +169,11 @@ describe("RegisterUserApplication", () => {
     test("PasswordNotMeetPolicy", async () => {
         expect.assertions(2)
         const transaction = await TransactionRepository.new()
-        const usersRepository = new UsersRepository(transaction)
-        const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
-        const loginSessionsRepository = new LoginSessionsRepository(transaction)
         await transaction.begin()
-        const app = new RegisterUserApplication(
-            usersRepository,
-            loginCredentialsRepository,
-            loginSessionsRepository
+        const app = new RegisterPasswordBasedUserApplication(
+            new UsersQueryRepository(transaction),
+            new UsersCommandRepository(transaction),
+            new LoginCredentialsQueryRepository(transaction)
         )
         try {
             await app.register({
@@ -208,19 +195,16 @@ describe("RegisterUserApplication", () => {
     test("Transaction", async () => {
         expect.assertions(3)
 
-        class TestLoginCredentialsRepository extends LoginCredentialsRepository {
-            async add(credential: LoginCredentialEntity) {
+        class TestLoginCredentialsRepository extends LoginCredentialsCommandRepository {
+            async add(credential: LoginCredentialEntity): Promise<boolean> {
                 throw new RepositoryError("")
             }
         }
         const transaction = await TransactionRepository.new()
-        const usersRepository = new UsersRepository(transaction)
-        const loginCredentialsRepository = new TestLoginCredentialsRepository(transaction)
-        const loginSessionsRepository = new LoginSessionsRepository(transaction)
-        const app = new RegisterUserApplication(
-            usersRepository,
-            loginCredentialsRepository,
-            loginSessionsRepository
+        const app = new RegisterPasswordBasedUserApplication(
+            new UsersQueryRepository(transaction),
+            new UsersCommandRepository(transaction),
+            new TestLoginCredentialsRepository(transaction)
         )
         const name = "admin"
         try {
@@ -241,47 +225,7 @@ describe("RegisterUserApplication", () => {
         await transaction.rollback()
         await transaction.end()
         {
-            const usersRepository = new UsersRepository()
-            const user = await usersRepository.findByName(name)
-            expect(user).toBeNull()
-        }
-    })
-    test("Transaction", async () => {
-        expect.assertions(3)
-        class TestLoginSessionsRepository extends LoginSessionsRepository {
-            async add(session: LoginSessionEntity) {
-                throw new RepositoryError("")
-            }
-        }
-        const transaction = await TransactionRepository.new()
-        const usersRepository = new UsersRepository(transaction)
-        const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
-        const loginSessionsRepository = new TestLoginSessionsRepository(transaction)
-        const app = new RegisterUserApplication(
-            usersRepository,
-            loginCredentialsRepository,
-            loginSessionsRepository
-        )
-        const name = "admin"
-        try {
-            await transaction.begin()
-            await app.register({
-                name: name,
-                password: "password",
-                ipAddress: "192.168.1.1",
-                lastLocation: null,
-                device: null,
-            })
-        } catch (error) {
-            expect(error).toBeInstanceOf(ApplicationError)
-            if (error instanceof ApplicationError) {
-                expect(error.code).toBe(ErrorCodes.InternalError)
-            }
-        }
-        await transaction.rollback()
-        await transaction.end()
-        {
-            const usersRepository = new UsersRepository()
+            const usersRepository = new UsersQueryRepository()
             const user = await usersRepository.findByName(name)
             expect(user).toBeNull()
         }

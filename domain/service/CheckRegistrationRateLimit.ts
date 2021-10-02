@@ -1,4 +1,4 @@
-import { IUsersRepository, SortBy, SortOrder } from "../repository/Users"
+import { IUsersQueryRepository, SortBy, SortOrder } from "../repository/query/Users"
 
 import { DomainError } from "../DomainError"
 import config from "../../config/app"
@@ -8,8 +8,8 @@ export const ErrorCodes = {
 } as const
 
 export class CheckRegistrationRateLimitService {
-    private usersRepository: IUsersRepository
-    constructor(usersRepository: IUsersRepository) {
+    private usersRepository: IUsersQueryRepository
+    constructor(usersRepository: IUsersQueryRepository) {
         this.usersRepository = usersRepository
     }
     async isRateLimited(ipAddress: string) {

@@ -1,12 +1,15 @@
 import * as vs from "../../../../domain/validation"
 
-import { ErrorCodes, RegisterUserApplication } from "../../../../application/RegisterUser"
+import {
+    ErrorCodes,
+    RegisterPasswordBasedUserApplication,
+} from "../../../../application/registration/RegisterPasswordBasedUser"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import {
-    LoginCredentialsRepository,
-    LoginSessionsRepository,
-    UsersRepository,
-} from "../../../repository"
+    LoginCredentialsQueryRepository,
+    UsersCommandRepository,
+    UsersQueryRepository,
+} from "../../../repositories"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
@@ -130,15 +133,12 @@ export default defineMethod(
         const transaction = await TransactionRepository.new()
         await transaction.begin()
         try {
-            const usersRepository = new UsersRepository(transaction)
-            const loginCredentialsRepository = new LoginCredentialsRepository(transaction)
-            const loginSessionsRepository = new LoginSessionsRepository(transaction)
-            const app = new RegisterUserApplication(
-                usersRepository,
-                loginCredentialsRepository,
-                loginSessionsRepository
+            const app = new RegisterPasswordBasedUserApplication(
+                new UsersQueryRepository(transaction),
+                new UsersCommandRepository(transaction),
+                new LoginCredentialsQueryRepository(transaction)
             )
-            const user = await app.register({
+            const [user, _] = await app.register({
                 name: args.name,
                 password: args.password,
                 ipAddress: args.ipAddress,

@@ -1,9 +1,6 @@
 import * as vn from "../validation"
 
-import { DomainError } from "../DomainError"
 import { Entity } from "./Entity"
-import { LoginCredentialEntity } from "./LoginCredential"
-import { LoginSessionEntity } from "./LoginSession"
 import { ValidateBy } from "../validation/ValidateBy"
 
 export const ErrorCodes = {
@@ -26,9 +23,6 @@ export const ErrorCodes = {
 } as const
 
 export class UserEntity extends Entity {
-    private _loginCredential: LoginCredentialEntity | null
-    private _loginSession: LoginSessionEntity | null
-
     // 一意なid DBの実装に依存する
     // 変更不可
     @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidId })
@@ -93,6 +87,9 @@ export class UserEntity extends Entity {
     createdAt: Date
 
     @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
+    bot: boolean
+
+    @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
     active: boolean // 登録後サイトを利用したかどうか
 
     @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
@@ -127,8 +124,6 @@ export class UserEntity extends Entity {
         this.id = params.id
         this.name = params.name
         this.twitterUserId = params.twitterUserId ? params.twitterUserId : null
-        this.loginCredential = null
-        this.loginSession = null
         this.displayName = params.displayName ? params.displayName : null
         this.profileImageUrl = params.profileImageUrl ? params.profileImageUrl : null
         this.location = params.location ? params.location : null
@@ -147,6 +142,7 @@ export class UserEntity extends Entity {
         this.followingChannelsCount = params.followingChannelsCount
             ? params.followingChannelsCount
             : 0
+        this.bot = params.bot ? params.bot : false
         this.active = params.active ? params.active : false
         this.dormant = params.dormant ? params.dormant : false
         this.suspended = params.suspended ? params.suspended : false
@@ -159,33 +155,5 @@ export class UserEntity extends Entity {
             ? params.termsOfServiceAgreementVersion
             : null
         this.registrationIpAddress = params.registrationIpAddress
-    }
-    get loginCredential() {
-        return this._loginCredential
-    }
-    get loginSession() {
-        return this._loginSession
-    }
-    set loginCredential(loginCredential: LoginCredentialEntity | null) {
-        if (loginCredential == null) {
-            this._loginCredential = null
-            return
-        }
-        if (loginCredential instanceof LoginCredentialEntity) {
-            this._loginCredential = loginCredential
-            return
-        }
-        throw new DomainError(ErrorCodes.InvalidLoginCredential)
-    }
-    set loginSession(LoginSession: LoginSessionEntity | null) {
-        if (LoginSession == null) {
-            this._loginSession = null
-            return
-        }
-        if (LoginSession instanceof LoginSessionEntity) {
-            this._loginSession = LoginSession
-            return
-        }
-        throw new DomainError(ErrorCodes.InvalidLoginSession)
     }
 }

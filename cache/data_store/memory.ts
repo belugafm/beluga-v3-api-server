@@ -1,4 +1,4 @@
-import { Entity } from "../../../domain/entity/Entity"
+import { Entity } from "../../domain/entity/Entity"
 
 export class CachedObject {
     expireDate: Date

@@ -1,26 +1,23 @@
-import * as mongo from "../mongoose"
-
 import {
     EmptyTransactionRepository,
     TransactionRepository,
     TransactionRepositoryInterface,
-} from "./Transaction"
-import { LoginSessionModel, schemaVersion } from "../schema/LoginSession"
-import { SortBy, SortOrder } from "../../../domain/repository/LoginSessions"
+} from "../Transaction"
+import { LoginSessionModel, schemaVersion } from "../../schema/LoginSession"
 
-import { ChangeEventHandler } from "../../ChangeEventHandler"
-import { ILoginSessionsRepository } from "../../../domain/repository/LoginSessions"
-import { LoginSessionEntity } from "../../../domain/entity/LoginSession"
+import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { ILoginSessionsCommandRepository } from "../../../../domain/repository/command/LoginSessions"
+import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { MongoError } from "mongodb"
-import { RepositoryError } from "../../../domain/repository/RepositoryError"
+import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 
-export class LoginSessionsRepository
+export class LoginSessionsCommandRepository
     extends ChangeEventHandler
-    implements ILoginSessionsRepository
+    implements ILoginSessionsCommandRepository
 {
     private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
     constructor(transaction?: TransactionRepository) {
-        super(LoginSessionsRepository)
+        super(LoginSessionsCommandRepository)
         if (transaction) {
             this._transaction = transaction
         }
@@ -47,48 +44,7 @@ export class LoginSessionsRepository
             } else {
                 await LoginSessionModel.create(doc)
             }
-            return
-        } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
-            }
-            throw new RepositoryError(error.message, error.stack)
-        }
-    }
-    async deleteAll(userId: UserId) {
-        try {
-            const user_id = mongo.toObjectId(userId as string)
-            const session = this._transaction.getSession()
-            const result = await (session
-                ? LoginSessionModel.deleteMany({ user_id }, { session }).exec()
-                : LoginSessionModel.deleteMany({ user_id }).exec())
-            return result.deletedCount ? result.deletedCount : 0
-        } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
-            }
-            throw new RepositoryError(error.message, error.stack)
-        }
-    }
-    async findBySessionId(sessionId: string) {
-        return null
-    }
-    async findByUserId(
-        userId: UserId,
-        sortBy: typeof SortBy[keyof typeof SortBy],
-        sortOrder: typeof SortOrder[keyof typeof SortOrder]
-    ) {
-        try {
-            const user_id = mongo.toObjectId(userId as string)
-            const session = this._transaction.getSession()
-            const docs = await (session
-                ? LoginSessionModel.find({ user_id }, null, { session }).exec()
-                : LoginSessionModel.find({ user_id }).exec())
-            const ret: LoginSessionEntity[] = []
-            docs.forEach((session) => {
-                ret.push(session.toEntity())
-            })
-            return ret
+            return true
         } catch (error) {
             if (error instanceof MongoError) {
                 throw new RepositoryError(error.message, error.stack, error.code)
@@ -97,6 +53,50 @@ export class LoginSessionsRepository
         }
     }
     async update(session: LoginSessionEntity) {
-        return true
+        try {
+            const result = await LoginSessionModel.updateOne(
+                { session_id: session.sessionId },
+                {
+                    $set: {
+                        user_id: session.userId as string,
+                        ip_address: session.ipAddress,
+                        expire_date: session.expireDate,
+                        created_at: session.createdAt,
+                        expired: session.expired,
+                        last_location: session.lastLocation,
+                        device: session.device,
+                    },
+                }
+            )
+            if (result.nModified == 1) {
+                this.emitChanges(session.sessionId)
+                return true
+            }
+            return false
+        } catch (error) {
+            if (error instanceof MongoError) {
+                throw new RepositoryError(error.message, error.stack, error.code)
+            }
+            throw new RepositoryError(error.message, error.stack)
+        }
+    }
+    async delete(session: LoginSessionEntity) {
+        try {
+            const transSession = this._transaction.getSession()
+            const query = { session_id: session.sessionId }
+            const result = await (transSession
+                ? LoginSessionModel.deleteOne(query, { session: transSession }).exec()
+                : LoginSessionModel.deleteOne(query).exec())
+            if (result.deletedCount === 1) {
+                this.emitChanges(session.sessionId)
+                return true
+            }
+            return false
+        } catch (error) {
+            if (error instanceof MongoError) {
+                throw new RepositoryError(error.message, error.stack, error.code)
+            }
+            throw new RepositoryError(error.message, error.stack)
+        }
     }
 }

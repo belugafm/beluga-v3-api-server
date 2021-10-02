@@ -1,11 +1,12 @@
-import {
-    LoginCredentialsRepository,
-    LoginSessionsRepository,
-    UsersRepository,
-} from "../../../../web/repository"
 import signup, { expectedErrorSpecs } from "../../../../web/api/methods/account/signup"
 
 import { DeleteUserApplication } from "../../../../application/DeleteUser"
+import { LoginCredentialsCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginCredentials"
+import { LoginCredentialsQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginCredentials"
+import { LoginSessionsCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginSessions"
+import { LoginSessionsQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginSessions"
+import { UsersCommandRepository } from "../../../../infrastructure/mongodb/repository/command/Users"
+import { UsersQueryRepository } from "../../../../infrastructure/mongodb/repository/query/Users"
 import { WebApiRuntimeError } from "../../../../web/api/error"
 import { db } from "../../../env"
 
@@ -106,17 +107,17 @@ describe("account/signup", () => {
             }
         }
         if (user) {
-            const usersRepository = new UsersRepository()
-            const loginCredentialsRepository = new LoginCredentialsRepository()
-            const loginSessionsRepository = new LoginSessionsRepository()
             await new DeleteUserApplication(
-                usersRepository,
-                loginCredentialsRepository,
-                loginSessionsRepository
+                new UsersQueryRepository(),
+                new UsersCommandRepository(),
+                new LoginCredentialsQueryRepository(),
+                new LoginCredentialsCommandRepository(),
+                new LoginSessionsQueryRepository(),
+                new LoginSessionsCommandRepository()
             ).delete(user.id)
         }
         {
-            const usersRepository = new UsersRepository()
+            const usersRepository = new UsersQueryRepository()
             const user = await usersRepository.findByName(name)
             expect(user).toBeNull()
         }

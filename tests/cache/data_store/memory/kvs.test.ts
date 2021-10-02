@@ -1,4 +1,4 @@
-import { InMemoryCache } from "../../../../query/cache/memory/kvs"
+import { InMemoryCache } from "../../../../cache/data_store/memory"
 import { UserEntity } from "../../../../domain/entity/User"
 import { db } from "../../../mongodb"
 import { sleep } from "../../../functions"

@@ -1,20 +1,24 @@
-import * as mongo from "../mongoose"
-
 import {
     EmptyTransactionRepository,
     TransactionRepository,
     TransactionRepositoryInterface,
-} from "./Transaction"
-import { LoginCredentialModel, schemaVersion } from "../schema/LoginCredential"
+} from "../Transaction"
+import { LoginCredentialModel, schemaVersion } from "../../schema/LoginCredential"
 
-import { ILoginCredentialsRepository } from "../../../domain/repository/LoginCredentials"
-import { LoginCredentialEntity } from "../../../domain/entity/LoginCredential"
+import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { ILoginCredentialsCommandRepository } from "../../../../domain/repository/command/LoginCredentials"
+import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
 import { MongoError } from "mongodb"
-import { RepositoryError } from "../../../domain/repository/RepositoryError"
+import { RepositoryError } from "../../../../domain/repository/RepositoryError"
+import mongoose from "mongoose"
 
-export class LoginCredentialsRepository implements ILoginCredentialsRepository {
+export class LoginCredentialsCommandRepository
+    extends ChangeEventHandler
+    implements ILoginCredentialsCommandRepository
+{
     private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
     constructor(transaction?: TransactionRepository) {
+        super(LoginCredentialsCommandRepository)
         if (transaction) {
             this._transaction = transaction
         }
@@ -35,6 +39,7 @@ export class LoginCredentialsRepository implements ILoginCredentialsRepository {
             } else {
                 await LoginCredentialModel.create(doc)
             }
+            return true
         } catch (error) {
             if (error instanceof MongoError) {
                 throw new RepositoryError(error.message, error.stack, error.code)
@@ -42,9 +47,9 @@ export class LoginCredentialsRepository implements ILoginCredentialsRepository {
             throw new RepositoryError(error.message, error.stack)
         }
     }
-    async delete(userId: UserId) {
+    async delete(credential: LoginCredentialEntity) {
         try {
-            const user_id = mongo.toObjectId(userId as string)
+            const user_id = mongoose.Types.ObjectId(credential.userId as string)
             const session = this._transaction.getSession()
             const result = await (session
                 ? LoginCredentialModel.deleteOne({ user_id }, { session }).exec()
@@ -60,25 +65,25 @@ export class LoginCredentialsRepository implements ILoginCredentialsRepository {
             throw new RepositoryError(error.message, error.stack)
         }
     }
-    async findByUserId(userId: UserId) {
+    async update(credential: LoginCredentialEntity) {
         try {
-            const user_id = mongo.toObjectId(userId as string)
-            const session = this._transaction.getSession()
-            const result = await (session
-                ? LoginCredentialModel.findOne({ user_id }, null, { session }).exec()
-                : LoginCredentialModel.findOne({ user_id }).exec())
-            if (result == null) {
-                return null
+            const result = await LoginCredentialModel.updateOne(
+                { user_id: credential.userId as string },
+                {
+                    $set: {
+                        password_hash: credential.passwordHash,
+                    },
+                }
+            )
+            if (result.nModified == 1) {
+                return true
             }
-            return result.toEntity()
+            return false
         } catch (error) {
             if (error instanceof MongoError) {
                 throw new RepositoryError(error.message, error.stack, error.code)
             }
             throw new RepositoryError(error.message, error.stack)
         }
-    }
-    async update(credential: LoginCredentialEntity) {
-        return
     }
 }

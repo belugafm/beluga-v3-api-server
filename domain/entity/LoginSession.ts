@@ -22,8 +22,8 @@ export class LoginSessionEntity {
     @ValidateBy(vn.string({ maxLength: 128 }), { errorCode: ErrorCodes.InvalidSessionId })
     sessionId: string
 
-    @ValidateBy(vn.ipAddress(), { nullable: true, errorCode: ErrorCodes.InvalidIpAddress })
-    ipAddress: string | null
+    @ValidateBy(vn.ipAddress(), { errorCode: ErrorCodes.InvalidIpAddress })
+    ipAddress: string
 
     @ValidateBy(vn.date(), { errorCode: ErrorCodes.InvalidExpireDate })
     expireDate: Date
@@ -43,11 +43,12 @@ export class LoginSessionEntity {
     constructor(
         params: {
             userId: LoginSessionEntity["userId"]
+            ipAddress: LoginSessionEntity["ipAddress"]
         } & Partial<LoginSessionEntity>
     ) {
         this.userId = params.userId
         this.sessionId = params.sessionId ? params.sessionId : v4()
-        this.ipAddress = params.ipAddress ? params.ipAddress : null
+        this.ipAddress = params.ipAddress
         this.expireDate = params.expireDate
             ? params.expireDate
             : new Date(Date.now() + config.user_login_session.lifetime * 1000)

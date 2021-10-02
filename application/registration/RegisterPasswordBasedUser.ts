@@ -1,23 +1,22 @@
 import {
     CheckRegistrationRateLimitService,
     ErrorCodes as RegistrationRateLimitErrorCodes,
-} from "../domain/service/CheckRegistrationRateLimit"
+} from "../../domain/service/CheckRegistrationRateLimit"
 import {
     CheckUserNameAvailabilityService,
     ErrorCodes as UserNameAvailabilityErrorCodes,
-} from "../domain/service/CheckUserNameAvailability"
+} from "../../domain/service/CheckUserNameAvailability"
 import {
     LoginCredentialEntity,
     ErrorCodes as LoginCredentialErrorCodes,
-} from "../domain/entity/LoginCredential"
-import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../domain/entity/User"
+} from "../../domain/entity/LoginCredential"
+import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../../domain/entity/User"
 
-import { ApplicationError } from "./ApplicationError"
-import { DomainError } from "../domain/DomainError"
-import { ILoginCredentialsRepository } from "../domain/repository/LoginCredentials"
-import { ILoginSessionsRepository } from "../domain/repository/LoginSessions"
-import { IUsersRepository } from "../domain/repository/Users"
-import { LoginSessionEntity } from "../domain/entity/LoginSession"
+import { ApplicationError } from "../ApplicationError"
+import { DomainError } from "../../domain/DomainError"
+import { ILoginCredentialsCommandRepository } from "../../domain/repository/command/LoginCredentials"
+import { IUsersCommandRepository } from "../../domain/repository/command/Users"
+import { IUsersQueryRepository } from "../../domain/repository/query/Users"
 
 type Argument = {
     name: string
@@ -35,22 +34,26 @@ export const ErrorCodes = {
     PasswordNotMeetPolicy: LoginCredentialErrorCodes.PasswordNotMeetPolicy,
 } as const
 
-export class RegisterUserApplication {
-    private usersRepository: IUsersRepository
-    private loginCredentialsRepository: ILoginCredentialsRepository
-    private loginSessionsRepository: ILoginSessionsRepository
+export class RegisterPasswordBasedUserApplication {
+    private usersCommandRepository: IUsersCommandRepository
+    // private usersQueryRepository: IUsersQueryRepository
+    private loginCredentialsRepository: ILoginCredentialsCommandRepository
     private registrationRateLimitService: CheckRegistrationRateLimitService
     private userNameAvailabilityService: CheckUserNameAvailabilityService
     constructor(
-        usersRepository: IUsersRepository,
-        loginCredentialsRepository: ILoginCredentialsRepository,
-        loginSessionsRepository: ILoginSessionsRepository
+        usersQueryRepository: IUsersQueryRepository,
+        usersCommandRepository: IUsersCommandRepository,
+        loginCredentialsRepository: ILoginCredentialsCommandRepository
     ) {
-        this.usersRepository = usersRepository
+        this.usersCommandRepository = usersCommandRepository
+        // this.usersQueryRepository = usersQueryRepository
         this.loginCredentialsRepository = loginCredentialsRepository
-        this.loginSessionsRepository = loginSessionsRepository
-        this.registrationRateLimitService = new CheckRegistrationRateLimitService(usersRepository)
-        this.userNameAvailabilityService = new CheckUserNameAvailabilityService(usersRepository)
+        this.registrationRateLimitService = new CheckRegistrationRateLimitService(
+            usersQueryRepository
+        )
+        this.userNameAvailabilityService = new CheckUserNameAvailabilityService(
+            usersQueryRepository
+        )
     }
     async createUser({ name, ipAddress }: { name: string; ipAddress: string }) {
         await this.registrationRateLimitService.tryCheckIfRateIsLimited(ipAddress)
@@ -60,52 +63,26 @@ export class RegisterUserApplication {
             name: name,
             registrationIpAddress: ipAddress,
         })
-        user.id = await this.usersRepository.add(user)
+        user.id = await this.usersCommandRepository.add(user)
         return user
     }
-    async registerUser({
-        user,
-        password,
-        ipAddress,
-        lastLocation,
-        device,
-    }: {
-        user: UserEntity
-        password: string
-        ipAddress: string
-        lastLocation: string | null
-        device: string | null
-    }) {
+    async registerUser({ user, password }: { user: UserEntity; password: string }) {
         const loginCredential = await LoginCredentialEntity.new(user.id, password)
-        const loginSession = new LoginSessionEntity({
-            userId: user.id,
-            ipAddress,
-            lastLocation,
-            device,
-        })
         await this.loginCredentialsRepository.add(loginCredential)
-        await this.loginSessionsRepository.add(loginSession)
-        return { loginCredential, loginSession }
+        return loginCredential
     }
     async register({
         name,
         password,
         ipAddress,
-        lastLocation,
-        device,
-    }: Argument): Promise<UserEntity> {
+    }: Argument): Promise<[UserEntity, LoginCredentialEntity]> {
         try {
             const user = await this.createUser({ name, ipAddress })
-            const { loginCredential, loginSession } = await this.registerUser({
+            const loginCredential = await this.registerUser({
                 user,
                 password,
-                ipAddress,
-                lastLocation,
-                device,
             })
-            user.loginCredential = loginCredential
-            user.loginSession = loginSession
-            return user
+            return [user, loginCredential]
         } catch (error) {
             if (error instanceof DomainError) {
                 if (error.code === RegistrationRateLimitErrorCodes.TooManyRequests) {
