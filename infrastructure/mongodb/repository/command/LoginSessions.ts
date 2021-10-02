@@ -4,12 +4,15 @@ import {
     TransactionRepositoryInterface,
 } from "../Transaction"
 import { LoginSessionModel, schemaVersion } from "../../schema/LoginSession"
+import {
+    RepositoryError,
+    UnknownRepositoryError,
+} from "../../../../domain/repository/RepositoryError"
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { ILoginSessionsCommandRepository } from "../../../../domain/repository/command/LoginSessions"
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { MongoError } from "mongodb"
-import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 
 export class LoginSessionsCommandRepository
     extends ChangeEventHandler
@@ -46,10 +49,14 @@ export class LoginSessionsCommandRepository
             }
             return true
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
     async update(session: LoginSessionEntity) {
@@ -68,16 +75,20 @@ export class LoginSessionsCommandRepository
                     },
                 }
             )
-            if (result.nModified == 1) {
+            if (result.modifiedCount == 1) {
                 this.emitChanges(session.sessionId)
                 return true
             }
             return false
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
     async delete(session: LoginSessionEntity) {
@@ -93,10 +104,14 @@ export class LoginSessionsCommandRepository
             }
             return false
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
 }

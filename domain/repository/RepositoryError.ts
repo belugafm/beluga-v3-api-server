@@ -7,3 +7,9 @@ export class RepositoryError extends Error {
         this.stack = stack
     }
 }
+
+export class UnknownRepositoryError extends RepositoryError {
+    constructor() {
+        super("unknown_error")
+    }
+}

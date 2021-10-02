@@ -3,13 +3,16 @@ import {
     TransactionRepository,
     TransactionRepositoryInterface,
 } from "../Transaction"
+import {
+    RepositoryError,
+    UnknownRepositoryError,
+} from "../../../../domain/repository/RepositoryError"
 import { SortBy, SortOrder } from "../../../../domain/repository/query/LoginSessions"
 
 import { ILoginSessionsQueryRepository } from "../../../../domain/repository/query/LoginSessions"
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { LoginSessionModel } from "../../schema/LoginSession"
 import { MongoError } from "mongodb"
-import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 import { UserId } from "../../../../domain/types"
 import mongoose from "mongoose"
 
@@ -29,7 +32,7 @@ export class LoginSessionsQueryRepository implements ILoginSessionsQueryReposito
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
     ) {
         try {
-            const user_id = mongoose.Types.ObjectId(userId as string)
+            const user_id = new mongoose.Types.ObjectId(userId as string)
             const session = this._transaction.getSession()
             const docs = await (session
                 ? LoginSessionModel.find({ user_id }, null, { session }).exec()
@@ -40,10 +43,14 @@ export class LoginSessionsQueryRepository implements ILoginSessionsQueryReposito
             })
             return ret
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
 }

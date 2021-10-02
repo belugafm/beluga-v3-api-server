@@ -1,5 +1,6 @@
 import * as vn from "../validation"
 
+import { Entity } from "./Entity"
 import { UserId } from "../types"
 import { ValidateBy } from "../validation/ValidateBy"
 import config from "../../config/app"
@@ -16,7 +17,7 @@ export const ErrorCodes = {
     InvalidDevice: "invalid_device",
 } as const
 
-export class LoginSessionEntity {
+export class LoginSessionEntity extends Entity {
     @ValidateBy(vn.objectId(), { errorCode: ErrorCodes.InvalidUserId })
     userId: UserId
 
@@ -47,6 +48,7 @@ export class LoginSessionEntity {
             ipAddress: LoginSessionEntity["ipAddress"]
         } & Partial<LoginSessionEntity>
     ) {
+        super()
         this.userId = params.userId
         this.sessionId = params.sessionId ? params.sessionId : v4()
         this.ipAddress = params.ipAddress

@@ -14,11 +14,7 @@ class MongoDBTestEnvironment {
         await this.replSet.start()
         await this.replSet.waitUntilRunning()
         const uri = await this.replSet.getUri()
-        await mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true,
-        })
+        await mongoose.connect(uri)
         await UserModel.createCollection()
         await LoginCredentialModel.createCollection()
         await LoginSessionModel.createCollection()

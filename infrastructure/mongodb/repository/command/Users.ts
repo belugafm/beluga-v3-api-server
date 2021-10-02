@@ -3,12 +3,15 @@ import {
     TransactionRepository,
     TransactionRepositoryInterface,
 } from "../Transaction"
+import {
+    RepositoryError,
+    UnknownRepositoryError,
+} from "../../../../domain/repository/RepositoryError"
 import { UserModel, schemaVersion } from "../../schema/User"
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { IUsersCommandRepository } from "../../../../domain/repository/command/Users"
 import { MongoError } from "mongodb"
-import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
 import mongoose from "mongoose"
@@ -60,15 +63,19 @@ export class UsersCommandRepository extends ChangeEventHandler implements IUsers
             const userId = results[0]._id.toHexString()
             return userId
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
     async update(user: UserEntity) {
         try {
-            const _id = mongoose.Types.ObjectId(user.id as string)
+            const _id = new mongoose.Types.ObjectId(user.id as string)
             const result = await UserModel.updateOne(
                 { _id },
                 {
@@ -103,21 +110,25 @@ export class UsersCommandRepository extends ChangeEventHandler implements IUsers
                     },
                 }
             )
-            if (result.nModified == 1) {
+            if (result.modifiedCount == 1) {
                 this.emitChanges(user.id)
                 return true
             }
             return false
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
     async delete(user: UserEntity) {
         try {
-            const _id = mongoose.Types.ObjectId(user.id as string)
+            const _id = new mongoose.Types.ObjectId(user.id as string)
             const session = this._transaction.getSession()
             const result = await (session
                 ? UserModel.deleteOne({ _id }, { session }).exec()
@@ -128,10 +139,14 @@ export class UsersCommandRepository extends ChangeEventHandler implements IUsers
             }
             return false
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
 }

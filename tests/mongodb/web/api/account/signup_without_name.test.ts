@@ -35,7 +35,7 @@ describe("account/signup_without_name", () => {
         expect(pool.size).toBe(repeat)
     })
     test("Normal", async () => {
-        expect.assertions(10)
+        expect.assertions(4)
         try {
             await signup(
                 {
@@ -63,7 +63,7 @@ describe("account/signup_without_name", () => {
             },
             null
         )
-        expect(user1).toBe(UserEntity)
+        expect(user1).toBeInstanceOf(UserEntity)
 
         const user2 = await signup(
             {
@@ -75,7 +75,7 @@ describe("account/signup_without_name", () => {
             },
             null
         )
-        expect(user2).toBe(UserEntity)
+        expect(user2).toBeInstanceOf(UserEntity)
         if (user1) {
             await new DeleteUserApplication(
                 new UsersQueryRepository(),

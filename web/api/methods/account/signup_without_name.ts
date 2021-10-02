@@ -150,8 +150,10 @@ export default defineMethod(
                 } else {
                     raise(errors["internal_error"], error)
                 }
-            } else {
+            } else if (error instanceof Error) {
                 raise(errors["unexpected_error"], error)
+            } else {
+                raise(errors["unexpected_error"], new Error("unexpected_error"))
             }
         }
         return null

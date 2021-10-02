@@ -3,11 +3,14 @@ import {
     TransactionRepository,
     TransactionRepositoryInterface,
 } from "../Transaction"
+import {
+    RepositoryError,
+    UnknownRepositoryError,
+} from "../../../../domain/repository/RepositoryError"
 
 import { ILoginCredentialsQueryRepository } from "../../../../domain/repository/query/LoginCredentials"
 import { LoginCredentialModel } from "../../schema/LoginCredential"
 import { MongoError } from "mongodb"
-import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 import { UserId } from "../../../../domain/types"
 import mongoose from "mongoose"
 
@@ -20,7 +23,7 @@ export class LoginCredentialsQueryRepository implements ILoginCredentialsQueryRe
     }
     async findByUserId(userId: UserId) {
         try {
-            const user_id = mongoose.Types.ObjectId(userId as string)
+            const user_id = new mongoose.Types.ObjectId(userId as string)
             const session = this._transaction.getSession()
             const result = await (session
                 ? LoginCredentialModel.findOne({ user_id }, null, { session }).exec()
@@ -30,10 +33,14 @@ export class LoginCredentialsQueryRepository implements ILoginCredentialsQueryRe
             }
             return result.toEntity()
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
 }

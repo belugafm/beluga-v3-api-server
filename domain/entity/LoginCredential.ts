@@ -1,6 +1,7 @@
 import * as vn from "../validation"
 
 import { DomainError } from "../DomainError"
+import { Entity } from "./Entity"
 import { UserId } from "../types"
 import { ValidateBy } from "../validation/ValidateBy"
 import bcrypt from "bcrypt"
@@ -13,7 +14,7 @@ export const ErrorCodes = {
     PasswordNotMeetPolicy: "password_not_meet_policy",
 } as const
 
-export class LoginCredentialEntity {
+export class LoginCredentialEntity extends Entity {
     // @ts-ignore
 
     @ValidateBy(vn.objectId(), ErrorCodes.InvalidUserId)
@@ -36,6 +37,7 @@ export class LoginCredentialEntity {
         return new LoginCredentialEntity({ userId, passwordHash })
     }
     constructor(params: { userId: UserId; passwordHash: string }) {
+        super()
         this.userId = params.userId
         this.passwordHash = params.passwordHash
     }

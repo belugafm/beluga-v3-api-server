@@ -4,12 +4,15 @@ import {
     TransactionRepositoryInterface,
 } from "../Transaction"
 import { LoginCredentialModel, schemaVersion } from "../../schema/LoginCredential"
+import {
+    RepositoryError,
+    UnknownRepositoryError,
+} from "../../../../domain/repository/RepositoryError"
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { ILoginCredentialsCommandRepository } from "../../../../domain/repository/command/LoginCredentials"
 import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
 import { MongoError } from "mongodb"
-import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 import mongoose from "mongoose"
 
 export class LoginCredentialsCommandRepository
@@ -41,15 +44,19 @@ export class LoginCredentialsCommandRepository
             }
             return true
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
     async delete(credential: LoginCredentialEntity) {
         try {
-            const user_id = mongoose.Types.ObjectId(credential.userId as string)
+            const user_id = new mongoose.Types.ObjectId(credential.userId as string)
             const session = this._transaction.getSession()
             const result = await (session
                 ? LoginCredentialModel.deleteOne({ user_id }, { session }).exec()
@@ -59,10 +66,14 @@ export class LoginCredentialsCommandRepository
             }
             return false
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
     async update(credential: LoginCredentialEntity) {
@@ -75,15 +86,19 @@ export class LoginCredentialsCommandRepository
                     },
                 }
             )
-            if (result.nModified == 1) {
+            if (result.modifiedCount == 1) {
                 return true
             }
             return false
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
 }

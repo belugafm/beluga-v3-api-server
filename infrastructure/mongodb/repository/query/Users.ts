@@ -4,9 +4,12 @@ import {
     TransactionRepositoryInterface,
 } from "../Transaction"
 import { IUsersQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/Users"
+import {
+    RepositoryError,
+    UnknownRepositoryError,
+} from "../../../../domain/repository/RepositoryError"
 
 import { MongoError } from "mongodb"
-import { RepositoryError } from "../../../../domain/repository/RepositoryError"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
 import { UserModel } from "../../schema/User"
@@ -21,7 +24,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     }
     async findById(userId: UserId) {
         try {
-            const _id = mongoose.Types.ObjectId(userId as string)
+            const _id = new mongoose.Types.ObjectId(userId as string)
             const session = this._transaction.getSession()
             const result = await (session
                 ? UserModel.findOne({ _id }, null, { session }).exec()
@@ -31,10 +34,14 @@ export class UsersQueryRepository implements IUsersQueryRepository {
             }
             return result.toEntity()
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
     async findByName(name: string) {
@@ -54,10 +61,14 @@ export class UsersQueryRepository implements IUsersQueryRepository {
             }
             return result.toEntity()
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
     async findByRegistrationIpAddress(
@@ -76,10 +87,14 @@ export class UsersQueryRepository implements IUsersQueryRepository {
             })
             return ret
         } catch (error) {
-            if (error instanceof MongoError) {
-                throw new RepositoryError(error.message, error.stack, error.code)
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
             }
-            throw new RepositoryError(error.message, error.stack)
         }
     }
 }
