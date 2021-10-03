@@ -5,6 +5,7 @@ import { LoginSessionModel } from "./infrastructure/mongodb/schema/LoginSession"
 import { MongoClient } from "mongodb"
 import { MongoMemoryReplSet } from "mongodb-memory-server"
 import { UserModel } from "./infrastructure/mongodb/schema/User"
+import { UsersCommandRepository } from "./infrastructure/mongodb/repository/command/Users"
 import config from "./config/app"
 import mongoose from "mongoose"
 import signup from "./web/api/methods/account/signup"
@@ -36,22 +37,25 @@ async function initialize() {
 }
 
 async function startServer() {
-    const server = new TurboServer({
-        maxParamLength: 128,
-        defaultRoute: (req: Request, res: Response) => {
-            res.setHeader("Content-Type", "application/json")
-            res.setStatusCode(404)
-            res.write(
-                Buffer.from(
-                    JSON.stringify({
-                        ok: false,
-                        error: "endpoint_not_found",
-                    })
+    const server = new TurboServer(
+        {
+            maxParamLength: 128,
+            defaultRoute: (req: Request, res: Response) => {
+                res.setHeader("Content-Type", "application/json")
+                res.setStatusCode(404)
+                res.write(
+                    Buffer.from(
+                        JSON.stringify({
+                            ok: false,
+                            error: "endpoint_not_found",
+                        })
+                    )
                 )
-            )
-            res.end()
+                res.end()
+            },
         },
-    })
+        new UsersCommandRepository()
+    )
 
     // トランザクション中はcollectionの作成ができないので先に作っておく
     await createCollections()
@@ -59,7 +63,9 @@ async function startServer() {
     await initialize()
 
     // routerにendpointを登録
+    console.log("Register endpoints")
     server.register(require("./web/endpoint/account/signup"))
+    server.register(require("./web/endpoint/debug"))
 
     server.listen(config.server.port)
 }
@@ -68,34 +74,33 @@ if (true) {
     const replSet = new MongoMemoryReplSet({
         replSet: { storageEngine: "wiredTiger" },
     })
-    replSet.start().then(async () => {
-        await replSet.waitUntilRunning()
-        const uri = await replSet.getUri()
-        await mongoose.connect(uri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useCreateIndex: true,
-
-            // change streamでwatchしている数よりも
-            // 大きい値に設定する必要がある
-            poolSize: 20,
-        })
-        mongoose.connection.on("error", (err) => {
-            console.error(err)
-        })
-        mongoose.connection.once("open", async () => {
+    replSet
+        .start()
+        .then(async () => {
+            console.log("replSet start")
+            await replSet.waitUntilRunning()
+            console.log("replSet waitUntilRunning")
+            const uri = await replSet.getUri()
+            await mongoose.connect(uri)
+            console.log("Connect mongoose")
+            mongoose.connection.on("error", (err) => {
+                console.error(err)
+            })
+            // mongoose.connection.once("open", async () => {
+            // })
             await startServer()
-            console.log("mongodb:", uri)
-            console.log("web:", config.server.port)
+            console.group("Server runnin on:")
+            console.log("Mongo:", uri)
+            console.log("Web:", `${config.server.domain}:${config.server.port}`)
+            console.groupEnd()
         })
-    })
+        .catch((error) => {
+            console.error(error)
+        })
 } else {
     // 先にdocker-compose upしておく
     const uri = "mongodb://localhost:27017"
-    MongoClient.connect(uri, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    })
+    MongoClient.connect(uri)
         .then((mongodb) => {
             startServer()
         })

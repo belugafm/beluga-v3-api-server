@@ -73,7 +73,7 @@ export class UsersCommandRepository extends ChangeEventHandler implements IUsers
             }
         }
     }
-    async update(user: UserEntity) {
+    async update(user: UserEntity): Promise<boolean> {
         try {
             const _id = new mongoose.Types.ObjectId(user.id as string)
             const result = await UserModel.updateOne(
@@ -126,7 +126,7 @@ export class UsersCommandRepository extends ChangeEventHandler implements IUsers
             }
         }
     }
-    async delete(user: UserEntity) {
+    async delete(user: UserEntity): Promise<boolean> {
         try {
             const _id = new mongoose.Types.ObjectId(user.id as string)
             const session = this._transaction.getSession()
@@ -139,6 +139,42 @@ export class UsersCommandRepository extends ChangeEventHandler implements IUsers
             }
             return false
         } catch (error) {
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
+    async activate(user: UserEntity): Promise<boolean> {
+        if (user.active) {
+            return true
+        }
+        try {
+            user.active = true
+            return await this.update(user)
+        } catch (error) {
+            user.active = false
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
+    async updateLastActivityDate(user: UserEntity, date: Date): Promise<boolean> {
+        const origValue = user.lastActivityDate
+        try {
+            user.lastActivityDate = date
+            return await this.update(user)
+        } catch (error) {
+            user.lastActivityDate = origValue
             if (error instanceof Error) {
                 if (error instanceof MongoError) {
                     throw new RepositoryError(error.message, error.stack, error.code)

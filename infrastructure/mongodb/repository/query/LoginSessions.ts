@@ -23,14 +23,14 @@ export class LoginSessionsQueryRepository implements ILoginSessionsQueryReposito
             this._transaction = transaction
         }
     }
-    async findBySessionId(sessionId: string) {
+    async findBySessionId(sessionId: string): Promise<LoginSessionEntity | null> {
         return null
     }
     async findByUserId(
         userId: UserId,
         sortBy: typeof SortBy[keyof typeof SortBy],
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
-    ) {
+    ): Promise<LoginSessionEntity[]> {
         try {
             const user_id = new mongoose.Types.ObjectId(userId as string)
             const session = this._transaction.getSession()

@@ -26,7 +26,7 @@ export class LoginCredentialsCommandRepository
             this._transaction = transaction
         }
     }
-    async add(credential: LoginCredentialEntity) {
+    async add(credential: LoginCredentialEntity): Promise<boolean> {
         if (credential instanceof LoginCredentialEntity !== true) {
             throw new RepositoryError("user.loginCredential not set")
         }
@@ -54,7 +54,7 @@ export class LoginCredentialsCommandRepository
             }
         }
     }
-    async delete(credential: LoginCredentialEntity) {
+    async delete(credential: LoginCredentialEntity): Promise<boolean> {
         try {
             const user_id = new mongoose.Types.ObjectId(credential.userId as string)
             const session = this._transaction.getSession()
@@ -76,7 +76,7 @@ export class LoginCredentialsCommandRepository
             }
         }
     }
-    async update(credential: LoginCredentialEntity) {
+    async update(credential: LoginCredentialEntity): Promise<boolean> {
         try {
             const result = await LoginCredentialModel.updateOne(
                 { user_id: credential.userId as string },

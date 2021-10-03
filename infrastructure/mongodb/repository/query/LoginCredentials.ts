@@ -21,7 +21,7 @@ export class LoginCredentialsQueryRepository implements ILoginCredentialsQueryRe
             this._transaction = transaction
         }
     }
-    async findByUserId(userId: UserId) {
+    async findByUserId(userId: UserId): Promise<LoginCredentialEntity | null> {
         try {
             const user_id = new mongoose.Types.ObjectId(userId as string)
             const session = this._transaction.getSession()

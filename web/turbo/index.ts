@@ -2,7 +2,7 @@ import { InvalidContentTypeErrorSpec, WebApiRuntimeError } from "../api/error"
 import { Request, Response, read_body } from "./turbo"
 
 import { ContentTypesUnion } from "../api/facts/content_type"
-import { IUsersRepository } from "../../domain/repository/Users"
+import { IUsersCommandRepository } from "../../domain/repository/command/Users"
 import { MethodFacts } from "../api/define"
 import Router from "find-my-way"
 import { UserEntity } from "../../domain/entity/User"
@@ -84,16 +84,16 @@ export const ContentType = {
     JSON: "application/json",
 }
 
-async function activate_user(user: UserEntity) {
-    if (user.dormant === true) {
-        return
-    }
-    if (user.active === true) {
-        return
-    }
-    user.active = true
-    await user.save()
-}
+// async function activate_user(user: UserEntity) {
+//     if (user.dormant === true) {
+//         return
+//     }
+//     if (user.active === true) {
+//         return
+//     }
+//     user.active = true
+//     await user.save()
+// }
 
 const base_url = "/api/v1/"
 
@@ -102,8 +102,8 @@ type Options = {}
 export class TurboServer {
     router: Router.Instance
     server: turbo.Server
-    usersRepository: IUsersRepository
-    constructor(opt: Router.Config, usersRepository: IUsersRepository) {
+    usersRepository: IUsersCommandRepository
+    constructor(opt: Router.Config, usersRepository: IUsersCommandRepository) {
         if (opt.defaultRoute == null) {
             opt.defaultRoute = DefaultRoute
         }
@@ -114,7 +114,8 @@ export class TurboServer {
             const req = new Request(_req)
             const res = new Response(_res)
             const { host } = req.headers
-            if (host !== config.server.domain) {
+            const domain = host.split(":")[0]
+            if (domain !== config.server.domain) {
                 return AccessDeniedRoute(req, res)
             }
             return this.router.lookup(req, res)
@@ -140,28 +141,40 @@ export class TurboServer {
                 const data = await handler(req, res, params)
                 res.write(Buffer.from(JSON.stringify(data)))
             } catch (error) {
-                if (error instanceof WebApiRuntimeError) {
-                    res.write(
-                        Buffer.from(
-                            JSON.stringify({
-                                ok: false,
-                                error_code: error.code,
-                                description: error.description,
-                                argument: error.argument,
-                                hint: error.hint,
-                                additional_message: error.additional_message,
-                                stack: null,
-                            })
+                if (error instanceof Error) {
+                    if (error instanceof WebApiRuntimeError) {
+                        res.write(
+                            Buffer.from(
+                                JSON.stringify({
+                                    ok: false,
+                                    error_code: error.code,
+                                    description: error.description,
+                                    argument: error.argument,
+                                    hint: error.hint,
+                                    additional_message: error.additional_message,
+                                    stack: null,
+                                })
+                            )
                         )
-                    )
+                    } else {
+                        res.write(
+                            Buffer.from(
+                                JSON.stringify({
+                                    ok: false,
+                                    error_code: "unexpected_error",
+                                    description: [error.toString()],
+                                    stack: error.stack?.split("\n"),
+                                })
+                            )
+                        )
+                    }
                 } else {
                     res.write(
                         Buffer.from(
                             JSON.stringify({
                                 ok: false,
                                 error_code: "unexpected_error",
-                                description: [error.toString()],
-                                stack: error.stack.split("\n"),
+                                description: ["unknown_error"],
                             })
                         )
                     )
@@ -191,7 +204,7 @@ export class TurboServer {
                     if (authUser) {
                         // activeなユーザーにする
                         await this.usersRepository.activate(authUser)
-                        await this.usersRepository.updateLastActivityDate(authUser)
+                        await this.usersRepository.updateLastActivityDate(authUser, new Date())
                     }
                     params["authUser"] = authUser
                 }
@@ -207,28 +220,40 @@ export class TurboServer {
                 }
                 res.write(Buffer.from(JSON.stringify(data)))
             } catch (error) {
-                if (error instanceof WebApiRuntimeError) {
-                    res.write(
-                        Buffer.from(
-                            JSON.stringify({
-                                ok: false,
-                                error_code: error.code,
-                                description: error.description,
-                                argument: error.argument,
-                                hint: error.hint,
-                                additional_message: error.additional_message,
-                                stack: null,
-                            })
+                if (error instanceof Error) {
+                    if (error instanceof WebApiRuntimeError) {
+                        res.write(
+                            Buffer.from(
+                                JSON.stringify({
+                                    ok: false,
+                                    error_code: error.code,
+                                    description: error.description,
+                                    argument: error.argument,
+                                    hint: error.hint,
+                                    additional_message: error.additional_message,
+                                    stack: null,
+                                })
+                            )
                         )
-                    )
+                    } else {
+                        res.write(
+                            Buffer.from(
+                                JSON.stringify({
+                                    ok: false,
+                                    error_code: "unexpected_error",
+                                    description: [error.toString()],
+                                    stack: error.stack?.split("\n"),
+                                })
+                            )
+                        )
+                    }
                 } else {
                     res.write(
                         Buffer.from(
                             JSON.stringify({
                                 ok: false,
                                 error_code: "unexpected_error",
-                                description: [error.toString()],
-                                stack: error.stack.split("\n"),
+                                description: ["unknown_error"],
                             })
                         )
                     )

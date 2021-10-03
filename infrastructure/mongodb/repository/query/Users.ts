@@ -22,7 +22,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
             this._transaction = transaction
         }
     }
-    async findById(userId: UserId) {
+    async findById(userId: UserId): Promise<UserEntity | null> {
         try {
             const _id = new mongoose.Types.ObjectId(userId as string)
             const session = this._transaction.getSession()
@@ -44,7 +44,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
             }
         }
     }
-    async findByName(name: string) {
+    async findByName(name: string): Promise<UserEntity | null> {
         try {
             const session = this._transaction.getSession()
             const result = await (session
@@ -75,7 +75,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
         ipAddress: string,
         sortBy: typeof SortBy[keyof typeof SortBy],
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
-    ) {
+    ): Promise<UserEntity[]> {
         try {
             const session = this._transaction.getSession()
             const docs = await (session

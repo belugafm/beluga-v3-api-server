@@ -18,4 +18,5 @@ export const MethodIdentifiers = {
     ShowUser: "users/show",
     ChannelTimeline: "timeline/channel",
     ThreadTimeline: "timeline/thread",
+    Debug: "debug",
 }

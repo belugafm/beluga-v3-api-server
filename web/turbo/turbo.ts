@@ -1,6 +1,6 @@
-import turbo from "turbo-http"
 import cookie from "cookie"
 import multipart from "./multipart"
+import turbo from "turbo-http"
 
 export class Request {
     _req: turbo.Request
@@ -13,9 +13,7 @@ export class Request {
         this._req = req
         Object.assign(this, req)
         this.headers = convert_raw_headers_to_dict(req._options.headers)
-        this.cookies = this.headers["cookie"]
-            ? cookie.parse(this.headers["cookie"])
-            : {}
+        this.cookies = this.headers["cookie"] ? cookie.parse(this.headers["cookie"]) : {}
     }
     onData(handler: (buffer: Buffer, start: number, length: number) => void) {
         this._req.ondata = handler
@@ -113,7 +111,11 @@ export function read_body(req: Request) {
                 reject(new Error("Content-Typeが不正です"))
             } catch (error) {
                 console.error(error)
-                reject(new Error(error.toString()))
+                if (error instanceof Error) {
+                    reject(new Error(error.toString()))
+                } else {
+                    reject(new Error("unknown_error"))
+                }
             }
         })
     })

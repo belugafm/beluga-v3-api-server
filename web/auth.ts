@@ -1,36 +1,33 @@
 import { MethodFacts } from "./api/define"
-import { UserSchema } from "../schema/user"
-import mongoose from "mongoose"
-import authenticate_login_session from "./api/methods/auth/cookie/authenticate"
-import { invalidate } from "../model/user/login_session/invalidate"
+import { UserEntity } from "../domain/entity/User"
 
-export const invalidate_last_login_session = async (cookies: any) => {
-    const [user, session] = await authenticate_user_with_cookie(cookies)
-    if (session) {
-        await invalidate({ session_id: session._id })
-    }
-}
+// export const invalidate_last_login_session = async (cookies: any) => {
+//     const [_, session] = await authenticate_user_with_cookie(cookies)
+//     if (session) {
+//         await invalidate({ session_id: session._id })
+//     }
+// }
 
-export const authenticate_user_with_cookie = async (cookies: any) => {
-    cookies = cookies || {}
-    const user_id_str = cookies["user_id"]
-    const session_id_str = cookies["session_id"]
-    const session_token = cookies["session_token"]
-    if (user_id_str && session_id_str && session_token) {
-        return await authenticate_login_session({
-            user_id: mongoose.Types.ObjectId(user_id_str),
-            session_id: mongoose.Types.ObjectId(session_id_str),
-            session_token: session_token,
-        })
-    }
-    return [null, null]
-}
+// export const authenticate_user_with_cookie = async (cookies: any) => {
+//     cookies = cookies || {}
+//     const user_id_str = cookies["user_id"]
+//     const session_id_str = cookies["session_id"]
+//     const session_token = cookies["session_token"]
+//     if (user_id_str && session_id_str && session_token) {
+//         return await authenticate_login_session({
+//             user_id: new mongoose.Types.ObjectId(user_id_str),
+//             session_id: new mongoose.Types.ObjectId(session_id_str),
+//             session_token: session_token,
+//         })
+//     }
+//     return [null, null]
+// }
 
 export const authenticate_user = async (
     facts: MethodFacts,
     query: any,
     cookies: any
-): Promise<UserSchema | null> => {
+): Promise<UserEntity | null> => {
     query = query || {}
     cookies = cookies || {}
     const {
@@ -53,8 +50,8 @@ export const authenticate_user = async (
     }
     if (facts.acceptedAuthenticationMethods.includes("Cookie")) {
         // Cookieを使ったログインセッション
-        const [user, session] = await authenticate_user_with_cookie(cookies)
-        return user
+        // const [user, _] = await authenticate_user_with_cookie(cookies)
+        // return user
     }
     return null
 }

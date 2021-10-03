@@ -25,7 +25,7 @@ export class LoginSessionsCommandRepository
             this._transaction = transaction
         }
     }
-    async add(session: LoginSessionEntity) {
+    async add(session: LoginSessionEntity): Promise<boolean> {
         if (session instanceof LoginSessionEntity !== true) {
             throw new RepositoryError("user.loginCredential not set")
         }
@@ -59,7 +59,7 @@ export class LoginSessionsCommandRepository
             }
         }
     }
-    async update(session: LoginSessionEntity) {
+    async update(session: LoginSessionEntity): Promise<boolean> {
         try {
             const result = await LoginSessionModel.updateOne(
                 { session_id: session.sessionId },
@@ -91,7 +91,7 @@ export class LoginSessionsCommandRepository
             }
         }
     }
-    async delete(session: LoginSessionEntity) {
+    async delete(session: LoginSessionEntity): Promise<boolean> {
         try {
             const transSession = this._transaction.getSession()
             const query = { session_id: session.sessionId }
