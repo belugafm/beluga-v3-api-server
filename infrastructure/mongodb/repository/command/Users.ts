@@ -111,7 +111,7 @@ export class UsersCommandRepository extends ChangeEventHandler implements IUsers
                 }
             )
             if (result.modifiedCount == 1) {
-                this.emitChanges(user.id)
+                await this.emitChanges(user.id)
                 return true
             }
             return false
@@ -134,7 +134,7 @@ export class UsersCommandRepository extends ChangeEventHandler implements IUsers
                 ? UserModel.deleteOne({ _id }, { session }).exec()
                 : UserModel.deleteOne({ _id }).exec())
             if (result.deletedCount === 1) {
-                this.emitChanges(user.id)
+                await this.emitChanges(user.id)
                 return true
             }
             return false

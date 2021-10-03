@@ -51,10 +51,10 @@ export class UnexpectedErrorSpec {
 
 export function raise<ErrorCode extends string, ArgumentSpecs>(
     spec: ExpectedError<ErrorCode, ArgumentSpecs>,
-    source_error?: Error
+    sourceError?: Error
 ) {
-    if (source_error) {
-        throw new WebApiRuntimeError(spec, source_error.message)
+    if (sourceError) {
+        throw new WebApiRuntimeError(spec, sourceError.message)
     } else {
         throw new WebApiRuntimeError(spec)
     }

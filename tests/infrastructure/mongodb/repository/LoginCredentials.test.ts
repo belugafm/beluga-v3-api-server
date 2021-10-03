@@ -27,19 +27,20 @@ describe("LoginCredentialsRepository", () => {
 
         {
             const _credential = await loginCredentialQueryRepository.findByUserId(userId)
-            expect(_credential).not.toBeNull()
+            expect(_credential).toBeInstanceOf(LoginCredentialEntity)
             expect(_credential?.userId).toBe(loginCredential.userId)
             expect(_credential?.passwordHash).toBe(loginCredential.passwordHash)
         }
 
         const newPassword = "new_password"
         const newLoginCredential = await LoginCredentialEntity.new(userId, newPassword)
-        await loginCredentialsCommandRepository.update(newLoginCredential)
+        const success = await loginCredentialsCommandRepository.update(newLoginCredential)
+        expect(success).toBeTruthy()
 
         const _credential = await loginCredentialQueryRepository.findByUserId(userId)
-        expect(_credential).not.toBeNull()
+        expect(_credential).toBeInstanceOf(LoginCredentialEntity)
         expect(_credential?.userId).toBe(loginCredential.userId)
-        expect(_credential?.passwordHash).toBe(loginCredential.passwordHash)
+        expect(_credential?.passwordHash).toBe(newLoginCredential.passwordHash)
 
         const succeeded = await loginCredentialsCommandRepository.delete(newLoginCredential)
         expect(succeeded).toBeTruthy()

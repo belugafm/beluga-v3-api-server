@@ -86,7 +86,7 @@ const config: {
             max_count: number
         }
     }
-    in_memory_cache: {
+    query_cache: {
         enabled: boolean
         cache_limit: number
         default_expire_seconds: number
@@ -210,7 +210,7 @@ const config: {
             max_count: 10,
         },
     },
-    in_memory_cache: {
+    query_cache: {
         enabled: true,
         cache_limit: 1000,
         default_expire_seconds: 600,

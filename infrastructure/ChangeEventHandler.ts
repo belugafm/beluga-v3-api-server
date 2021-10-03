@@ -3,7 +3,7 @@ import { EntityId } from "../domain/types"
 export class ChangeEventHandler {
     static subscribe(func: any) {}
     protected static _eventListeners: ((changedId: EntityId) => void)[] = []
-    protected emitChanges(changedEntityId: EntityId) {}
+    protected async emitChanges(changedEntityId: EntityId) {}
     constructor(cls: any) {
         if (cls.hasOwnProperty("_eventListeners")) {
             return

@@ -1,30 +1,38 @@
 import {
     ErrorCodes,
     RegisterPasswordBasedUserApplication,
-} from "../../../application/registration/RegisterPasswordBasedUser"
-import { LoginCredentialsQueryRepository, TransactionRepository } from "../../../web/repositories"
+} from "../../application/registration/RegisterPasswordBasedUser"
 
-import { ApplicationError } from "../../../application/ApplicationError"
-import { LoginCredentialEntity } from "../../../domain/entity/LoginCredential"
-import { LoginCredentialsCommandRepository } from "../../../infrastructure/mongodb/repository/command/LoginCredentials"
-import { RepositoryError } from "../../../domain/repository/RepositoryError"
-import { UserEntity } from "../../../domain/entity/User"
-import { UsersCommandRepository } from "../../../infrastructure/mongodb/repository/command/Users"
-import { UsersQueryRepository } from "../../../infrastructure/mongodb/repository/query/Users"
-import config from "../../../config/app"
-import { db } from "../../env"
-import { sleep } from "../../functions"
+import { ApplicationError } from "../../application/ApplicationError"
+import { ILoginCredentialsCommandRepository } from "../../domain/repository/command/LoginCredentials"
+import { ITransactionRepository } from "../../domain/repository/Transaction"
+import { IUsersCommandRepository } from "../../domain/repository/command/Users"
+import { IUsersQueryRepository } from "../../domain/repository/query/Users"
+import { LoginCredentialEntity } from "../../domain/entity/LoginCredential"
+import { UserEntity } from "../../domain/entity/User"
+import config from "../../config/app"
+import { sleep } from "../functions"
 
-jest.setTimeout(60000)
+interface NewableRepository<T> {
+    new (transaction?: ITransactionRepository): T
+}
+type NewableTransaction<C extends ITransactionRepository> = {
+    new: () => Promise<C>
+}
 
-describe("RegisterUserApplication", () => {
-    beforeAll(async () => {
-        await db.connect()
-    })
-    afterAll(async () => {
-        await db.disconnect()
-    })
-    test("Normal", async () => {
+export class RegisterUserTests {
+    constructor() {}
+    async testNormal<
+        S extends IUsersQueryRepository,
+        T extends IUsersCommandRepository,
+        U extends ILoginCredentialsCommandRepository,
+        V extends ITransactionRepository
+    >(
+        UsersQueryRepository: NewableRepository<S>,
+        UsersCommandRepository: NewableRepository<T>,
+        LoginCredentialsCommandRepository: NewableRepository<U>,
+        TransactionRepository: NewableTransaction<V>
+    ) {
         const repeat = 100
         const userNames: string[] = []
         expect.assertions(3 * repeat)
@@ -33,7 +41,7 @@ describe("RegisterUserApplication", () => {
             const app = new RegisterPasswordBasedUserApplication(
                 new UsersQueryRepository(transaction),
                 new UsersCommandRepository(transaction),
-                new LoginCredentialsQueryRepository(transaction)
+                new LoginCredentialsCommandRepository(transaction)
             )
             const name = `admin_${k}`
             await transaction.begin()
@@ -59,15 +67,25 @@ describe("RegisterUserApplication", () => {
                 await usersCommandRepository.delete(_user)
             }
         }
-    })
-    test("NameTaken", async () => {
+    }
+    async testNameTaken<
+        S extends IUsersQueryRepository,
+        T extends IUsersCommandRepository,
+        U extends ILoginCredentialsCommandRepository,
+        V extends ITransactionRepository
+    >(
+        UsersQueryRepository: NewableRepository<S>,
+        UsersCommandRepository: NewableRepository<T>,
+        LoginCredentialsCommandRepository: NewableRepository<U>,
+        TransactionRepository: NewableTransaction<V>
+    ) {
         expect.assertions(2)
         const transaction = await TransactionRepository.new()
         await transaction.begin()
         const app = new RegisterPasswordBasedUserApplication(
             new UsersQueryRepository(transaction),
             new UsersCommandRepository(transaction),
-            new LoginCredentialsQueryRepository(transaction)
+            new LoginCredentialsCommandRepository(transaction)
         )
         const name = "admin"
         await app.register({
@@ -93,8 +111,18 @@ describe("RegisterUserApplication", () => {
         }
         await transaction.rollback()
         await transaction.end()
-    })
-    test("TooManyRequests", async () => {
+    }
+    async testTooManyRequests<
+        S extends IUsersQueryRepository,
+        T extends IUsersCommandRepository,
+        U extends ILoginCredentialsCommandRepository,
+        V extends ITransactionRepository
+    >(
+        UsersQueryRepository: NewableRepository<S>,
+        UsersCommandRepository: NewableRepository<T>,
+        LoginCredentialsCommandRepository: NewableRepository<U>,
+        TransactionRepository: NewableTransaction<V>
+    ) {
         expect.assertions(2)
         const transaction = await TransactionRepository.new()
         const origValue = config.user_registration.limit
@@ -103,7 +131,7 @@ describe("RegisterUserApplication", () => {
         const app = new RegisterPasswordBasedUserApplication(
             new UsersQueryRepository(transaction),
             new UsersCommandRepository(transaction),
-            new LoginCredentialsQueryRepository(transaction)
+            new LoginCredentialsCommandRepository(transaction)
         )
         const name = "admin"
         await app.register({
@@ -139,15 +167,25 @@ describe("RegisterUserApplication", () => {
         await transaction.rollback()
         await transaction.end()
         config.user_registration.limit = origValue
-    })
-    test("UserNameNotMeetPolicy", async () => {
+    }
+    async testUserNameNotMeetPolicy<
+        S extends IUsersQueryRepository,
+        T extends IUsersCommandRepository,
+        U extends ILoginCredentialsCommandRepository,
+        V extends ITransactionRepository
+    >(
+        UsersQueryRepository: NewableRepository<S>,
+        UsersCommandRepository: NewableRepository<T>,
+        LoginCredentialsCommandRepository: NewableRepository<U>,
+        TransactionRepository: NewableTransaction<V>
+    ) {
         expect.assertions(2)
         const transaction = await TransactionRepository.new()
         await transaction.begin()
         const app = new RegisterPasswordBasedUserApplication(
             new UsersQueryRepository(transaction),
             new UsersCommandRepository(transaction),
-            new LoginCredentialsQueryRepository(transaction)
+            new LoginCredentialsCommandRepository(transaction)
         )
         try {
             await app.register({
@@ -165,15 +203,25 @@ describe("RegisterUserApplication", () => {
         }
         await transaction.rollback()
         await transaction.end()
-    })
-    test("PasswordNotMeetPolicy", async () => {
+    }
+    async testPasswordNotMeetPolicy<
+        S extends IUsersQueryRepository,
+        T extends IUsersCommandRepository,
+        U extends ILoginCredentialsCommandRepository,
+        V extends ITransactionRepository
+    >(
+        UsersQueryRepository: NewableRepository<S>,
+        UsersCommandRepository: NewableRepository<T>,
+        LoginCredentialsCommandRepository: NewableRepository<U>,
+        TransactionRepository: NewableTransaction<V>
+    ) {
         expect.assertions(2)
         const transaction = await TransactionRepository.new()
         await transaction.begin()
         const app = new RegisterPasswordBasedUserApplication(
             new UsersQueryRepository(transaction),
             new UsersCommandRepository(transaction),
-            new LoginCredentialsQueryRepository(transaction)
+            new LoginCredentialsCommandRepository(transaction)
         )
         try {
             await app.register({
@@ -191,20 +239,24 @@ describe("RegisterUserApplication", () => {
         }
         await transaction.rollback()
         await transaction.end()
-    })
-    test("Transaction", async () => {
+    }
+    async testTransaction<
+        S extends IUsersQueryRepository,
+        T extends IUsersCommandRepository,
+        U extends ILoginCredentialsCommandRepository,
+        V extends ITransactionRepository
+    >(
+        UsersQueryRepository: NewableRepository<S>,
+        UsersCommandRepository: NewableRepository<T>,
+        LoginCredentialsCommandRepository: NewableRepository<U>,
+        TransactionRepository: NewableTransaction<V>
+    ) {
         expect.assertions(3)
-
-        class TestLoginCredentialsRepository extends LoginCredentialsCommandRepository {
-            async add(credential: LoginCredentialEntity): Promise<boolean> {
-                throw new RepositoryError("")
-            }
-        }
         const transaction = await TransactionRepository.new()
         const app = new RegisterPasswordBasedUserApplication(
             new UsersQueryRepository(transaction),
             new UsersCommandRepository(transaction),
-            new TestLoginCredentialsRepository(transaction)
+            new LoginCredentialsCommandRepository(transaction)
         )
         const name = "admin"
         try {
@@ -229,5 +281,5 @@ describe("RegisterUserApplication", () => {
             const user = await usersRepository.findByName(name)
             expect(user).toBeNull()
         }
-    })
-})
+    }
+}

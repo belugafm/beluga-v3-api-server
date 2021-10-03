@@ -6,7 +6,7 @@ import {
 } from "../../../../application/registration/RegisterPasswordBasedUser"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import {
-    LoginCredentialsQueryRepository,
+    LoginCredentialsCommandRepository,
     UsersCommandRepository,
     UsersQueryRepository,
 } from "../../../repositories"
@@ -136,7 +136,7 @@ export default defineMethod(
             const app = new RegisterPasswordBasedUserApplication(
                 new UsersQueryRepository(transaction),
                 new UsersCommandRepository(transaction),
-                new LoginCredentialsQueryRepository(transaction)
+                new LoginCredentialsCommandRepository(transaction)
             )
             const [user, _] = await app.register({
                 name: args.name,

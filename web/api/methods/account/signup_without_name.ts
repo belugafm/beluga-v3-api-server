@@ -6,7 +6,7 @@ import {
 } from "../../../../application/registration/RegisterPasswordBasedUser"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import {
-    LoginCredentialsQueryRepository,
+    LoginCredentialsCommandRepository,
     UsersCommandRepository,
     UsersQueryRepository,
 } from "../../../repositories"
@@ -124,7 +124,7 @@ export default defineMethod(
             const app = new RegisterPasswordBasedUserApplication(
                 new UsersQueryRepository(transaction),
                 new UsersCommandRepository(transaction),
-                new LoginCredentialsQueryRepository(transaction)
+                new LoginCredentialsCommandRepository(transaction)
             )
             const name = generateRandomName(
                 (config.user.name.max_length - config.user.name.min_length) / 2

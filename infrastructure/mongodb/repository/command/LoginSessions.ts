@@ -76,7 +76,7 @@ export class LoginSessionsCommandRepository
                 }
             )
             if (result.modifiedCount == 1) {
-                this.emitChanges(session.sessionId)
+                await this.emitChanges(session.sessionId)
                 return true
             }
             return false
@@ -99,7 +99,7 @@ export class LoginSessionsCommandRepository
                 ? LoginSessionModel.deleteOne(query, { session: transSession }).exec()
                 : LoginSessionModel.deleteOne(query).exec())
             if (result.deletedCount === 1) {
-                this.emitChanges(session.sessionId)
+                await this.emitChanges(session.sessionId)
                 return true
             }
             return false
