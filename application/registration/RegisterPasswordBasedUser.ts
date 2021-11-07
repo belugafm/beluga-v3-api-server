@@ -22,8 +22,6 @@ type Argument = {
     name: string
     password: string
     ipAddress: string
-    lastLocation: string | null
-    device: string | null
 }
 
 export const ErrorCodes = {
@@ -37,17 +35,17 @@ export const ErrorCodes = {
 export class RegisterPasswordBasedUserApplication {
     private usersCommandRepository: IUsersCommandRepository
     // private usersQueryRepository: IUsersQueryRepository
-    private loginCredentialsRepository: ILoginCredentialsCommandRepository
+    private loginCredentialsCommandRepository: ILoginCredentialsCommandRepository
     private registrationRateLimitService: CheckRegistrationRateLimitService
     private userNameAvailabilityService: CheckUserNameAvailabilityService
     constructor(
         usersQueryRepository: IUsersQueryRepository,
         usersCommandRepository: IUsersCommandRepository,
-        loginCredentialsRepository: ILoginCredentialsCommandRepository
+        loginCredentialsCommandRepository: ILoginCredentialsCommandRepository
     ) {
         this.usersCommandRepository = usersCommandRepository
         // this.usersQueryRepository = usersQueryRepository
-        this.loginCredentialsRepository = loginCredentialsRepository
+        this.loginCredentialsCommandRepository = loginCredentialsCommandRepository
         this.registrationRateLimitService = new CheckRegistrationRateLimitService(
             usersQueryRepository
         )
@@ -68,7 +66,7 @@ export class RegisterPasswordBasedUserApplication {
     }
     async registerUser({ user, password }: { user: UserEntity; password: string }) {
         const loginCredential = await LoginCredentialEntity.new(user.id, password)
-        await this.loginCredentialsRepository.add(loginCredential)
+        await this.loginCredentialsCommandRepository.add(loginCredential)
         return loginCredential
     }
     async register({

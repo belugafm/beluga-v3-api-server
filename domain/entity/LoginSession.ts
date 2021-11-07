@@ -21,7 +21,7 @@ export class LoginSessionEntity extends Entity {
     @ValidateBy(vn.objectId(), { errorCode: ErrorCodes.InvalidUserId })
     userId: UserId
 
-    @ValidateBy(vn.string({ maxLength: 128 }), { errorCode: ErrorCodes.InvalidSessionId })
+    @ValidateBy(vn.sessionId(), { errorCode: ErrorCodes.InvalidSessionId })
     sessionId: string
 
     @ValidateBy(vn.ipAddress(), { errorCode: ErrorCodes.InvalidIpAddress })

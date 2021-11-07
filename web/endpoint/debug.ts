@@ -4,15 +4,16 @@ import { TurboServer } from "../turbo"
 
 export default (server: TurboServer) => {
     server.get(facts, async (req, res, params) => {
-        const user = await debug(
+        const [user, loginSession] = await debug(
             {
-                name: req.body.name,
+                password: "hogehoge",
             },
             null
         )
         return {
             ok: true,
-            user: user,
+            user: user?.dict(),
+            loginSession: loginSession?.dict(),
         }
     })
 }

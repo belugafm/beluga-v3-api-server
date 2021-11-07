@@ -127,12 +127,11 @@ export function defineMethod<
         [ArgumentName in RequiredArgNames]: ReturnType<
             ArgumentSpecs[ArgumentName]["validator"]["type"]
         >
-    } &
-        {
-            [ArgumentName in OptionalArgNames]?: ReturnType<
-                ArgumentSpecs[ArgumentName]["validator"]["type"]
-            >
-        },
+    } & {
+        [ArgumentName in OptionalArgNames]?: ReturnType<
+            ArgumentSpecs[ArgumentName]["validator"]["type"]
+        >
+    },
     ErrorCodes,
     CallbackReturnType
 >(
@@ -185,7 +184,8 @@ export function defineMethod<
                 } catch (validationError) {
                     if (validationError instanceof ValidationError) {
                         const error = errorsAssociatedWithArgs[argumentName]
-                        if (error === null) {
+                        if (error == null) {
+                            // エラーメッセージの定義漏れがあるとここに到達する
                             throw new WebApiRuntimeError(
                                 new InternalErrorSpec(),
                                 "引数の値チェックを完了できません"

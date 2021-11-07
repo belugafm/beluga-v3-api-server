@@ -12,4 +12,11 @@ export class Entity {
         }
         console.log("}")
     }
+    dict() {
+        const ret: { [key: string]: any } = {}
+        for (const key in this) {
+            ret[key] = this[key]
+        }
+        return ret
+    }
 }

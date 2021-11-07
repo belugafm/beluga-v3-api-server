@@ -142,8 +142,6 @@ export default defineMethod(
                 name: args.name,
                 password: args.password,
                 ipAddress: args.ipAddress,
-                lastLocation: args.lastLocation ? args.lastLocation : null,
-                device: args.device ? args.device : null,
             })
             await transaction.commit()
             await transaction.end()

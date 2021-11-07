@@ -23,7 +23,7 @@ export class IPGeolocationEntity extends Entity {
     @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidTor })
     tor: boolean
 
-    constructor(params: UserEntity) {
+    constructor(params: IPGeolocationEntity) {
         super()
         this.country = params.country
         this.region = params.region

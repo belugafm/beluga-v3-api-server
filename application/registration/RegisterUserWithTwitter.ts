@@ -24,8 +24,6 @@ type Argument = {
     name: string
     password: string
     ipAddress: string
-    lastLocation: string | null
-    device: string | null
 }
 
 export const ErrorCodes = {
