@@ -9,6 +9,7 @@ import {
 } from "../../../../domain/repository/RepositoryError"
 
 import { ILoginCredentialsQueryRepository } from "../../../../domain/repository/query/LoginCredentials"
+import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
 import { LoginCredentialModel } from "../../schema/LoginCredential"
 import { MongoError } from "mongodb"
 import { UserId } from "../../../../domain/types"
