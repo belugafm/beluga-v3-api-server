@@ -50,7 +50,7 @@ export class LoginSessionEntity extends Entity {
     ) {
         super()
         this.userId = params.userId
-        this.sessionId = params.sessionId ? params.sessionId : v4()
+        this.sessionId = params.sessionId ? params.sessionId : [v4(), v4()].join("-")
         this.ipAddress = params.ipAddress
         this.expireDate = params.expireDate
             ? params.expireDate

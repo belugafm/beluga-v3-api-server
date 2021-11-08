@@ -1,40 +1,32 @@
-import { InternalErrorSpec, WebApiRuntimeError } from "../../api/error"
-import signup, { facts } from "../../api/methods/account/signup"
+import signup_without_name, { facts } from "../../api/methods/account/signup_without_name"
 
 import { TurboServer } from "../../turbo"
+import config from "../../../config/app"
 
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
-        const user = await signup(
+        const remoteIpAddress = req.headers["x-real-ip"]
+        const [user, _, loginSession, __] = await signup_without_name(
             {
-                name: req.body.name,
                 password: req.body.password,
-                confirmationPassword: req.body.confirmed_password,
-                ipAddress: params["ipAddress"],
+                confirmation_password: req.body.confirmation_password,
+                ip_address: remoteIpAddress,
             },
+            remoteIpAddress,
             null
         )
-        if (user == null) {
-            throw new WebApiRuntimeError(new InternalErrorSpec())
+        if (loginSession) {
+            res.setCookie("session_id", loginSession.sessionId, {
+                expires: loginSession.expireDate,
+                domain: config.server.domain,
+                path: "/",
+                httpOnly: true,
+                secure: config.server.https,
+            })
         }
-        // const session = user.loginSession
-        // if (session == null) {
-        //     throw new WebApiRuntimeError(new InternalErrorSpec())
-        // }
-        // res.setCookie("user_id", `${session.userId}`, {
-        //     expires: session.expireDate,
-        //     domain: config.server.domain,
-        //     path: "/",
-        //     httpOnly: true,
-        // })
-        // res.setCookie("session_id", session.sessionId, {
-        //     expires: session.expireDate,
-        //     domain: config.server.domain,
-        //     path: "/",
-        //     httpOnly: true,
-        // })
         return {
             ok: true,
+            user: user,
         }
     })
 }

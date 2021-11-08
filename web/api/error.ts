@@ -24,7 +24,7 @@ export class InvalidContentTypeErrorSpec {
 }
 
 export class EndpointUnavailableErrorSpec {
-    description = ["このAPIは無効化されています"]
+    description = ["このAPIは利用できません"]
     hint = []
     code = "endpoint_unavailable" as const
 }

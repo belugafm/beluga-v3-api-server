@@ -24,7 +24,26 @@ export class LoginSessionsQueryRepository implements ILoginSessionsQueryReposito
         }
     }
     async findBySessionId(sessionId: string): Promise<LoginSessionEntity | null> {
-        return null
+        try {
+            const session = this._transaction.getSession()
+            const result = await (session
+                ? LoginSessionModel.findOne({ session_id: sessionId }, null, { session })
+                : LoginSessionModel.findOne({ session_id: sessionId })
+            ).exec()
+            if (result == null) {
+                return null
+            }
+            return result.toEntity()
+        } catch (error) {
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
     }
     async findByUserId(
         userId: UserId,

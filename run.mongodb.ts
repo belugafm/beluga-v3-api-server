@@ -8,7 +8,6 @@ import { UserModel } from "./infrastructure/mongodb/schema/User"
 import { UsersCommandRepository } from "./infrastructure/mongodb/repository/command/Users"
 import config from "./config/app"
 import mongoose from "mongoose"
-import signup from "./web/api/methods/account/signup"
 
 async function createCollections() {
     try {
@@ -22,19 +21,19 @@ async function createCollections() {
     } catch (error) {}
 }
 
-async function initialize() {
-    try {
-        await signup(
-            {
-                name: config.admin.name,
-                password: config.admin.password,
-                confirmationPassword: config.admin.password,
-                ipAddress: "0.0.0.0",
-            },
-            null
-        )
-    } catch (error) {}
-}
+// async function initialize() {
+//     try {
+//         await signup(
+//             {
+//                 name: config.admin.name,
+//                 password: config.admin.password,
+//                 confirmationPassword: config.admin.password,
+//                 ipAddress: "0.0.0.0",
+//             },
+//             null
+//         )
+//     } catch (error) {}
+// }
 
 async function startServer() {
     const server = new TurboServer(
@@ -60,12 +59,13 @@ async function startServer() {
     // トランザクション中はcollectionの作成ができないので先に作っておく
     await createCollections()
 
-    await initialize()
+    // await initialize()
 
     // routerにendpointを登録
     console.log("Register endpoints")
     server.register(require("./web/endpoint/account/signup"))
-    server.register(require("./web/endpoint/debug"))
+    server.register(require("./web/endpoint/auth/cookie/authenticate"))
+    // server.register(require("./web/endpoint/debug"))
 
     server.listen(config.server.port)
 }

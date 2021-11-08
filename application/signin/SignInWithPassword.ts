@@ -1,4 +1,6 @@
 import { ApplicationError } from "../ApplicationError"
+import { AuthenticityTokenEntity } from "../../domain/entity/AuthenticityToken"
+import { IAuthenticityTokenCommandRepository } from "../../domain/repository/command/AuthenticityToken"
 import { ILoginCredentialsQueryRepository } from "../../domain/repository/query/LoginCredentials"
 import { ILoginSessionsCommandRepository } from "../../domain/repository/command/LoginSessions"
 import { IUsersQueryRepository } from "../../domain/repository/query/Users"
@@ -26,16 +28,19 @@ export class SignInWithPasswordApplication {
     private usersQueryRepository: IUsersQueryRepository
     private loginCredentialsQueryRepository: ILoginCredentialsQueryRepository
     private loginSessionCommandRepository: ILoginSessionsCommandRepository
+    private authenticityTokenCommandRepository: IAuthenticityTokenCommandRepository
     constructor(
         usersQueryRepository: IUsersQueryRepository,
         loginCredentialsQueryRepository: ILoginCredentialsQueryRepository,
-        loginSessionCommandRepository: ILoginSessionsCommandRepository
+        loginSessionCommandRepository: ILoginSessionsCommandRepository,
+        authenticityTokenCommandRepository: IAuthenticityTokenCommandRepository
     ) {
         this.usersQueryRepository = usersQueryRepository
         this.loginCredentialsQueryRepository = loginCredentialsQueryRepository
         this.loginSessionCommandRepository = loginSessionCommandRepository
+        this.authenticityTokenCommandRepository = authenticityTokenCommandRepository
     }
-    async createSession(
+    async createLoginSession(
         userId: UserId,
         ipAddress: Argument["ipAddress"],
         lastLocation: Argument["lastLocation"],
@@ -50,13 +55,20 @@ export class SignInWithPasswordApplication {
         await this.loginSessionCommandRepository.add(session)
         return session
     }
+    async createAuthenticityToken(sessionId: string) {
+        const token = new AuthenticityTokenEntity({ sessionId })
+        await this.authenticityTokenCommandRepository.add(token)
+        return token
+    }
     async signin({
         name,
         password,
         ipAddress,
         lastLocation,
         device,
-    }: Argument): Promise<[UserEntity, LoginCredentialEntity, LoginSessionEntity]> {
+    }: Argument): Promise<
+        [UserEntity, LoginCredentialEntity, LoginSessionEntity, AuthenticityTokenEntity]
+    > {
         try {
             const user = await this.usersQueryRepository.findByName(name)
             if (user == null) {
@@ -70,8 +82,14 @@ export class SignInWithPasswordApplication {
             if (match == false) {
                 throw new ApplicationError(ErrorCodes.IncorrectPassword)
             }
-            const loginSession = await this.createSession(user.id, ipAddress, lastLocation, device)
-            return [user, loginCredential, loginSession]
+            const loginSession = await this.createLoginSession(
+                user.id,
+                ipAddress,
+                lastLocation,
+                device
+            )
+            const authenticityToken = await this.createAuthenticityToken(loginSession.sessionId)
+            return [user, loginCredential, loginSession, authenticityToken]
         } catch (error) {
             throw new ApplicationError(ErrorCodes.InternalError)
         }

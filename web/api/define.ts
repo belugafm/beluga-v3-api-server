@@ -1,4 +1,9 @@
-import { InternalErrorSpec, InvalidAuth, WebApiRuntimeError } from "./error"
+import {
+    EndpointUnavailableErrorSpec,
+    InternalErrorSpec,
+    InvalidAuth,
+    WebApiRuntimeError,
+} from "./error"
 
 import { AuthenticationMethodsLiteralUnion } from "./facts/authentication_method"
 import { ContentTypesUnion } from "./facts/content_type"
@@ -9,6 +14,7 @@ import { TokenTypesUnion } from "./facts/token_type"
 import { UserEntity } from "../../domain/entity/User"
 import { ValidationError } from "../../domain/validation/ValidationError"
 import { Validator } from "../../domain/validation/Validator"
+import config from "../../config/app"
 
 // Web APIの仕様を定義
 export interface MethodFacts {
@@ -20,6 +26,10 @@ export interface MethodFacts {
     // GETかPOSTか
     // それ以外のHTTP Methodは基本使わない
     httpMethod: HttpMethodUnion
+
+    // 公開APIかどうか
+    // SSRサーバーからのみアクセスを許可する場合に使う
+    private: boolean
 
     // 規制レベルをトークンの種類ごとに設定する
     // UserトークンとBotトークンで規制レベルを異なる設定にすることがある
@@ -143,11 +153,20 @@ export function defineMethod<
         errors: ExpectedErrorSpecs<ArgumentSpecs, ErrorCodes>,
         authUser: UserEntity | null
     ) => Promise<CallbackReturnType>
-): (args: Args, authUser: UserEntity | null) => Promise<CallbackReturnType> {
-    return (args: Args, authUser: UserEntity | null) => {
+): (
+    args: Args,
+    remoteIpAddress: string,
+    authUser: UserEntity | null
+) => Promise<CallbackReturnType> {
+    return (args: Args, remoteIpAddress: string, authUser: UserEntity | null) => {
         if (facts.authenticationRequired) {
             if (authUser === null) {
                 throw new WebApiRuntimeError(new InvalidAuth())
+            }
+        }
+        if (facts.private) {
+            if (config.private_api.allowed_ip_addresses.includes(remoteIpAddress) !== true) {
+                throw new WebApiRuntimeError(new EndpointUnavailableErrorSpec())
             }
         }
         // 各argumentに関連付けられた、値チェック失敗時のエラーを送出できるようにする

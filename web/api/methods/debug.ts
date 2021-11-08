@@ -1,12 +1,13 @@
 import * as vs from "../../../domain/validation"
 
-import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../error"
 import {
+    AuthenticityTokenCommandRepository,
     LoginCredentialsCommandRepository,
     LoginSessionsCommandRepository,
     UsersCommandRepository,
     UsersQueryRepository,
 } from "../../repositories"
+import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../define"
 
 import { ApplicationError } from "../../../application/ApplicationError"
@@ -64,6 +65,7 @@ export const facts: MethodFacts = {
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
     authenticationRequired: false,
+    private: false,
     acceptedAuthenticationMethods: [],
     acceptedScopes: {},
     description: ["テスト用endpoint"],
@@ -100,7 +102,8 @@ export default defineMethod(
             const [user, _, loginSession] = await new SignInWithPasswordApplication(
                 new UsersQueryRepository(transaction),
                 new LoginCredentialsQueryRepository(transaction),
-                new LoginSessionsCommandRepository(transaction)
+                new LoginSessionsCommandRepository(transaction),
+                new AuthenticityTokenCommandRepository(transaction)
             ).signin({
                 name: name,
                 password: args.password,

@@ -2,6 +2,7 @@ import * as vn from "../validation"
 
 import { Entity } from "./Entity"
 import { ValidateBy } from "../validation/ValidateBy"
+import { v4 } from "uuid"
 
 export const ErrorCodes = {
     InvalidSessionId: "invalid_session_id",
@@ -10,14 +11,18 @@ export const ErrorCodes = {
 
 export class AuthenticityTokenEntity extends Entity {
     @ValidateBy(vn.sessionId(), { errorCode: ErrorCodes.InvalidSessionId })
-    sessionId: UserId
+    sessionId: string
 
     @ValidateBy(vn.sessionId(), { errorCode: ErrorCodes.InvalidToken })
     token: string
 
-    constructor(params: AuthenticityTokenEntity) {
+    constructor(
+        params: {
+            sessionId: AuthenticityTokenEntity["sessionId"]
+        } & Partial<AuthenticityTokenEntity>
+    ) {
         super()
         this.sessionId = params.sessionId
-        this.token = params.token
+        this.token = params.token ? params.token : [v4(), v4()].join("-")
     }
 }

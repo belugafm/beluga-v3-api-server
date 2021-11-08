@@ -5,6 +5,9 @@ const config: {
         https: boolean
         get_base_url: () => string
     }
+    private_api: {
+        allowed_ip_addresses: string[]
+    }
     terms_of_service: {
         version: string
     }
@@ -106,6 +109,9 @@ const config: {
                 return `http://${config.server.domain}`
             }
         },
+    },
+    private_api: {
+        allowed_ip_addresses: ["127.0.0.1"],
     },
     terms_of_service: {
         version: "dc96fc180a405bf5c2d1631ab69444e71bbbd0ac",

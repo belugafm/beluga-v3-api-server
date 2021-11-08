@@ -1,28 +1,35 @@
 import * as vs from "../../../../domain/validation"
 
 import {
+    AuthenticityTokenCommandRepository,
+    LoginCredentialsCommandRepository,
+    LoginCredentialsQueryRepository,
+    LoginSessionsCommandRepository,
+    UsersCommandRepository,
+    UsersQueryRepository,
+} from "../../../repositories"
+import {
     ErrorCodes,
     RegisterPasswordBasedUserApplication,
 } from "../../../../application/registration/RegisterPasswordBasedUser"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
-import {
-    LoginCredentialsCommandRepository,
-    UsersCommandRepository,
-    UsersQueryRepository,
-} from "../../../repositories"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
+import { AuthenticityTokenEntity } from "../../../../domain/entity/AuthenticityToken"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
+import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
+import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { MethodIdentifiers } from "../../identifier"
+import { SignInWithPasswordApplication } from "../../../../application/signin/SignInWithPassword"
 import { TransactionRepository } from "../../../../infrastructure/mongodb/repository/Transaction"
 import { UserEntity } from "../../../../domain/entity/User"
 import config from "../../../../config/app"
 import crypto from "crypto"
 
 export const argumentSpecs = defineArguments(
-    ["password", "confirmationPassword", "ipAddress"] as const,
+    ["password", "confirmation_password", "ip_address"] as const,
     {
         password: {
             description: ["パスワード"],
@@ -30,29 +37,17 @@ export const argumentSpecs = defineArguments(
             required: true,
             validator: vs.password(),
         },
-        confirmationPassword: {
+        confirmation_password: {
             description: ["確認用のパスワード"],
             examples: ["do_not_use_this_password_0123"],
             required: true,
             validator: vs.password(),
         },
-        ipAddress: {
+        ip_address: {
             description: ["登録時のIPアドレス"],
             examples: ["192.168.1.1"],
             required: true,
             validator: vs.ipAddress(),
-        },
-        lastLocation: {
-            description: ["IP Geolocationの結果"],
-            examples: ["Shinjuku-ku, Tokyo, Japan"],
-            required: false,
-            validator: vs.string(),
-        },
-        device: {
-            description: ["User-Agentなど"],
-            examples: ["Chrome on Linux"],
-            required: false,
-            validator: vs.string(),
         },
     }
 )
@@ -78,7 +73,7 @@ export const expectedErrorSpecs = defineErrors(
         confirmation_password_not_match: {
             description: ["確認用のパスワードが一致しません"],
             hint: ["パスワードと確認用パスワードは同じものを入力してください"],
-            argument: "confirmationPassword",
+            argument: "confirmation_password",
             code: "confirmation_password_not_match",
         },
         too_many_requests: {
@@ -97,6 +92,7 @@ export const facts: MethodFacts = {
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
     authenticationRequired: false,
+    private: false,
     acceptedAuthenticationMethods: [],
     acceptedScopes: {},
     description: ["新規アカウントを作成します"],
@@ -114,31 +110,51 @@ export default defineMethod(
     facts,
     argumentSpecs,
     expectedErrorSpecs,
-    async (args, errors): Promise<UserEntity | null> => {
-        if (args.password !== args.confirmationPassword) {
+    async (
+        args,
+        errors
+    ): Promise<
+        [
+            UserEntity | null,
+            LoginCredentialEntity | null,
+            LoginSessionEntity | null,
+            AuthenticityTokenEntity | null
+        ]
+    > => {
+        if (args.password !== args.confirmation_password) {
             raise(errors["confirmation_password_not_match"])
         }
         const transaction = await TransactionRepository.new()
         await transaction.begin()
         try {
-            const app = new RegisterPasswordBasedUserApplication(
-                new UsersQueryRepository(transaction),
-                new UsersCommandRepository(transaction),
-                new LoginCredentialsCommandRepository(transaction)
-            )
             const name = generateRandomName(
                 (config.user.name.max_length - config.user.name.min_length) / 2
             )
-            const [user, _] = await app.register({
+            await new RegisterPasswordBasedUserApplication(
+                new UsersQueryRepository(transaction),
+                new UsersCommandRepository(transaction),
+                new LoginCredentialsCommandRepository(transaction)
+            ).register({
                 name: name,
                 password: args.password,
-                ipAddress: args.ipAddress,
-                lastLocation: args.lastLocation ? args.lastLocation : null,
-                device: args.device ? args.device : null,
+                ipAddress: args.ip_address,
             })
+            const [user, loginCredential, loginSession, authenticityToken] =
+                await new SignInWithPasswordApplication(
+                    new UsersQueryRepository(transaction),
+                    new LoginCredentialsQueryRepository(transaction),
+                    new LoginSessionsCommandRepository(transaction),
+                    new AuthenticityTokenCommandRepository(transaction)
+                ).signin({
+                    name: name,
+                    password: args.password,
+                    ipAddress: args.ip_address,
+                    lastLocation: null,
+                    device: null,
+                })
             await transaction.commit()
             await transaction.end()
-            return user
+            return [user, loginCredential, loginSession, authenticityToken]
         } catch (error) {
             await transaction.rollback()
             await transaction.end()
@@ -156,6 +172,6 @@ export default defineMethod(
                 raise(errors["unexpected_error"], new Error("unexpected_error"))
             }
         }
-        return null
+        return [null, null, null, null]
     }
 )

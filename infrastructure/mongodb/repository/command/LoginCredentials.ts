@@ -28,7 +28,7 @@ export class LoginCredentialsCommandRepository
     }
     async add(credential: LoginCredentialEntity): Promise<boolean> {
         if (credential instanceof LoginCredentialEntity !== true) {
-            throw new RepositoryError("user.loginCredential not set")
+            throw new RepositoryError("XXX")
         }
         try {
             const doc = {
