@@ -56,7 +56,7 @@ export default defineMethod(
     facts,
     argumentSpecs,
     expectedErrorSpecs,
-    async (args, errors): Promise<[UserEntity | null, AuthenticityTokenEntity | null]> => {
+    async (args, errors): Promise<[UserEntity, AuthenticityTokenEntity]> => {
         try {
             const [user, _, authenticityToken] = await new CookieAuthenticationApplication(
                 new UsersQueryRepository(),
@@ -73,6 +73,5 @@ export default defineMethod(
                 raise(errors["unexpected_error"], new Error("unexpected_error"))
             }
         }
-        return [null, null]
     }
 )

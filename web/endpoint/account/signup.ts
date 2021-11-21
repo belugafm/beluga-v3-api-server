@@ -26,7 +26,7 @@ export default (server: TurboServer) => {
         }
         return {
             ok: true,
-            user: user,
+            user: user.toResponseObject(),
         }
     })
 }

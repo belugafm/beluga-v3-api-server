@@ -321,9 +321,8 @@ export class TwitterAuthenticationApplication {
         oauthToken: string,
         oauthVerifier: string,
         ipAddress: string
-    ): Promise<UserEntity | null> {
+    ): Promise<UserEntity> {
         const accessTokenResponse = await this.getAccessToken(oauthToken, oauthVerifier)
-        console.log(accessTokenResponse)
         if (accessTokenResponse == null) {
             throw new ApplicationError(ErrorCodes.InternalError)
         }
@@ -332,16 +331,13 @@ export class TwitterAuthenticationApplication {
             accessTokenResponse.oauthTokenSecret,
             accessTokenResponse.userId
         )
-        console.log(userResponse)
         if (userResponse == null) {
             throw new ApplicationError(ErrorCodes.InternalError)
         }
         const existingUser = await this.usersQueryRepository.findByTwitterUserId(userResponse.id)
         if (existingUser) {
-            console.log("user existing")
             return existingUser
         }
-        console.log("creating new user")
         const name = await this.generateUserName(userResponse.screenName)
         const user = new UserEntity({
             id: -1,
@@ -351,7 +347,6 @@ export class TwitterAuthenticationApplication {
             twitterUserId: userResponse.id,
         })
         user.id = await this.usersCommandRepository.add(user)
-        console.log(name)
         return user
     }
 }

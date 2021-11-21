@@ -105,12 +105,7 @@ export default defineMethod(
         args,
         errors
     ): Promise<
-        [
-            UserEntity | null,
-            LoginCredentialEntity | null,
-            LoginSessionEntity | null,
-            AuthenticityTokenEntity | null
-        ]
+        [UserEntity, LoginCredentialEntity, LoginSessionEntity, AuthenticityTokenEntity]
     > => {
         if (args.password !== args.confirmation_password) {
             raise(errors["confirmation_password_not_match"])
@@ -163,6 +158,5 @@ export default defineMethod(
                 raise(errors["unexpected_error"], new Error("unexpected_error"))
             }
         }
-        return [null, null, null, null]
     }
 )

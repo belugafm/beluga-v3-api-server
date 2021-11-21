@@ -52,7 +52,7 @@ export class UnexpectedErrorSpec {
 export function raise<ErrorCode extends string, ArgumentSpecs>(
     spec: ExpectedError<ErrorCode, ArgumentSpecs>,
     sourceError?: Error
-) {
+): never {
     if (sourceError) {
         throw new WebApiRuntimeError(spec, sourceError.message)
     } else {

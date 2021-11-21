@@ -1,13 +1,21 @@
 import * as vs from "../../../../../domain/validation"
 
+import {
+    AuthenticityTokenCommandRepository,
+    LoginSessionsCommandRepository,
+} from "../../../../repositories"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../../define"
 import { UsersCommandRepository, UsersQueryRepository } from "../../../../repositories"
 
 import { ApplicationError } from "../../../../../application/ApplicationError"
+import { AuthenticityTokenEntity } from "../../../../../domain/entity/AuthenticityToken"
 import { ContentTypes } from "../../../facts/content_type"
 import { HttpMethods } from "../../../facts/http_method"
+import { LoginSessionEntity } from "../../../../../domain/entity/LoginSession"
 import { MethodIdentifiers } from "../../../identifier"
+import { SignInWithTwitterApplication } from "../../../../../application/signin/SignInWithTwitter"
+import { TransactionRepository } from "../../../../../infrastructure/mongodb/repository/Transaction"
 import { TwitterAuthenticationApplication } from "../../../../../application/authentication/Twitter"
 import { UserEntity } from "../../../../../domain/entity/User"
 
@@ -60,13 +68,31 @@ export default defineMethod(
     facts,
     argumentSpecs,
     expectedErrorSpecs,
-    async (args, errors): Promise<UserEntity | null> => {
+    async (args, errors): Promise<[UserEntity, LoginSessionEntity, AuthenticityTokenEntity]> => {
+        const transaction = await TransactionRepository.new()
+        await transaction.begin()
         try {
-            return await new TwitterAuthenticationApplication(
+            const user = await new TwitterAuthenticationApplication(
                 new UsersQueryRepository(),
                 new UsersCommandRepository()
             ).authenticate(args.oauth_token, args.oauth_verifier, args.ip_address)
+            const [_, loginSession, authenticityToken] = await new SignInWithTwitterApplication(
+                new UsersQueryRepository(transaction),
+                new LoginSessionsCommandRepository(transaction),
+                new AuthenticityTokenCommandRepository(transaction)
+            ).signin({
+                // @ts-ignore
+                twitterUserId: user.twitterUserId,
+                ipAddress: args.ip_address,
+                lastLocation: null,
+                device: null,
+            })
+            await transaction.commit()
+            await transaction.end()
+            return [user, loginSession, authenticityToken]
         } catch (error) {
+            await transaction.rollback()
+            await transaction.end()
             if (error instanceof ApplicationError) {
                 raise(errors["internal_error"], error)
             } else if (error instanceof Error) {
@@ -75,6 +101,5 @@ export default defineMethod(
                 raise(errors["unexpected_error"], new Error("unexpected_error"))
             }
         }
-        return null
     }
 )

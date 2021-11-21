@@ -53,6 +53,5 @@ export default defineMethod(
                 raise(errors["unexpected_error"], new Error("unexpected_error"))
             }
         }
-        return null
     }
 )
