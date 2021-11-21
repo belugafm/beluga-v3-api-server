@@ -65,6 +65,8 @@ async function startServer() {
     console.log("Register endpoints")
     server.register(require("./web/endpoint/account/signup"))
     server.register(require("./web/endpoint/auth/cookie/authenticate"))
+    server.register(require("./web/endpoint/auth/twitter/request_token"))
+    server.register(require("./web/endpoint/auth/twitter/authenticate"))
     // server.register(require("./web/endpoint/debug"))
 
     server.listen(config.server.port)

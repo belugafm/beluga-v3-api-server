@@ -97,6 +97,11 @@ const config: {
     blocks: {
         enabled: boolean
     }
+    twitter: {
+        api_key: string
+        api_key_secret: string
+        callback_url: string
+    }
 } = {
     server: {
         domain: "localhost.beluga.fm",
@@ -223,6 +228,11 @@ const config: {
     },
     blocks: {
         enabled: false,
+    },
+    twitter: {
+        api_key: "YOUR_API_KEY",
+        api_key_secret: "YOUR_API_KEY_SCRET",
+        callback_url: "CALLBACK_URL",
     },
 }
 

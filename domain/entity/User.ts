@@ -3,6 +3,15 @@ import * as vn from "../validation"
 import { Entity } from "./Entity"
 import { UserId } from "../types"
 import { ValidateBy } from "../validation/ValidateBy"
+import crypto from "crypto"
+
+export const generateRandomName = (length: number): string => {
+    const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    const N = 16
+    return Array.from(crypto.randomFillSync(new Uint8Array(N)))
+        .map((n) => S[n % S.length])
+        .join("")
+}
 
 export const ErrorCodes = {
     InvalidId: "invalid_id",
@@ -156,5 +165,33 @@ export class UserEntity extends Entity {
             ? params.termsOfServiceAgreementVersion
             : null
         this.registrationIpAddress = params.registrationIpAddress
+    }
+    toResponseObject() {
+        return {
+            id: this.id.toString(),
+            name: this.name,
+            display_name: this.displayName,
+            profile_image_url: this.profileImageUrl,
+            location: this.location,
+            url: this.url,
+            description: this.description,
+            theme_color: this.themeColor,
+            background_image_url: this.backgroundImageUrl,
+            default_profile: this.defaultProfile,
+            created_at: this.createdAt,
+            status_count: this.statusCount,
+            favorites_count: this.favoritedCount,
+            favorited_count: this.favoritedCount,
+            likes_count: this.likesCount,
+            liked_count: this.likedCount,
+            channels_count: this.channelsCount,
+            following_channels_count: this.followingChannelsCount,
+            bot: this.bot,
+            active: this.active,
+            dormant: this.dormant,
+            suspended: this.suspended,
+            trust_level: this.trustLevel,
+            last_activity_date: this.lastActivityDate,
+        }
     }
 }

@@ -13,7 +13,7 @@ export default (server: TurboServer) => {
         )
         return {
             ok: true,
-            user: user,
+            user: user?.toResponseObject(),
             authenticity_token: authenticityToken?.token,
         }
     })

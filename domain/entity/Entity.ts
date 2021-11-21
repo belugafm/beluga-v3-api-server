@@ -19,4 +19,7 @@ export class Entity {
         }
         return ret
     }
+    toResponseObject() {
+        throw Error("not_implemented")
+    }
 }

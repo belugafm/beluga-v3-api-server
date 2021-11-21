@@ -71,6 +71,28 @@ export class UsersQueryRepository implements IUsersQueryRepository {
             }
         }
     }
+    async findByTwitterUserId(twitterUserId: string): Promise<UserEntity | null> {
+        try {
+            const session = this._transaction.getSession()
+            const result = await (session
+                ? UserModel.findOne({ twitter_user_id: twitterUserId }, null, { session })
+                : UserModel.findOne({ twitter_user_id: twitterUserId })
+            ).exec()
+            if (result == null) {
+                return null
+            }
+            return result.toEntity()
+        } catch (error) {
+            if (error instanceof Error) {
+                if (error instanceof MongoError) {
+                    throw new RepositoryError(error.message, error.stack, error.code)
+                }
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
     async findByRegistrationIpAddress(
         ipAddress: string,
         sortBy: typeof SortBy[keyof typeof SortBy],

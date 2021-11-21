@@ -14,6 +14,7 @@ import {
 } from "../../../../application/registration/RegisterPasswordBasedUser"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
+import { UserEntity, generateRandomName } from "../../../../domain/entity/User"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { AuthenticityTokenEntity } from "../../../../domain/entity/AuthenticityToken"
@@ -24,9 +25,7 @@ import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { MethodIdentifiers } from "../../identifier"
 import { SignInWithPasswordApplication } from "../../../../application/signin/SignInWithPassword"
 import { TransactionRepository } from "../../../../infrastructure/mongodb/repository/Transaction"
-import { UserEntity } from "../../../../domain/entity/User"
 import config from "../../../../config/app"
-import crypto from "crypto"
 
 export const argumentSpecs = defineArguments(
     ["password", "confirmation_password", "ip_address"] as const,
@@ -96,14 +95,6 @@ export const facts: MethodFacts = {
     acceptedAuthenticationMethods: [],
     acceptedScopes: {},
     description: ["新規アカウントを作成します"],
-}
-
-export const generateRandomName = (length: number): string => {
-    const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    const N = 16
-    return Array.from(crypto.randomFillSync(new Uint8Array(N)))
-        .map((n) => S[n % S.length])
-        .join("")
 }
 
 export default defineMethod(

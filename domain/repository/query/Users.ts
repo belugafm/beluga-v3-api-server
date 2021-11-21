@@ -12,6 +12,7 @@ export const SortOrder = {
 
 export interface IUsersQueryRepository {
     findById(userId: UserId): Promise<UserEntity | null>
+    findByTwitterUserId(twitterUserId: string): Promise<UserEntity | null>
     findByName(name: string): Promise<UserEntity | null>
     findByRegistrationIpAddress(
         ipAddress: string,
