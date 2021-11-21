@@ -20,7 +20,7 @@ import { TwitterAuthenticationApplication } from "../../../../../application/aut
 import { UserEntity } from "../../../../../domain/entity/User"
 
 export const argumentSpecs = defineArguments(
-    ["oauth_token", "oauth_verifier", "ip_address"] as const,
+    ["oauth_token", "oauth_verifier", "auth_session_id", "ip_address"] as const,
     {
         oauth_token: {
             description: ["oauth_token"],
@@ -30,6 +30,12 @@ export const argumentSpecs = defineArguments(
         },
         oauth_verifier: {
             description: ["oauth_verifier"],
+            examples: ["XXXXXXXXXX-XXXXXXXXXXXXX"],
+            required: true,
+            validator: vs.string(),
+        },
+        auth_session_id: {
+            description: ["セッションID"],
             examples: ["XXXXXXXXXX-XXXXXXXXXXXXX"],
             required: true,
             validator: vs.string(),
@@ -75,7 +81,12 @@ export default defineMethod(
             const user = await new TwitterAuthenticationApplication(
                 new UsersQueryRepository(),
                 new UsersCommandRepository()
-            ).authenticate(args.oauth_token, args.oauth_verifier, args.ip_address)
+            ).authenticate({
+                oauthToken: args.oauth_token,
+                oauthVerifier: args.oauth_verifier,
+                ipAddress: args.ip_address,
+                authSessionId: args.auth_session_id,
+            })
             const [_, loginSession, authenticityToken] = await new SignInWithTwitterApplication(
                 new UsersQueryRepository(transaction),
                 new LoginSessionsCommandRepository(transaction),

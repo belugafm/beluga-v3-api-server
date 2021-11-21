@@ -5,15 +5,18 @@ import { CheckUserNameAvailabilityService } from "../../domain/service/CheckUser
 import { GetInitialTrustLevelService } from "../../domain/service/GetInitialTrustLevel"
 import { IUsersCommandRepository } from "../../domain/repository/command/Users"
 import { IUsersQueryRepository } from "../../domain/repository/query/Users"
+import { InMemoryCache } from "../../cache/data_store/memory"
 import OAuth from "oauth-1.0a"
 import { URLSearchParams } from "url"
 import axios from "axios"
 import config from "../../config/app"
 import crypto from "crypto"
 import { isString } from "../../domain/validation"
+import { v4 } from "uuid"
 
 export const ErrorCodes = {
     InternalError: "internal_error",
+    InvalidSession: "invalid_session",
     ApiResponseError: "api_response_error",
     ApiAuthError: "api_auth_error",
 } as const
@@ -35,6 +38,18 @@ function getParam(params: URLSearchParams, key: string): string | null {
     return null
 }
 
+function getOAuth(): OAuth {
+    return new OAuth({
+        consumer: {
+            key: config.twitter.api_key,
+            secret: config.twitter.api_key_secret,
+        },
+        signature_method: "HMAC-SHA1",
+        hash_function: (baseString, key) =>
+            crypto.createHmac("sha1", key).update(baseString).digest("base64"),
+    })
+}
+
 type NullableStringParams<T> = {
     [K in keyof T]: string | null
 }
@@ -42,6 +57,7 @@ type NullableStringParams<T> = {
 export class RequestTokenResponse {
     oauthToken: string
     oauthTokenSecret: string
+    authSessionId: string
     constructor(params: NullableStringParams<RequestTokenResponse>) {
         if (isString(params.oauthToken)) {
             this.oauthToken = params.oauthToken
@@ -52,6 +68,11 @@ export class RequestTokenResponse {
             this.oauthTokenSecret = params.oauthTokenSecret
         } else {
             throw new ResponseError("oauthTokenSecret")
+        }
+        if (isString(params.authSessionId)) {
+            this.authSessionId = params.authSessionId
+        } else {
+            throw new ResponseError("authSessionId")
         }
     }
 }
@@ -121,6 +142,14 @@ export class UserResponse {
     }
 }
 
+// 直にcallbackを叩かれるのを防ぐための一時的なセッション
+// わざわざ物理ストレージに保存する必要はないはず
+export const authSessionExpireSeconds = 600
+const tmpSessionStore = new InMemoryCache<boolean>({
+    cacheLimit: 1000,
+    defaultExpireSeconds: authSessionExpireSeconds,
+})
+
 export class TwitterAuthenticationApplication {
     private usersQueryRepository: IUsersQueryRepository
     private usersCommandRepository: IUsersCommandRepository
@@ -137,15 +166,7 @@ export class TwitterAuthenticationApplication {
     }
     async getRequestToken(): Promise<RequestTokenResponse | null> {
         const url = "https://api.twitter.com/oauth/request_token"
-        const oauth = new OAuth({
-            consumer: {
-                key: config.twitter.api_key,
-                secret: config.twitter.api_key_secret,
-            },
-            signature_method: "HMAC-SHA1",
-            hash_function: (baseString, key) =>
-                crypto.createHmac("sha1", key).update(baseString).digest("base64"),
-        })
+        const oauth = getOAuth()
         const authHeader = oauth.toHeader(
             oauth.authorize({
                 url: url,
@@ -162,9 +183,15 @@ export class TwitterAuthenticationApplication {
                 },
             })
             const params = new URLSearchParams(res.data)
+
+            // 保存する値は何でもいい
+            const authSessionId = v4()
+            tmpSessionStore.set(authSessionId, true)
+
             return new RequestTokenResponse({
                 oauthToken: getParam(params, "oauth_token"),
                 oauthTokenSecret: getParam(params, "oauth_token_secret"),
+                authSessionId: authSessionId,
             })
         } catch (error) {
             if (error instanceof Error) {
@@ -186,15 +213,7 @@ export class TwitterAuthenticationApplication {
         oauthVerifier: string
     ): Promise<AccessTokenResponse | null> {
         const url = "https://api.twitter.com/oauth/access_token"
-        const oauth = new OAuth({
-            consumer: {
-                key: config.twitter.api_key,
-                secret: config.twitter.api_key_secret,
-            },
-            signature_method: "HMAC-SHA1",
-            hash_function: (baseString, key) =>
-                crypto.createHmac("sha1", key).update(baseString).digest("base64"),
-        })
+        const oauth = getOAuth()
         const authHeader = oauth.toHeader(
             oauth.authorize({
                 url: url,
@@ -247,15 +266,7 @@ export class TwitterAuthenticationApplication {
             new URLSearchParams({
                 user_id: userId,
             }).toString()
-        const oauth = new OAuth({
-            consumer: {
-                key: config.twitter.api_key,
-                secret: config.twitter.api_key_secret,
-            },
-            signature_method: "HMAC-SHA1",
-            hash_function: (baseString, key) =>
-                crypto.createHmac("sha1", key).update(baseString).digest("base64"),
-        })
+        const oauth = getOAuth()
         const authHeader = oauth.toHeader(
             oauth.authorize(
                 {
@@ -318,11 +329,23 @@ export class TwitterAuthenticationApplication {
         }
         return screenName
     }
-    async authenticate(
-        oauthToken: string,
-        oauthVerifier: string,
+    async authenticate(params: {
+        oauthToken: string
+        oauthVerifier: string
+        authSessionId: string
         ipAddress: string
-    ): Promise<UserEntity> {
+    }): Promise<UserEntity> {
+        const { oauthToken, oauthVerifier, authSessionId, ipAddress } = params
+        // セッション
+        if (isString(authSessionId) == false) {
+            throw new ApplicationError(ErrorCodes.InternalError)
+        }
+        const isValidRequest = tmpSessionStore.get(authSessionId)
+        if (isValidRequest !== true) {
+            throw new ApplicationError(ErrorCodes.InvalidSession)
+        }
+        tmpSessionStore.delete(authSessionId)
+
         const accessTokenResponse = await this.getAccessToken(oauthToken, oauthVerifier)
         if (accessTokenResponse == null) {
             throw new ApplicationError(ErrorCodes.InternalError)

@@ -6,10 +6,12 @@ import config from "../../../../config/app"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = req.headers["x-real-ip"]
+        const authSessionId = req.cookies["tw_auth_session_id"]
         const [user, loginSession, _] = await authenticate(
             {
                 oauth_token: req.body.oauth_token,
                 oauth_verifier: req.body.oauth_verifier,
+                auth_session_id: authSessionId,
                 ip_address: remoteIpAddress,
             },
             remoteIpAddress,

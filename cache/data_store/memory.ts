@@ -1,9 +1,7 @@
-import { Entity } from "../../domain/entity/Entity"
-
-export class CachedObject {
+export class CachedObject<T> {
     expireDate: Date
-    value: Entity
-    constructor(value: Entity, expireSeconds: number) {
+    value: T
+    constructor(value: T, expireSeconds: number) {
         this.value = value
         this.expireDate = new Date(Date.now() + expireSeconds * 1000)
     }
@@ -16,16 +14,17 @@ export class CachedObject {
     }
 }
 
-export class InMemoryCache {
-    cacheLimit: number
-    defaultExpireSeconds: number
-    data: { [key: string]: CachedObject }
-    constructor(cacheLimit: number, default_expire_seconds: number) {
-        this.cacheLimit = cacheLimit
-        this.defaultExpireSeconds = default_expire_seconds
+export class InMemoryCache<T> {
+    private cacheLimit: number // キャッシュの容量
+    private defaultExpireSeconds: number
+    private data: { [key: string]: CachedObject<T> }
+    constructor(params: { cacheLimit: number; defaultExpireSeconds: number }) {
+        this.cacheLimit = params.cacheLimit
+        this.defaultExpireSeconds = params.defaultExpireSeconds
         this.data = {}
     }
-    get(key: string): Entity | null {
+    clear() {}
+    get(key: string): T | null {
         if (key in this.data !== true) {
             return null
         }

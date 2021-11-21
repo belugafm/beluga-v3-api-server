@@ -19,7 +19,7 @@ describe("UsersRepository", () => {
 
         const cacheLimit = 2
         const expireSec = 5
-        const kvs = new InMemoryCache(cacheLimit, expireSec)
+        const kvs = new InMemoryCache({ cacheLimit, defaultExpireSeconds: expireSec })
         {
             const key = `user_${user1.id}`
             kvs.set(key, user1)
