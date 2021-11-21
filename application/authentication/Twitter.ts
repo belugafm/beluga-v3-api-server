@@ -2,6 +2,7 @@ import { UserEntity, generateRandomName } from "../../domain/entity/User"
 
 import { ApplicationError } from "../ApplicationError"
 import { CheckUserNameAvailabilityService } from "../../domain/service/CheckUserNameAvailability"
+import { GetInitialTrustLevelService } from "../../domain/service/GetInitialTrustLevel"
 import { IUsersCommandRepository } from "../../domain/repository/command/Users"
 import { IUsersQueryRepository } from "../../domain/repository/query/Users"
 import OAuth from "oauth-1.0a"
@@ -345,6 +346,11 @@ export class TwitterAuthenticationApplication {
             displayName: userResponse.name,
             registrationIpAddress: ipAddress,
             twitterUserId: userResponse.id,
+            trustLevel: GetInitialTrustLevelService.getTrustLevel({
+                signedUpWithTwitter: true,
+                invitedByAuthorizedUser: false,
+                twitterAccountCreatedAt: userResponse.createdAt,
+            }),
         })
         user.id = await this.usersCommandRepository.add(user)
         return user

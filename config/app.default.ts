@@ -11,7 +11,6 @@ const config: {
     terms_of_service: {
         version: string
     }
-    trust_levels: { label: string; level: number }[]
     admin: {
         name: string
         password: string
@@ -121,13 +120,6 @@ const config: {
     terms_of_service: {
         version: "dc96fc180a405bf5c2d1631ab69444e71bbbd0ac",
     },
-    trust_levels: [
-        { label: "不審ユーザー", level: 0 },
-        { label: "ビジター", level: 1 },
-        { label: "認証ユーザー", level: 2 },
-        { label: "モデレーター", level: 3 },
-        { label: "管理者", level: 4 },
-    ],
     admin: {
         name: "admin",
 
