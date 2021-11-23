@@ -2,7 +2,6 @@ import { UserEntity, generateRandomName } from "../../domain/entity/User"
 
 import { ApplicationError } from "../ApplicationError"
 import { CheckUserNameAvailabilityService } from "../../domain/service/CheckUserNameAvailability"
-import { GetInitialTrustLevelService } from "../../domain/service/GetInitialTrustLevel"
 import { IUsersCommandRepository } from "../../domain/repository/command/Users"
 import { IUsersQueryRepository } from "../../domain/repository/query/Users"
 import { InMemoryCache } from "../../cache/data_store/memory"
@@ -55,19 +54,19 @@ type NullableStringParams<T> = {
 }
 
 export class RequestTokenResponse {
-    oauthToken: string
-    oauthTokenSecret: string
+    token: string
+    tokenSecret: string
     authSessionId: string
     constructor(params: NullableStringParams<RequestTokenResponse>) {
-        if (isString(params.oauthToken)) {
-            this.oauthToken = params.oauthToken
+        if (isString(params.token)) {
+            this.token = params.token
         } else {
-            throw new ResponseError("oauthToken")
+            throw new ResponseError("token")
         }
-        if (isString(params.oauthTokenSecret)) {
-            this.oauthTokenSecret = params.oauthTokenSecret
+        if (isString(params.tokenSecret)) {
+            this.tokenSecret = params.tokenSecret
         } else {
-            throw new ResponseError("oauthTokenSecret")
+            throw new ResponseError("tokenSecret")
         }
         if (isString(params.authSessionId)) {
             this.authSessionId = params.authSessionId
@@ -78,19 +77,19 @@ export class RequestTokenResponse {
 }
 
 export class AccessTokenResponse {
-    oauthToken: string
-    oauthTokenSecret: string
+    token: string
+    tokenSecret: string
     userId: string
     constructor(params: NullableStringParams<AccessTokenResponse>) {
-        if (isString(params.oauthToken)) {
-            this.oauthToken = params.oauthToken
+        if (isString(params.token)) {
+            this.token = params.token
         } else {
-            throw new ResponseError("oauthToken")
+            throw new ResponseError("token")
         }
-        if (isString(params.oauthTokenSecret)) {
-            this.oauthTokenSecret = params.oauthTokenSecret
+        if (isString(params.tokenSecret)) {
+            this.tokenSecret = params.tokenSecret
         } else {
-            throw new ResponseError("oauthTokenSecret")
+            throw new ResponseError("tokenSecret")
         }
         if (isString(params.userId)) {
             this.userId = params.userId
@@ -144,11 +143,16 @@ export class UserResponse {
 
 // 直にcallbackを叩かれるのを防ぐための一時的なセッション
 // わざわざ物理ストレージに保存する必要はないはず
+// oauth/request_tokenが返すoauth_tokenを保存する
 export const authSessionExpireSeconds = 600
-const tmpSessionStore = new InMemoryCache<boolean>({
+const tmpSessionStore = new InMemoryCache<string>({
     cacheLimit: 1000,
     defaultExpireSeconds: authSessionExpireSeconds,
 })
+
+// Log in with Twitterの実装では'oauth_token'という名前の全く違う２つのトークンを扱うことになる
+// oauth/request_tokenが返すoauth_tokenをrequest_token、
+// oauth/access_tokenが返すoauth_tokenをaccess_tokenと呼ぶ
 
 export class TwitterAuthenticationApplication {
     private usersQueryRepository: IUsersQueryRepository
@@ -183,14 +187,16 @@ export class TwitterAuthenticationApplication {
                 },
             })
             const params = new URLSearchParams(res.data)
-
-            // 保存する値は何でもいい
+            const oauthToken = getParam(params, "oauth_token")
+            if (oauthToken == null) {
+                throw new Error()
+            }
             const authSessionId = v4()
-            tmpSessionStore.set(authSessionId, true)
+            tmpSessionStore.set(authSessionId, oauthToken)
 
             return new RequestTokenResponse({
-                oauthToken: getParam(params, "oauth_token"),
-                oauthTokenSecret: getParam(params, "oauth_token_secret"),
+                token: getParam(params, "oauth_token"),
+                tokenSecret: getParam(params, "oauth_token_secret"),
                 authSessionId: authSessionId,
             })
         } catch (error) {
@@ -209,8 +215,8 @@ export class TwitterAuthenticationApplication {
         }
     }
     async getAccessToken(
-        oauthToken: string,
-        oauthVerifier: string
+        requestToken: string,
+        verifier: string
     ): Promise<AccessTokenResponse | null> {
         const url = "https://api.twitter.com/oauth/access_token"
         const oauth = getOAuth()
@@ -219,14 +225,14 @@ export class TwitterAuthenticationApplication {
                 url: url,
                 method: "POST",
                 data: {
-                    oauth_token: oauthToken,
+                    oauth_token: requestToken,
                 },
             })
         )
 
         try {
             const query = new URLSearchParams({
-                oauth_verifier: oauthVerifier,
+                oauth_verifier: verifier,
             })
             const res = await axios.post(url, query.toString(), {
                 headers: {
@@ -235,8 +241,8 @@ export class TwitterAuthenticationApplication {
             })
             const params = new URLSearchParams(res.data)
             return new AccessTokenResponse({
-                oauthToken: getParam(params, "oauth_token"),
-                oauthTokenSecret: getParam(params, "oauth_token_secret"),
+                token: getParam(params, "oauth_token"),
+                tokenSecret: getParam(params, "oauth_token_secret"),
                 userId: getParam(params, "user_id"),
             })
         } catch (error) {
@@ -255,8 +261,8 @@ export class TwitterAuthenticationApplication {
         }
     }
     async verifyCredentials(
-        oauthToken: string,
-        oauthTokenSecret: string,
+        accessToken: string,
+        accessTokenSecret: string,
         userId: string
     ): Promise<UserResponse | null> {
         const baseUrl = "https://api.twitter.com/1.1/users/show.json"
@@ -274,8 +280,8 @@ export class TwitterAuthenticationApplication {
                     method: "GET",
                 },
                 {
-                    key: oauthToken,
-                    secret: oauthTokenSecret,
+                    key: accessToken,
+                    secret: accessTokenSecret,
                 }
             )
         )
@@ -330,29 +336,29 @@ export class TwitterAuthenticationApplication {
         return screenName
     }
     async authenticate(params: {
-        oauthToken: string
-        oauthVerifier: string
+        requestToken: string
+        verifier: string
         authSessionId: string
         ipAddress: string
     }): Promise<UserEntity> {
-        const { oauthToken, oauthVerifier, authSessionId, ipAddress } = params
+        const { requestToken, verifier, authSessionId, ipAddress } = params
         // セッション
         if (isString(authSessionId) == false) {
             throw new ApplicationError(ErrorCodes.InternalError)
         }
-        const isValidRequest = tmpSessionStore.get(authSessionId)
-        if (isValidRequest !== true) {
+        const _requestToken = tmpSessionStore.get(authSessionId)
+        if (requestToken !== _requestToken) {
             throw new ApplicationError(ErrorCodes.InvalidSession)
         }
         tmpSessionStore.delete(authSessionId)
 
-        const accessTokenResponse = await this.getAccessToken(oauthToken, oauthVerifier)
+        const accessTokenResponse = await this.getAccessToken(requestToken, verifier)
         if (accessTokenResponse == null) {
             throw new ApplicationError(ErrorCodes.InternalError)
         }
         const userResponse = await this.verifyCredentials(
-            accessTokenResponse.oauthToken,
-            accessTokenResponse.oauthTokenSecret,
+            accessTokenResponse.token,
+            accessTokenResponse.tokenSecret,
             accessTokenResponse.userId
         )
         if (userResponse == null) {
@@ -369,7 +375,7 @@ export class TwitterAuthenticationApplication {
             displayName: userResponse.name,
             registrationIpAddress: ipAddress,
             twitterUserId: userResponse.id,
-            trustLevel: GetInitialTrustLevelService.getTrustLevel({
+            trustLevel: UserEntity.getInitialTrustLevel({
                 signedUpWithTwitter: true,
                 invitedByAuthorizedUser: false,
                 twitterAccountCreatedAt: userResponse.createdAt,

@@ -14,7 +14,6 @@ import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../../domain/enti
 
 import { ApplicationError } from "../ApplicationError"
 import { DomainError } from "../../domain/DomainError"
-import { GetInitialTrustLevelService } from "../../domain/service/GetInitialTrustLevel"
 import { ILoginCredentialsCommandRepository } from "../../domain/repository/command/LoginCredentials"
 import { IUsersCommandRepository } from "../../domain/repository/command/Users"
 import { IUsersQueryRepository } from "../../domain/repository/query/Users"
@@ -61,7 +60,7 @@ export class RegisterPasswordBasedUserApplication {
             id: -1,
             name: name,
             registrationIpAddress: ipAddress,
-            trustLevel: GetInitialTrustLevelService.getTrustLevel({
+            trustLevel: UserEntity.getInitialTrustLevel({
                 signedUpWithTwitter: false,
                 invitedByAuthorizedUser: false,
                 twitterAccountCreatedAt: null,

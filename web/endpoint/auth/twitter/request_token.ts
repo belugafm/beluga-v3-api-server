@@ -22,10 +22,12 @@ export default (server: TurboServer) => {
                 secure: config.server.https,
             })
         }
+        console.log("request token", response.token)
+        console.log("request token secret", response.tokenSecret)
         return {
             ok: true,
-            oauth_token: response.oauthToken,
-            oauth_token_secret: response.oauthTokenSecret,
+            oauth_token: response.token,
+            oauth_token_secret: response.tokenSecret,
         }
     })
 }

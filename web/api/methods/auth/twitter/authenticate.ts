@@ -82,8 +82,8 @@ export default defineMethod(
                 new UsersQueryRepository(),
                 new UsersCommandRepository()
             ).authenticate({
-                oauthToken: args.oauth_token,
-                oauthVerifier: args.oauth_verifier,
+                requestToken: args.oauth_token,
+                verifier: args.oauth_verifier,
                 ipAddress: args.ip_address,
                 authSessionId: args.auth_session_id,
             })
