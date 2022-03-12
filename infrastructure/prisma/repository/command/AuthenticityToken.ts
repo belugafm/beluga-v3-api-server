@@ -6,21 +6,28 @@ import {
 import { AuthenticityTokenEntity } from "../../../../domain/entity/AuthenticityToken"
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { IAuthenticityTokenCommandRepository } from "../../../../domain/repository/command/AuthenticityToken"
+import { PrismaClient } from "@prisma/client"
 import { prisma } from "../client"
 
 export class AuthenticityTokenCommandRepository
     extends ChangeEventHandler
     implements IAuthenticityTokenCommandRepository
 {
-    constructor(transaction?: any) {
+    private _prisma: PrismaClient
+    constructor(transaction?: PrismaClient) {
         super(AuthenticityTokenCommandRepository)
+        if (transaction) {
+            this._prisma = transaction
+        } else {
+            this._prisma = prisma
+        }
     }
     async add(auth: AuthenticityTokenEntity): Promise<boolean> {
         if (auth instanceof AuthenticityTokenEntity !== true) {
             throw new RepositoryError("`auth` must be an instance of AuthenticityTokenEntity")
         }
         try {
-            await prisma.authenticityToken.create({
+            await this._prisma.authenticityToken.create({
                 data: {
                     sessionId: auth.sessionId,
                     token: auth.token,
@@ -40,7 +47,7 @@ export class AuthenticityTokenCommandRepository
             throw new RepositoryError("`auth` must be an instance of AuthenticityTokenEntity")
         }
         try {
-            await prisma.authenticityToken.delete({
+            await this._prisma.authenticityToken.delete({
                 where: {
                     sessionId: auth.sessionId,
                     token: auth.token,

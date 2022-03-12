@@ -7,7 +7,7 @@ export interface TransactionRepositoryInterface<T> extends ITransactionRepositor
     commit(): void
     rollback(): void
     end(): void
-    $transaction(func: () => T): Promise<T>
+    $transaction(func: (session: any) => T): Promise<T>
     getSession(): ClientSession | null
 }
 
@@ -32,10 +32,10 @@ export class TransactionRepository<T> implements TransactionRepositoryInterface<
     async end() {
         await this._session.endSession()
     }
-    async $transaction(func: () => T) {
+    async $transaction(func: (session: any) => T) {
         await this.begin()
         try {
-            const ret = await func()
+            const ret = await func(this._session)
             await this.commit()
             await this.end()
             return ret
@@ -55,7 +55,9 @@ export class EmptyTransactionRepository implements TransactionRepositoryInterfac
     async commit() {}
     async rollback() {}
     async end() {}
-    async $transaction(func: () => void) {}
+    async $transaction(func: (session: any) => void) {
+        func(null)
+    }
     getSession() {
         return null
     }

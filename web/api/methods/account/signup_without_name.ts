@@ -111,14 +111,14 @@ export default defineMethod(
         }
         const transaction = await TransactionRepository.new<ReturnType>()
         try {
-            return await transaction.$transaction(async () => {
+            return await transaction.$transaction(async (transactionSession) => {
                 const name = generateRandomName(
                     (config.user.name.max_length - config.user.name.min_length) / 2
                 )
                 await new RegisterPasswordBasedUserApplication(
-                    new UsersQueryRepository(transaction),
-                    new UsersCommandRepository(transaction),
-                    new LoginCredentialsCommandRepository(transaction)
+                    new UsersQueryRepository(transactionSession),
+                    new UsersCommandRepository(transactionSession),
+                    new LoginCredentialsCommandRepository(transactionSession)
                 ).register({
                     name: name,
                     password: args.password,
@@ -126,10 +126,10 @@ export default defineMethod(
                 })
                 const [user, loginCredential, loginSession, authenticityToken] =
                     await new SignInWithPasswordApplication(
-                        new UsersQueryRepository(transaction),
-                        new LoginCredentialsQueryRepository(transaction),
-                        new LoginSessionsCommandRepository(transaction),
-                        new AuthenticityTokenCommandRepository(transaction)
+                        new UsersQueryRepository(transactionSession),
+                        new LoginCredentialsQueryRepository(transactionSession),
+                        new LoginSessionsCommandRepository(transactionSession),
+                        new AuthenticityTokenCommandRepository(transactionSession)
                     ).signin({
                         name: name,
                         password: args.password,
@@ -137,6 +137,7 @@ export default defineMethod(
                         lastLocation: null,
                         device: null,
                     })
+                throw new Error("Uwaaaaaaaaaaaaaaaaaaaa")
                 return [user, loginCredential, loginSession, authenticityToken]
             })
         } catch (error) {

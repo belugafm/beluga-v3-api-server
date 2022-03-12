@@ -6,21 +6,28 @@ import {
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { ILoginCredentialsCommandRepository } from "../../../../domain/repository/command/LoginCredentials"
 import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
+import { PrismaClient } from "@prisma/client"
 import { prisma } from "../client"
 
 export class LoginCredentialsCommandRepository
     extends ChangeEventHandler
     implements ILoginCredentialsCommandRepository
 {
-    constructor(transaction?: any) {
+    private _prisma: PrismaClient
+    constructor(transaction?: PrismaClient) {
         super(LoginCredentialsCommandRepository)
+        if (transaction) {
+            this._prisma = transaction
+        } else {
+            this._prisma = prisma
+        }
     }
     async add(credential: LoginCredentialEntity): Promise<boolean> {
         if (credential instanceof LoginCredentialEntity !== true) {
             throw new RepositoryError("`credential` must be an instance of LoginCredentialEntity")
         }
         try {
-            await prisma.loginCredential.create({
+            await this._prisma.loginCredential.create({
                 data: {
                     userId: credential.userId,
                     passwordHash: credential.passwordHash,
@@ -43,7 +50,7 @@ export class LoginCredentialsCommandRepository
             throw new RepositoryError("`credential` must be an instance of LoginCredentialEntity")
         }
         try {
-            await prisma.loginCredential.delete({
+            await this._prisma.loginCredential.delete({
                 where: {
                     userId: credential.userId,
                 },
@@ -62,7 +69,7 @@ export class LoginCredentialsCommandRepository
             throw new RepositoryError("`credential` must be an instance of LoginCredentialEntity")
         }
         try {
-            await prisma.loginCredential.update({
+            await this._prisma.loginCredential.update({
                 where: {
                     userId: credential.userId,
                 },

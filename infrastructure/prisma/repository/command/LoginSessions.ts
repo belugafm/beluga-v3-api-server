@@ -1,3 +1,4 @@
+import { LoginSession, PrismaClient } from "@prisma/client"
 import {
     RepositoryError,
     UnknownRepositoryError,
@@ -5,7 +6,6 @@ import {
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { ILoginSessionsCommandRepository } from "../../../../domain/repository/command/LoginSessions"
-import { LoginSession } from "@prisma/client"
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { prisma } from "../client"
 
@@ -26,15 +26,21 @@ export class LoginSessionsCommandRepository
     extends ChangeEventHandler
     implements ILoginSessionsCommandRepository
 {
-    constructor(transaction?: any) {
+    private _prisma: PrismaClient
+    constructor(transaction?: PrismaClient) {
         super(LoginSessionsCommandRepository)
+        if (transaction) {
+            this._prisma = transaction
+        } else {
+            this._prisma = prisma
+        }
     }
     async add(session: LoginSessionEntity): Promise<boolean> {
         if (session instanceof LoginSessionEntity !== true) {
             throw new RepositoryError("`session` must be an instance of LoginSessionEntity")
         }
         try {
-            await prisma.loginSession.create({
+            await this._prisma.loginSession.create({
                 data: {
                     userId: session.userId,
                     sessionId: session.sessionId,
@@ -60,7 +66,7 @@ export class LoginSessionsCommandRepository
             throw new RepositoryError("`session` must be an instance of LoginSessionEntity")
         }
         try {
-            const updatedSession = await prisma.loginSession.update({
+            const updatedSession = await this._prisma.loginSession.update({
                 where: { sessionId: session.sessionId },
                 data: {
                     userId: session.userId,
@@ -91,7 +97,7 @@ export class LoginSessionsCommandRepository
             throw new RepositoryError("`session` must be an instance of LoginSessionEntity")
         }
         try {
-            await prisma.loginSession.delete({
+            await this._prisma.loginSession.delete({
                 where: {
                     sessionId: session.sessionId,
                 },

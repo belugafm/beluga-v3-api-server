@@ -3,5 +3,5 @@ export interface ITransactionRepository<T> {
     commit(): void
     rollback(): void
     end(): void
-    $transaction(func: () => T): Promise<T>
+    $transaction(func: (session: any) => T): Promise<T>
 }

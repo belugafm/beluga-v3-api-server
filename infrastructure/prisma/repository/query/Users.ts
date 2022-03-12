@@ -1,10 +1,10 @@
 import { IUsersQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/Users"
+import { PrismaClient, User } from "@prisma/client"
 import {
     RepositoryError,
     UnknownRepositoryError,
 } from "../../../../domain/repository/RepositoryError"
 
-import { User } from "@prisma/client"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
 import { prisma } from "../client"
@@ -41,10 +41,17 @@ function toEntity(user: User) {
     })
 }
 export class UsersQueryRepository implements IUsersQueryRepository {
-    constructor(transaction?: any) {}
+    private _prisma: PrismaClient
+    constructor(transaction?: PrismaClient) {
+        if (transaction) {
+            this._prisma = transaction
+        } else {
+            this._prisma = prisma
+        }
+    }
     async findById(userId: UserId): Promise<UserEntity | null> {
         try {
-            const user = await prisma.user.findUnique({
+            const user = await this._prisma.user.findUnique({
                 where: {
                     id: userId,
                 },
@@ -63,7 +70,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     }
     async findByName(name: string): Promise<UserEntity | null> {
         try {
-            const user = await prisma.user.findUnique({
+            const user = await this._prisma.user.findUnique({
                 where: {
                     name: name,
                 },
@@ -82,7 +89,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
     }
     async findByTwitterUserId(twitterUserId: string): Promise<UserEntity | null> {
         try {
-            const user = await prisma.user.findUnique({
+            const user = await this._prisma.user.findUnique({
                 where: {
                     twitterUserId: twitterUserId,
                 },
@@ -105,7 +112,7 @@ export class UsersQueryRepository implements IUsersQueryRepository {
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
     ): Promise<UserEntity[]> {
         try {
-            const users = await prisma.user.findMany({
+            const users = await this._prisma.user.findMany({
                 where: {
                     registrationIpAddress: ipAddress,
                 },

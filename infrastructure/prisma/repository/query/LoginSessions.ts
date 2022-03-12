@@ -1,3 +1,4 @@
+import { LoginSession, PrismaClient } from "@prisma/client"
 import {
     RepositoryError,
     UnknownRepositoryError,
@@ -5,7 +6,6 @@ import {
 import { SortBy, SortOrder } from "../../../../domain/repository/query/LoginSessions"
 
 import { ILoginSessionsQueryRepository } from "../../../../domain/repository/query/LoginSessions"
-import { LoginSession } from "@prisma/client"
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { UserId } from "../../../../domain/types"
 import { prisma } from "../client"
@@ -23,10 +23,17 @@ function toEntity(session: LoginSession) {
     })
 }
 export class LoginSessionsQueryRepository implements ILoginSessionsQueryRepository {
-    constructor(transaction?: any) {}
+    private _prisma: PrismaClient
+    constructor(transaction?: PrismaClient) {
+        if (transaction) {
+            this._prisma = transaction
+        } else {
+            this._prisma = prisma
+        }
+    }
     async findBySessionId(sessionId: string): Promise<LoginSessionEntity | null> {
         try {
-            const session = await prisma.loginSession.findUnique({
+            const session = await this._prisma.loginSession.findUnique({
                 where: {
                     sessionId: sessionId,
                 },
@@ -49,7 +56,7 @@ export class LoginSessionsQueryRepository implements ILoginSessionsQueryReposito
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
     ): Promise<LoginSessionEntity[]> {
         try {
-            const sessions = await prisma.loginSession.findMany({
+            const sessions = await this._prisma.loginSession.findMany({
                 where: {
                     userId: userId,
                 },

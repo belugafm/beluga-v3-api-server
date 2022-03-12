@@ -1,3 +1,4 @@
+import { PrismaClient, User } from "@prisma/client"
 import {
     RepositoryError,
     UnknownRepositoryError,
@@ -5,7 +6,6 @@ import {
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { IUsersCommandRepository } from "../../../../domain/repository/command/Users"
-import { User } from "@prisma/client"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
 import { prisma } from "../client"
@@ -43,15 +43,21 @@ export function has_changed(a: UserEntity, b: User) {
 }
 
 export class UsersCommandRepository extends ChangeEventHandler implements IUsersCommandRepository {
-    constructor(transaction?: any) {
+    private _prisma: PrismaClient
+    constructor(transaction?: PrismaClient) {
         super(UsersCommandRepository)
+        if (transaction) {
+            this._prisma = transaction
+        } else {
+            this._prisma = prisma
+        }
     }
     async add(user: UserEntity): Promise<UserId> {
         if (user instanceof UserEntity !== true) {
             throw new RepositoryError("`user` must be an instance of UserEntity")
         }
         try {
-            const result = await prisma.user.create({
+            const result = await this._prisma.user.create({
                 data: {
                     twitterUserId: user.twitterUserId,
                     name: user.name,
@@ -97,7 +103,7 @@ export class UsersCommandRepository extends ChangeEventHandler implements IUsers
             throw new RepositoryError("`user` must be an instance of UserEntity")
         }
         try {
-            const updatedUser = await prisma.user.update({
+            const updatedUser = await this._prisma.user.update({
                 where: {
                     id: user.id,
                 },
@@ -149,7 +155,7 @@ export class UsersCommandRepository extends ChangeEventHandler implements IUsers
             throw new RepositoryError("`user` must be an instance of UserEntity")
         }
         try {
-            await prisma.user.delete({
+            await this._prisma.user.delete({
                 where: {
                     id: user.id,
                 },

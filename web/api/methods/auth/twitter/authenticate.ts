@@ -79,7 +79,7 @@ export default defineMethod(
     async (args, errors): ReturnType => {
         const transaction = await TransactionRepository.new<ReturnType>()
         try {
-            return await transaction.$transaction(async () => {
+            return await transaction.$transaction(async (transactionSession) => {
                 const user = await new TwitterAuthenticationApplication(
                     new UsersQueryRepository(),
                     new UsersCommandRepository()
@@ -90,9 +90,9 @@ export default defineMethod(
                     authSessionId: args.auth_session_id,
                 })
                 const [_, loginSession, authenticityToken] = await new SignInWithTwitterApplication(
-                    new UsersQueryRepository(transaction),
-                    new LoginSessionsCommandRepository(transaction),
-                    new AuthenticityTokenCommandRepository(transaction)
+                    new UsersQueryRepository(transactionSession),
+                    new LoginSessionsCommandRepository(transactionSession),
+                    new AuthenticityTokenCommandRepository(transactionSession)
                 ).signin({
                     // @ts-ignore
                     twitterUserId: user.twitterUserId,

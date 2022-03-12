@@ -1,9 +1,9 @@
+import { AuthenticityToken, PrismaClient } from "@prisma/client"
 import {
     RepositoryError,
     UnknownRepositoryError,
 } from "../../../../domain/repository/RepositoryError"
 
-import { AuthenticityToken } from "@prisma/client"
 import { AuthenticityTokenEntity } from "../../../../domain/entity/AuthenticityToken"
 import { IAuthenticityTokenQueryRepository } from "../../../../domain/repository/query/AuthenticityToken"
 import { prisma } from "../client"
@@ -15,11 +15,18 @@ function toEntity(auth: AuthenticityToken) {
     })
 }
 export class AuthenticityTokenQueryRepository implements IAuthenticityTokenQueryRepository {
-    constructor(transaction?: any) {}
+    private _prisma: PrismaClient
+    constructor(transaction?: PrismaClient) {
+        if (transaction) {
+            this._prisma = transaction
+        } else {
+            this._prisma = prisma
+        }
+    }
 
     async findBySessionId(sessionId: string): Promise<AuthenticityTokenEntity | null> {
         try {
-            const auth = await prisma.authenticityToken.findUnique({
+            const auth = await this._prisma.authenticityToken.findUnique({
                 where: {
                     sessionId: sessionId,
                 },
