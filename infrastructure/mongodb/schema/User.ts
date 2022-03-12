@@ -16,7 +16,7 @@ export interface UserSchema extends Document {
     theme_color: string | null
     background_image_url: string | null
     default_profile: boolean
-    status_count: number
+    statuses_count: number
     favorites_count: number
     favorited_count: number
     likes_count: number
@@ -68,7 +68,7 @@ function defineSchema(): any {
         theme_color: NullableString,
         background_image_url: NullableString,
         default_profile: True,
-        status_count: Zero,
+        statuses_count: Zero,
         favorites_count: Zero,
         favorited_count: Zero,
         likes_count: Zero,
@@ -117,7 +117,7 @@ schema.methods.toEntity = function () {
         themeColor: this.theme_color,
         backgroundImageUrl: this.background_image_url,
         defaultProfile: this.default_profile,
-        statusCount: this.status_count,
+        statusesCount: this.statuses_count,
         favoritesCount: this.favorites_count,
         favoritedCount: this.favorited_count,
         likesCount: this.likes_count,

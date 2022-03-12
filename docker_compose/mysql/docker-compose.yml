@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  mysql:
+    restart: always
+    image: mysql:latest
+    container_name: mysql_host
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: test_database
+      MYSQL_USER: docker
+      MYSQL_PASSWORD: docker
+      TZ: "Asia/Tokyo"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/mysql/sql:/docker-entrypoint-initdb.d
+    ports:
+      - 127.0.0.2:3306:3306
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 127.0.0.2:8090:8080
+    depends_on:
+      - mysql

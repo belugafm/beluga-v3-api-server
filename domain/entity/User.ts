@@ -74,7 +74,7 @@ export class UserEntity extends Entity {
     defaultProfile: boolean
 
     @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
-    statusCount: number // 全投稿数
+    statusesCount: number // 全投稿数
 
     @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     favoritesCount: number // ふぁぼった投稿数
@@ -144,7 +144,7 @@ export class UserEntity extends Entity {
         this.backgroundImageUrl = params.backgroundImageUrl ? params.backgroundImageUrl : null
         this.defaultProfile = params.defaultProfile === false ? false : true
         this.createdAt = params.createdAt ? params.createdAt : new Date()
-        this.statusCount = params.statusCount ? params.statusCount : 0
+        this.statusesCount = params.statusesCount ? params.statusesCount : 0
         this.favoritesCount = params.favoritesCount ? params.favoritesCount : 0
         this.favoritedCount = params.favoritedCount ? params.favoritedCount : 0
         this.likesCount = params.likesCount ? params.likesCount : 0
@@ -180,7 +180,7 @@ export class UserEntity extends Entity {
             background_image_url: this.backgroundImageUrl,
             default_profile: this.defaultProfile,
             created_at: this.createdAt,
-            status_count: this.statusCount,
+            status_count: this.statusesCount,
             favorites_count: this.favoritedCount,
             favorited_count: this.favoritedCount,
             likes_count: this.likesCount,

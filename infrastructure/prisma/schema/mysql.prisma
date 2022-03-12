@@ -1,0 +1,64 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["interactiveTransactions"]
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model LoginCredential {
+    id           Int    @id @default(autoincrement())
+    userId       Int    @unique
+    passwordHash String @db.VarChar(255)
+}
+
+model LoginSession {
+    id           Int      @id @default(autoincrement())
+    userId       Int
+    sessionId    String   @unique @db.VarChar(255)
+    ipAddress    String
+    expireDate   DateTime
+    expired      Boolean
+    createdAt    DateTime @default(now())
+    lastLocation String?  @db.VarChar(255)
+    device       String?  @db.VarChar(255)
+}
+
+model AuthenticityToken {
+    id        Int    @id @default(autoincrement())
+    sessionId String @unique @db.VarChar(255)
+    token     String @unique @db.VarChar(255)
+}
+
+model User {
+    id                             Int       @id @default(autoincrement())
+    name                           String    @unique
+    twitterUserId                  String?   @unique @db.VarChar(255)
+    displayName                    String?   @db.VarChar(255)
+    profileImageUrl                String?   @db.VarChar(255)
+    location                       String?   @db.VarChar(255)
+    url                            String?   @db.VarChar(255)
+    description                    String?   @db.VarChar(255)
+    themeColor                     String?   @db.VarChar(255)
+    backgroundImageUrl             String?   @db.VarChar(255)
+    defaultProfile                 Boolean   @default(true)
+    statusesCount                  Int // 全投稿数
+    favoritesCount                 Int // ふぁぼった投稿数
+    favoritedCount                 Int // ふぁぼられた投稿数
+    likesCount                     Int // いいねした投稿数
+    likedCount                     Int // いいねされた投稿数
+    channelsCount                  Int // 作成したチャンネル数
+    followingChannelsCount         Int // フォロー中のチャンネル数
+    createdAt                      DateTime  @default(now())
+    bot                            Boolean
+    active                         Boolean   @default(false) // 登録後サイトを利用したかどうか
+    dormant                        Boolean   @default(false) // サイトを長期間利用しなかったかどうか
+    suspended                      Boolean   @default(false) // 凍結されたかどうか
+    trustLevel                     Int // 信用レベル
+    lastActivityDate               DateTime? // 最後に活動した日
+    termsOfServiceAgreementDate    DateTime? // 利用規約に同意した日
+    termsOfServiceAgreementVersion String?   @db.VarChar(255) // 同意した利用規約のバージョン
+    registrationIpAddress          String // 登録時のIPアドレス
+}

@@ -2,17 +2,18 @@ import mongoose, { ClientSession } from "mongoose"
 
 import { ITransactionRepository } from "../../../domain/repository/Transaction"
 
-export interface TransactionRepositoryInterface extends ITransactionRepository {
+export interface TransactionRepositoryInterface<T> extends ITransactionRepository<T> {
     begin(): void
     commit(): void
     rollback(): void
     end(): void
+    $transaction(func: () => T): Promise<T>
     getSession(): ClientSession | null
 }
 
-export class TransactionRepository implements TransactionRepositoryInterface {
+export class TransactionRepository<T> implements TransactionRepositoryInterface<T> {
     private _session: ClientSession
-    static async new() {
+    static async new<T>(): Promise<TransactionRepository<T>> {
         const session = await mongoose.startSession()
         return new TransactionRepository(session)
     }
@@ -31,16 +32,30 @@ export class TransactionRepository implements TransactionRepositoryInterface {
     async end() {
         await this._session.endSession()
     }
+    async $transaction(func: () => T) {
+        await this.begin()
+        try {
+            const ret = await func()
+            await this.commit()
+            await this.end()
+            return ret
+        } catch (error) {
+            await this.rollback()
+            await this.end()
+            throw error
+        }
+    }
     getSession() {
         return this._session
     }
 }
 
-export class EmptyTransactionRepository implements TransactionRepositoryInterface {
+export class EmptyTransactionRepository implements TransactionRepositoryInterface<void> {
     async begin() {}
     async commit() {}
     async rollback() {}
     async end() {}
+    async $transaction(func: () => void) {}
     getSession() {
         return null
     }

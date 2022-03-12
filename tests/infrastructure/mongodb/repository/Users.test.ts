@@ -32,7 +32,7 @@ describe("UsersRepository", () => {
         user.url = `https://example.com/${uuid.v4()}`
         user.themeColor = "#01ab9f"
         user.defaultProfile = false
-        user.statusCount = 10
+        user.statusesCount = 10
         user.favoritesCount = 11
         user.favoritedCount = 12
         user.likesCount = 13
@@ -71,7 +71,7 @@ describe("UsersRepository", () => {
             expect(_user?.themeColor).toBe(user.themeColor)
             expect(_user?.backgroundImageUrl).toBe(user.backgroundImageUrl)
             expect(_user?.defaultProfile).toBe(user.defaultProfile)
-            expect(_user?.statusCount).toBe(user.statusCount)
+            expect(_user?.statusesCount).toBe(user.statusesCount)
             expect(_user?.favoritesCount).toBe(user.favoritesCount)
             expect(_user?.favoritedCount).toBe(user.favoritedCount)
             expect(_user?.likesCount).toBe(user.likesCount)
@@ -101,7 +101,7 @@ describe("UsersRepository", () => {
             expect(_user?.themeColor).toBe(user.themeColor)
             expect(_user?.backgroundImageUrl).toBe(user.backgroundImageUrl)
             expect(_user?.defaultProfile).toBe(user.defaultProfile)
-            expect(_user?.statusCount).toBe(user.statusCount)
+            expect(_user?.statusesCount).toBe(user.statusesCount)
             expect(_user?.favoritesCount).toBe(user.favoritesCount)
             expect(_user?.favoritedCount).toBe(user.favoritedCount)
             expect(_user?.likesCount).toBe(user.likesCount)
@@ -165,7 +165,7 @@ describe("UsersRepository", () => {
         user.url = `https://example.com/${uuid.v4()}`
         user.themeColor = "#01ab9f"
         user.defaultProfile = false
-        user.statusCount = 10
+        user.statusesCount = 10
         user.favoritesCount = 11
         user.favoritedCount = 12
         user.likesCount = 13
@@ -192,7 +192,7 @@ describe("UsersRepository", () => {
             expect(_user?.themeColor).toBe(user.themeColor)
             expect(_user?.backgroundImageUrl).toBe(user.backgroundImageUrl)
             expect(_user?.defaultProfile).toBe(user.defaultProfile)
-            expect(_user?.statusCount).toBe(user.statusCount)
+            expect(_user?.statusesCount).toBe(user.statusesCount)
             expect(_user?.favoritesCount).toBe(user.favoritesCount)
             expect(_user?.favoritedCount).toBe(user.favoritedCount)
             expect(_user?.likesCount).toBe(user.likesCount)

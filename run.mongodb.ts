@@ -91,7 +91,7 @@ if (true) {
             // mongoose.connection.once("open", async () => {
             // })
             await startServer()
-            console.group("Server runnin on:")
+            console.group("Server running on:")
             console.log("Mongo:", uri)
             console.log("Web:", `${config.server.domain}:${config.server.port}`)
             console.groupEnd()
