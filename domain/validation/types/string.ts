@@ -1,8 +1,8 @@
 import { Validator } from "../Validator"
-import { checkMinLength } from "../validator/string/min_length"
-import { checkMaxLength } from "../validator/string/max_length"
+import { checkIsString } from "../validator/string/isString"
+import { checkMaxLength } from "../validator/string/maxLength"
+import { checkMinLength } from "../validator/string/minLength"
 import { checkRegexPattern } from "../validator/string/regex"
-import { checkIsString } from "../validator/string/is_string"
 
 export type Options = {
     minLength?: number

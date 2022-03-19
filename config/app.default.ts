@@ -59,6 +59,10 @@ const config: {
             min_length: number
             max_length: number
         }
+        unique_name: {
+            min_length: number
+            max_length: number
+        }
         description: {
             min_length: number
             max_length: number
@@ -68,6 +72,10 @@ const config: {
     }
     channel: {
         name: {
+            min_length: number
+            max_length: number
+        }
+        unique_name: {
             min_length: number
             max_length: number
         }
@@ -177,6 +185,10 @@ const config: {
             min_length: 1,
             max_length: 32,
         },
+        unique_name: {
+            min_length: 1,
+            max_length: 32,
+        },
         description: {
             min_length: 0,
             max_length: 3000,
@@ -192,12 +204,16 @@ const config: {
             min_length: 1,
             max_length: 32,
         },
+        unique_name: {
+            min_length: 1,
+            max_length: 32,
+        },
         description: {
             min_length: 0,
             max_length: 3000,
         },
         // 1日あたりの新規作成可能なチャンネル数
-        create_limit_per_day: 50,
+        create_limit_per_day: 100,
 
         // 作成に必要な最低Trust Level
         min_trust_level_required_to_create: 2,

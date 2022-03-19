@@ -1,9 +1,9 @@
-import { Validator } from "../../Validator"
-import { checkIsString } from "../../validator/string/is_string"
-import { checkMinLength } from "../../validator/string/min_length"
-import { checkRegexPattern } from "../../validator/string/regex"
-import { checkMaxLength } from "../../validator/string/max_length"
 import { Options } from "../string"
+import { Validator } from "../../Validator"
+import { checkIsString } from "../../validator/string/isString"
+import { checkMaxLength } from "../../validator/string/maxLength"
+import { checkMinLength } from "../../validator/string/minLength"
+import { checkRegexPattern } from "../../validator/string/regex"
 import config from "../../../../config/app"
 
 export function url() {

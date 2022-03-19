@@ -1,7 +1,7 @@
-import { Validator } from "../Validator"
-import { checkIsString } from "../validator/string/is_string"
-import { checkRegexPattern } from "../validator/string/regex"
 import { Options } from "./string"
+import { Validator } from "../Validator"
+import { checkIsString } from "../validator/string/isString"
+import { checkRegexPattern } from "../validator/string/regex"
 
 export function colorCode() {
     const options: Options = {

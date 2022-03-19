@@ -1,5 +1,5 @@
 export { name } from "./user/name"
-export { displayName } from "./user/display_name"
+export { displayName } from "./user/displayName"
 export { description } from "./user/description"
 export { location } from "./user/location"
 export { url } from "./user/url"

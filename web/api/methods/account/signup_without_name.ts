@@ -137,7 +137,6 @@ export default defineMethod(
                         lastLocation: null,
                         device: null,
                     })
-                throw new Error("Uwaaaaaaaaaaaaaaaaaaaa")
                 return [user, loginCredential, loginSession, authenticityToken]
             })
         } catch (error) {

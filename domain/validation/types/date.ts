@@ -1,7 +1,7 @@
 import { Validator } from "../Validator"
-import { checkMinValue } from "../validator/number/min_value"
-import { checkMaxValue } from "../validator/number/max_value"
-import { checkIsDate } from "../validator/date/is_date"
+import { checkIsDate } from "../validator/date/isDate"
+import { checkMaxValue } from "../validator/number/maxValue"
+import { checkMinValue } from "../validator/number/minValue"
 
 export function date() {
     return new Validator<Date>({}, [checkIsDate, checkMinValue, checkMaxValue])

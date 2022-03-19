@@ -1,7 +1,7 @@
 import { Options } from "./string"
 import { Validator } from "../Validator"
-import { checkIsString } from "../validator/string/is_string"
-import { checkMaxLength } from "../validator/string/max_length"
+import { checkIsString } from "../validator/string/isString"
+import { checkMaxLength } from "../validator/string/maxLength"
 
 export function sessionId() {
     const options: Options = {

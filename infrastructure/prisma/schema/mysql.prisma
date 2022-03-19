@@ -49,8 +49,6 @@ model User {
     favoritedCount                 Int // ふぁぼられた投稿数
     likesCount                     Int // いいねした投稿数
     likedCount                     Int // いいねされた投稿数
-    channelsCount                  Int // 作成したチャンネル数
-    followingChannelsCount         Int // フォロー中のチャンネル数
     createdAt                      DateTime  @default(now())
     bot                            Boolean
     active                         Boolean   @default(false) // 登録後サイトを利用したかどうか
@@ -61,4 +59,26 @@ model User {
     termsOfServiceAgreementDate    DateTime? // 利用規約に同意した日
     termsOfServiceAgreementVersion String?   @db.VarChar(255) // 同意した利用規約のバージョン
     registrationIpAddress          String // 登録時のIPアドレス
+}
+
+model ChannelGroup {
+    id            Int      @id @default(autoincrement())
+    name          String   @db.VarChar(255)
+    uniqueName    String   @unique @db.VarChar(255)
+    parentId      Int
+    createdBy     Int
+    createdAt     DateTime @default(now())
+    level         Int // 階層の深さ 0が最上位
+    channelsCount Int      @default(0)
+    statusesCount Int      @default(0)
+}
+
+model Channel {
+    id                   Int      @id @default(autoincrement())
+    name                 String   @db.VarChar(255)
+    uniqueName           String   @unique @db.VarChar(255)
+    parentChannelGroupId Int
+    createdBy            Int
+    createdAt            DateTime @default(now())
+    statusesCount        Int      @default(0)
 }
