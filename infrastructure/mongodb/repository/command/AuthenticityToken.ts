@@ -14,12 +14,12 @@ import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { IAuthenticityTokenCommandRepository } from "../../../../domain/repository/command/AuthenticityToken"
 import { MongoError } from "mongodb"
 
-export class AuthenticityTokenCommandRepository
+export class AuthenticityTokenCommandRepository<T>
     extends ChangeEventHandler
     implements IAuthenticityTokenCommandRepository
 {
-    private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
-    constructor(transaction?: TransactionRepository) {
+    private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
+    constructor(transaction?: TransactionRepository<T>) {
         super(AuthenticityTokenCommandRepository)
         if (transaction) {
             this._transaction = transaction

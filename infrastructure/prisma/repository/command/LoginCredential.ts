@@ -4,18 +4,18 @@ import {
 } from "../../../../domain/repository/RepositoryError"
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
-import { ILoginCredentialsCommandRepository } from "../../../../domain/repository/command/LoginCredentials"
+import { ILoginCredentialCommandRepository } from "../../../../domain/repository/command/LoginCredential"
 import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
 import { PrismaClient } from "@prisma/client"
 import { prisma } from "../client"
 
-export class LoginCredentialsCommandRepository
+export class LoginCredentialCommandRepository
     extends ChangeEventHandler
-    implements ILoginCredentialsCommandRepository
+    implements ILoginCredentialCommandRepository
 {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
-        super(LoginCredentialsCommandRepository)
+        super(LoginCredentialCommandRepository)
         if (transaction) {
             this._prisma = transaction
         } else {

@@ -1,12 +1,12 @@
 import signup, { expectedErrorSpecs } from "../../../../web/api/methods/account/signup"
 
 import { DeleteUserApplication } from "../../../../application/DeleteUser"
-import { LoginCredentialsCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginCredentials"
-import { LoginCredentialsQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginCredentials"
-import { LoginSessionsCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginSessions"
-import { LoginSessionsQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginSessions"
-import { UsersCommandRepository } from "../../../../infrastructure/mongodb/repository/command/Users"
-import { UsersQueryRepository } from "../../../../infrastructure/mongodb/repository/query/Users"
+import { LoginCredentialCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginCredential"
+import { LoginCredentialQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginCredential"
+import { LoginSessionCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginSession"
+import { LoginSessionQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginSession"
+import { UserCommandRepository } from "../../../../infrastructure/mongodb/repository/command/User"
+import { UserQueryRepository } from "../../../../infrastructure/mongodb/repository/query/User"
 import { WebApiRuntimeError } from "../../../../web/api/error"
 import { db } from "../../../env"
 
@@ -108,16 +108,16 @@ describe("account/signup", () => {
         }
         if (user) {
             await new DeleteUserApplication(
-                new UsersQueryRepository(),
-                new UsersCommandRepository(),
-                new LoginCredentialsQueryRepository(),
-                new LoginCredentialsCommandRepository(),
-                new LoginSessionsQueryRepository(),
-                new LoginSessionsCommandRepository()
+                new UserQueryRepository(),
+                new UserCommandRepository(),
+                new LoginCredentialQueryRepository(),
+                new LoginCredentialCommandRepository(),
+                new LoginSessionQueryRepository(),
+                new LoginSessionCommandRepository()
             ).delete(user.id)
         }
         {
-            const usersRepository = new UsersQueryRepository()
+            const usersRepository = new UserQueryRepository()
             const user = await usersRepository.findByName(name)
             expect(user).toBeNull()
         }

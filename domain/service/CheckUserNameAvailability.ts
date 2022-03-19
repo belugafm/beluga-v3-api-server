@@ -1,13 +1,13 @@
 import { DomainError } from "../DomainError"
-import { IUsersQueryRepository } from "../repository/query/Users"
+import { IUserQueryRepository } from "../repository/query/User"
 
 export const ErrorCodes = {
     NameTaken: "name_taken",
 } as const
 
 export class CheckUserNameAvailabilityService {
-    private usersRepository: IUsersQueryRepository
-    constructor(usersRepository: IUsersQueryRepository) {
+    private usersRepository: IUserQueryRepository
+    constructor(usersRepository: IUserQueryRepository) {
         this.usersRepository = usersRepository
     }
     async isNameTaken(name: string) {

@@ -2,8 +2,8 @@ import { UserEntity, generateRandomName } from "../../domain/entity/User"
 
 import { ApplicationError } from "../ApplicationError"
 import { CheckUserNameAvailabilityService } from "../../domain/service/CheckUserNameAvailability"
-import { IUsersCommandRepository } from "../../domain/repository/command/Users"
-import { IUsersQueryRepository } from "../../domain/repository/query/Users"
+import { IUserCommandRepository } from "../../domain/repository/command/User"
+import { IUserQueryRepository } from "../../domain/repository/query/User"
 import { InMemoryCache } from "../../cache/data_store/memory"
 import OAuth from "oauth-1.0a"
 import { URLSearchParams } from "url"
@@ -155,12 +155,12 @@ const tmpSessionStore = new InMemoryCache<string>({
 // oauth/access_tokenが返すoauth_tokenをaccess_tokenと呼ぶ
 
 export class TwitterAuthenticationApplication {
-    private usersQueryRepository: IUsersQueryRepository
-    private usersCommandRepository: IUsersCommandRepository
+    private usersQueryRepository: IUserQueryRepository
+    private usersCommandRepository: IUserCommandRepository
     private userNameAvailabilityService: CheckUserNameAvailabilityService
     constructor(
-        usersQueryRepository: IUsersQueryRepository,
-        usersCommandRepository: IUsersCommandRepository
+        usersQueryRepository: IUserQueryRepository,
+        usersCommandRepository: IUserCommandRepository
     ) {
         this.usersQueryRepository = usersQueryRepository
         this.usersCommandRepository = usersCommandRepository

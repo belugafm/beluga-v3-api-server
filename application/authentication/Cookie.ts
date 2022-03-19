@@ -1,8 +1,8 @@
 import { ApplicationError } from "../ApplicationError"
 import { AuthenticityTokenEntity } from "../../domain/entity/AuthenticityToken"
 import { IAuthenticityTokenQueryRepository } from "../../domain/repository/query/AuthenticityToken"
-import { ILoginSessionsQueryRepository } from "../../domain/repository/query/LoginSessions"
-import { IUsersQueryRepository } from "../../domain/repository/query/Users"
+import { ILoginSessionQueryRepository } from "../../domain/repository/query/LoginSession"
+import { IUserQueryRepository } from "../../domain/repository/query/User"
 import { LoginSessionEntity } from "../../domain/entity/LoginSession"
 import { UserEntity } from "../../domain/entity/User"
 
@@ -18,12 +18,12 @@ export const ErrorCodes = {
 } as const
 
 export class CookieAuthenticationApplication {
-    private usersQueryRepository: IUsersQueryRepository
-    private loginSessionQueryRepository: ILoginSessionsQueryRepository
+    private usersQueryRepository: IUserQueryRepository
+    private loginSessionQueryRepository: ILoginSessionQueryRepository
     private authenticityTokenQueryRepository: IAuthenticityTokenQueryRepository
     constructor(
-        usersQueryRepository: IUsersQueryRepository,
-        loginSessionQueryRepository: ILoginSessionsQueryRepository,
+        usersQueryRepository: IUserQueryRepository,
+        loginSessionQueryRepository: ILoginSessionQueryRepository,
         authenticityTokenQueryRepository: IAuthenticityTokenQueryRepository
     ) {
         this.usersQueryRepository = usersQueryRepository

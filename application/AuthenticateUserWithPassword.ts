@@ -14,7 +14,7 @@ import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../domain/entity/
 
 import { ApplicationError } from "./ApplicationError"
 import { DomainError } from "../domain/DomainError"
-import { ILoginCredentialsCommandRepository } from "../domain/repository/command/LoginCredentials"
+import { ILoginCredentialCommandRepository } from "../domain/repository/command/LoginCredential"
 import { ILoginSessionsRepository } from "../domain/repository/LoginSessions"
 import { IUsersRepository } from "../domain/repository/Users"
 import { LoginSessionEntity } from "../domain/entity/LoginSession"
@@ -37,13 +37,13 @@ export const ErrorCodes = {
 
 export class RegisterUserApplication {
     private usersRepository: IUsersRepository
-    private loginCredentialsRepository: ILoginCredentialsCommandRepository
+    private loginCredentialsRepository: ILoginCredentialCommandRepository
     private loginSessionsRepository: ILoginSessionsRepository
     private registrationRateLimitService: CheckRegistrationRateLimitService
     private userNameAvailabilityService: CheckUserNameAvailabilityService
     constructor(
         usersRepository: IUsersRepository,
-        loginCredentialsRepository: ILoginCredentialsCommandRepository,
+        loginCredentialsRepository: ILoginCredentialCommandRepository,
         loginSessionsRepository: ILoginSessionsRepository
     ) {
         this.usersRepository = usersRepository

@@ -1,11 +1,11 @@
 import * as uuid from "uuid"
 
-import { LoginSessionsCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginSessions"
+import { LoginSessionCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginSession"
 import { RepositoryError } from "../../../../domain/repository/RepositoryError"
+import { UserCommandRepository } from "../../../../infrastructure/mongodb/repository/command/User"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
-import { UsersCommandRepository } from "../../../../infrastructure/mongodb/repository/command/Users"
-import { UsersQueryRepository } from "../../../../infrastructure/mongodb/repository/query/Users"
+import { UserQueryRepository } from "../../../../infrastructure/mongodb/repository/query/User"
 import config from "../../../../config/app"
 import { db } from "../../../mongodb"
 import { sleep } from "../../../env"
@@ -20,8 +20,8 @@ describe("UsersRepository", () => {
         await db.disconnect()
     })
     test("Normal", async () => {
-        const queryRepository = new UsersQueryRepository()
-        const commandRepository = new UsersCommandRepository()
+        const queryRepository = new UserQueryRepository()
+        const commandRepository = new UserCommandRepository()
         const user = new UserEntity({ id: -1, name: "hoge", registrationIpAddress: "192.168.1.1" })
         user.twitterUserId = uuid.v4()
         user.displayName = uuid.v4().substr(0, config.user.display_name.max_length)
@@ -132,7 +132,7 @@ describe("UsersRepository", () => {
     })
     test("Duplicated name", async () => {
         expect.assertions(2)
-        const repository = new UsersCommandRepository()
+        const repository = new UserCommandRepository()
 
         const user1 = new UserEntity({ id: 1, name: "hoge", registrationIpAddress: "192.168.1.1" })
         user1.id = await repository.add(user1)
@@ -151,8 +151,8 @@ describe("UsersRepository", () => {
         expect(succeeded).toBeTruthy()
     })
     test("update", async () => {
-        const queryRepository = new UsersQueryRepository()
-        const commandRepository = new UsersCommandRepository()
+        const queryRepository = new UserQueryRepository()
+        const commandRepository = new UserCommandRepository()
 
         const user = new UserEntity({ id: 1, name: "hoge", registrationIpAddress: "192.168.1.1" })
         user.id = await commandRepository.add(user)
@@ -213,17 +213,17 @@ describe("UsersRepository", () => {
     })
     test("emitChanges", async () => {
         expect.assertions(3)
-        const repository1 = new UsersCommandRepository()
-        const repository2 = new UsersCommandRepository()
+        const repository1 = new UserCommandRepository()
+        const repository2 = new UserCommandRepository()
 
         const user = new UserEntity({ id: 1, name: "hoge", registrationIpAddress: "192.168.1.1" })
         user.id = await repository1.add(user)
-        UsersCommandRepository.subscribe((userId: UserId) => {
+        UserCommandRepository.subscribe((userId: UserId) => {
             expect(userId).toBe(user.id)
         })
         // @ts-ignore
-        expect(LoginSessionsCommandRepository._eventListeners.length).toBe(0)
-        LoginSessionsCommandRepository.subscribe((sessionId: string) => {
+        expect(LoginSessionCommandRepository._eventListeners.length).toBe(0)
+        LoginSessionCommandRepository.subscribe((sessionId: string) => {
             expect(sessionId).toBe("") // 正しく実装できていればこの行は実行されない
         })
 

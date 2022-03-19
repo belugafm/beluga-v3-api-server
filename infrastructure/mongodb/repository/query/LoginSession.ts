@@ -7,18 +7,18 @@ import {
     RepositoryError,
     UnknownRepositoryError,
 } from "../../../../domain/repository/RepositoryError"
-import { SortBy, SortOrder } from "../../../../domain/repository/query/LoginSessions"
+import { SortBy, SortOrder } from "../../../../domain/repository/query/LoginSession"
 
-import { ILoginSessionsQueryRepository } from "../../../../domain/repository/query/LoginSessions"
+import { ILoginSessionQueryRepository } from "../../../../domain/repository/query/LoginSession"
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { LoginSessionModel } from "../../schema/LoginSession"
 import { MongoError } from "mongodb"
 import { UserId } from "../../../../domain/types"
 import mongoose from "mongoose"
 
-export class LoginSessionsQueryRepository implements ILoginSessionsQueryRepository {
-    private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
-    constructor(transaction?: TransactionRepository) {
+export class LoginSessionQueryRepository<T> implements ILoginSessionQueryRepository {
+    private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
+    constructor(transaction?: TransactionRepository<T>) {
         if (transaction) {
             this._transaction = transaction
         }

@@ -10,16 +10,16 @@ import {
 import { UserModel, schemaVersion } from "../../schema/User"
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
-import { IUsersCommandRepository } from "../../../../domain/repository/command/Users"
+import { IUserCommandRepository } from "../../../../domain/repository/command/User"
 import { MongoError } from "mongodb"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
 import mongoose from "mongoose"
 
-export class UsersCommandRepository extends ChangeEventHandler implements IUsersCommandRepository {
-    private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
-    constructor(transaction?: TransactionRepository) {
-        super(UsersCommandRepository)
+export class UserCommandRepository<T> extends ChangeEventHandler implements IUserCommandRepository {
+    private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
+    constructor(transaction?: TransactionRepository<T>) {
+        super(UserCommandRepository)
         if (transaction) {
             this._transaction = transaction
         }

@@ -4,7 +4,7 @@ import {
     UnknownRepositoryError,
 } from "../../../../domain/repository/RepositoryError"
 
-import { ILoginCredentialsQueryRepository } from "../../../../domain/repository/query/LoginCredentials"
+import { ILoginCredentialQueryRepository } from "../../../../domain/repository/query/LoginCredential"
 import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
 import { UserId } from "../../../../domain/types"
 import { prisma } from "../client"
@@ -15,7 +15,7 @@ function toEntity(loginCredential: LoginCredential) {
         passwordHash: loginCredential.passwordHash,
     })
 }
-export class LoginCredentialsQueryRepository implements ILoginCredentialsQueryRepository {
+export class LoginCredentialQueryRepository implements ILoginCredentialQueryRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
         if (transaction) {

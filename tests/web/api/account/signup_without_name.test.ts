@@ -4,13 +4,13 @@ import signup, {
 } from "../../../../web/api/methods/account/signup_without_name"
 
 import { DeleteUserApplication } from "../../../../application/DeleteUser"
-import { LoginCredentialsCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginCredentials"
-import { LoginCredentialsQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginCredentials"
-import { LoginSessionsCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginSessions"
-import { LoginSessionsQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginSessions"
+import { LoginCredentialCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginCredential"
+import { LoginCredentialQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginCredential"
+import { LoginSessionCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginSession"
+import { LoginSessionQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginSession"
+import { UserCommandRepository } from "../../../../infrastructure/mongodb/repository/command/User"
 import { UserEntity } from "../../../../domain/entity/User"
-import { UsersCommandRepository } from "../../../../infrastructure/mongodb/repository/command/Users"
-import { UsersQueryRepository } from "../../../../infrastructure/mongodb/repository/query/Users"
+import { UserQueryRepository } from "../../../../infrastructure/mongodb/repository/query/User"
 import { WebApiRuntimeError } from "../../../../web/api/error"
 import config from "../../../../config/app"
 import { db } from "../../../env"
@@ -82,22 +82,22 @@ describe("account/signup_without_name", () => {
         expect(user2).toBeInstanceOf(UserEntity)
         if (user1) {
             await new DeleteUserApplication(
-                new UsersQueryRepository(),
-                new UsersCommandRepository(),
-                new LoginCredentialsQueryRepository(),
-                new LoginCredentialsCommandRepository(),
-                new LoginSessionsQueryRepository(),
-                new LoginSessionsCommandRepository()
+                new UserQueryRepository(),
+                new UserCommandRepository(),
+                new LoginCredentialQueryRepository(),
+                new LoginCredentialCommandRepository(),
+                new LoginSessionQueryRepository(),
+                new LoginSessionCommandRepository()
             ).delete(user1.id)
         }
         if (user2) {
             await new DeleteUserApplication(
-                new UsersQueryRepository(),
-                new UsersCommandRepository(),
-                new LoginCredentialsQueryRepository(),
-                new LoginCredentialsCommandRepository(),
-                new LoginSessionsQueryRepository(),
-                new LoginSessionsCommandRepository()
+                new UserQueryRepository(),
+                new UserCommandRepository(),
+                new LoginCredentialQueryRepository(),
+                new LoginCredentialCommandRepository(),
+                new LoginSessionQueryRepository(),
+                new LoginSessionCommandRepository()
             ).delete(user2.id)
         }
         config.user_registration.limit = origValue

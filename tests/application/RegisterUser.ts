@@ -4,10 +4,10 @@ import {
 } from "../../application/registration/RegisterPasswordBasedUser"
 
 import { ApplicationError } from "../../application/ApplicationError"
-import { ILoginCredentialsCommandRepository } from "../../domain/repository/command/LoginCredentials"
+import { ILoginCredentialCommandRepository } from "../../domain/repository/command/LoginCredential"
 import { ITransactionRepository } from "../../domain/repository/Transaction"
-import { IUsersCommandRepository } from "../../domain/repository/command/Users"
-import { IUsersQueryRepository } from "../../domain/repository/query/Users"
+import { IUserCommandRepository } from "../../domain/repository/command/User"
+import { IUserQueryRepository } from "../../domain/repository/query/User"
 import { LoginCredentialEntity } from "../../domain/entity/LoginCredential"
 import { UserEntity } from "../../domain/entity/User"
 import config from "../../config/app"
@@ -23,9 +23,9 @@ type NewableTransaction<C extends ITransactionRepository> = {
 export class RegisterUserTests {
     constructor() {}
     async testNormal<
-        S extends IUsersQueryRepository,
-        T extends IUsersCommandRepository,
-        U extends ILoginCredentialsCommandRepository,
+        S extends IUserQueryRepository,
+        T extends IUserCommandRepository,
+        U extends ILoginCredentialCommandRepository,
         V extends ITransactionRepository
     >(
         UsersQueryRepository: NewableRepository<S>,
@@ -69,9 +69,9 @@ export class RegisterUserTests {
         }
     }
     async testNameTaken<
-        S extends IUsersQueryRepository,
-        T extends IUsersCommandRepository,
-        U extends ILoginCredentialsCommandRepository,
+        S extends IUserQueryRepository,
+        T extends IUserCommandRepository,
+        U extends ILoginCredentialCommandRepository,
         V extends ITransactionRepository
     >(
         UsersQueryRepository: NewableRepository<S>,
@@ -113,9 +113,9 @@ export class RegisterUserTests {
         await transaction.end()
     }
     async testTooManyRequests<
-        S extends IUsersQueryRepository,
-        T extends IUsersCommandRepository,
-        U extends ILoginCredentialsCommandRepository,
+        S extends IUserQueryRepository,
+        T extends IUserCommandRepository,
+        U extends ILoginCredentialCommandRepository,
         V extends ITransactionRepository
     >(
         UsersQueryRepository: NewableRepository<S>,
@@ -169,9 +169,9 @@ export class RegisterUserTests {
         config.user_registration.limit = origValue
     }
     async testUserNameNotMeetPolicy<
-        S extends IUsersQueryRepository,
-        T extends IUsersCommandRepository,
-        U extends ILoginCredentialsCommandRepository,
+        S extends IUserQueryRepository,
+        T extends IUserCommandRepository,
+        U extends ILoginCredentialCommandRepository,
         V extends ITransactionRepository
     >(
         UsersQueryRepository: NewableRepository<S>,
@@ -205,9 +205,9 @@ export class RegisterUserTests {
         await transaction.end()
     }
     async testPasswordNotMeetPolicy<
-        S extends IUsersQueryRepository,
-        T extends IUsersCommandRepository,
-        U extends ILoginCredentialsCommandRepository,
+        S extends IUserQueryRepository,
+        T extends IUserCommandRepository,
+        U extends ILoginCredentialCommandRepository,
         V extends ITransactionRepository
     >(
         UsersQueryRepository: NewableRepository<S>,
@@ -241,9 +241,9 @@ export class RegisterUserTests {
         await transaction.end()
     }
     async testTransaction<
-        S extends IUsersQueryRepository,
-        T extends IUsersCommandRepository,
-        U extends ILoginCredentialsCommandRepository,
+        S extends IUserQueryRepository,
+        T extends IUserCommandRepository,
+        U extends ILoginCredentialCommandRepository,
         V extends ITransactionRepository
     >(
         UsersQueryRepository: NewableRepository<S>,

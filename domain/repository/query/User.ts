@@ -10,7 +10,7 @@ export const SortOrder = {
     Descending: "Descending",
 } as const
 
-export interface IUsersQueryRepository {
+export interface IUserQueryRepository {
     findById(userId: UserId): Promise<UserEntity | null>
     findByTwitterUserId(twitterUserId: string): Promise<UserEntity | null>
     findByName(name: string): Promise<UserEntity | null>

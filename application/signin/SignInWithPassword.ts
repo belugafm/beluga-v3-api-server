@@ -1,9 +1,9 @@
 import { ApplicationError } from "../ApplicationError"
 import { AuthenticityTokenEntity } from "../../domain/entity/AuthenticityToken"
 import { IAuthenticityTokenCommandRepository } from "../../domain/repository/command/AuthenticityToken"
-import { ILoginCredentialsQueryRepository } from "../../domain/repository/query/LoginCredentials"
-import { ILoginSessionsCommandRepository } from "../../domain/repository/command/LoginSessions"
-import { IUsersQueryRepository } from "../../domain/repository/query/Users"
+import { ILoginCredentialQueryRepository } from "../../domain/repository/query/LoginCredential"
+import { ILoginSessionCommandRepository } from "../../domain/repository/command/LoginSession"
+import { IUserQueryRepository } from "../../domain/repository/query/User"
 import { LoginCredentialEntity } from "../../domain/entity/LoginCredential"
 import { LoginSessionEntity } from "../../domain/entity/LoginSession"
 import { UserEntity } from "../../domain/entity/User"
@@ -25,14 +25,14 @@ export const ErrorCodes = {
 } as const
 
 export class SignInWithPasswordApplication {
-    private usersQueryRepository: IUsersQueryRepository
-    private loginCredentialsQueryRepository: ILoginCredentialsQueryRepository
-    private loginSessionCommandRepository: ILoginSessionsCommandRepository
+    private usersQueryRepository: IUserQueryRepository
+    private loginCredentialsQueryRepository: ILoginCredentialQueryRepository
+    private loginSessionCommandRepository: ILoginSessionCommandRepository
     private authenticityTokenCommandRepository: IAuthenticityTokenCommandRepository
     constructor(
-        usersQueryRepository: IUsersQueryRepository,
-        loginCredentialsQueryRepository: ILoginCredentialsQueryRepository,
-        loginSessionCommandRepository: ILoginSessionsCommandRepository,
+        usersQueryRepository: IUserQueryRepository,
+        loginCredentialsQueryRepository: ILoginCredentialQueryRepository,
+        loginSessionCommandRepository: ILoginSessionCommandRepository,
         authenticityTokenCommandRepository: IAuthenticityTokenCommandRepository
     ) {
         this.usersQueryRepository = usersQueryRepository

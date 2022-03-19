@@ -14,9 +14,9 @@ import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../../domain/enti
 
 import { ApplicationError } from "../ApplicationError"
 import { DomainError } from "../../domain/DomainError"
-import { ILoginCredentialsCommandRepository } from "../../domain/repository/command/LoginCredentials"
-import { IUsersCommandRepository } from "../../domain/repository/command/Users"
-import { IUsersQueryRepository } from "../../domain/repository/query/Users"
+import { ILoginCredentialCommandRepository } from "../../domain/repository/command/LoginCredential"
+import { IUserCommandRepository } from "../../domain/repository/command/User"
+import { IUserQueryRepository } from "../../domain/repository/query/User"
 
 type Argument = {
     name: string
@@ -33,15 +33,15 @@ export const ErrorCodes = {
 } as const
 
 export class RegisterPasswordBasedUserApplication {
-    private usersCommandRepository: IUsersCommandRepository
+    private usersCommandRepository: IUserCommandRepository
     // private usersQueryRepository: IUsersQueryRepository
-    private loginCredentialsCommandRepository: ILoginCredentialsCommandRepository
+    private loginCredentialsCommandRepository: ILoginCredentialCommandRepository
     private registrationRateLimitService: CheckRegistrationRateLimitService
     private userNameAvailabilityService: CheckUserNameAvailabilityService
     constructor(
-        usersQueryRepository: IUsersQueryRepository,
-        usersCommandRepository: IUsersCommandRepository,
-        loginCredentialsCommandRepository: ILoginCredentialsCommandRepository
+        usersQueryRepository: IUserQueryRepository,
+        usersCommandRepository: IUserCommandRepository,
+        loginCredentialsCommandRepository: ILoginCredentialCommandRepository
     ) {
         this.usersCommandRepository = usersCommandRepository
         // this.usersQueryRepository = usersQueryRepository

@@ -10,17 +10,17 @@ import {
 } from "../../../../domain/repository/RepositoryError"
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
-import { ILoginSessionsCommandRepository } from "../../../../domain/repository/command/LoginSessions"
+import { ILoginSessionCommandRepository } from "../../../../domain/repository/command/LoginSession"
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { MongoError } from "mongodb"
 
-export class LoginSessionsCommandRepository
+export class LoginSessionCommandRepository<T>
     extends ChangeEventHandler
-    implements ILoginSessionsCommandRepository
+    implements ILoginSessionCommandRepository
 {
-    private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
-    constructor(transaction?: TransactionRepository) {
-        super(LoginSessionsCommandRepository)
+    private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
+    constructor(transaction?: TransactionRepository<T>) {
+        super(LoginSessionCommandRepository)
         if (transaction) {
             this._transaction = transaction
         }

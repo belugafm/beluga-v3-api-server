@@ -5,7 +5,7 @@ import {
 } from "../../../../domain/repository/RepositoryError"
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
-import { ILoginSessionsCommandRepository } from "../../../../domain/repository/command/LoginSessions"
+import { ILoginSessionCommandRepository } from "../../../../domain/repository/command/LoginSession"
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { prisma } from "../client"
 
@@ -22,13 +22,13 @@ export function has_changed(a: LoginSessionEntity, b: LoginSession) {
     )
 }
 
-export class LoginSessionsCommandRepository
+export class LoginSessionCommandRepository
     extends ChangeEventHandler
-    implements ILoginSessionsCommandRepository
+    implements ILoginSessionCommandRepository
 {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
-        super(LoginSessionsCommandRepository)
+        super(LoginSessionCommandRepository)
         if (transaction) {
             this._prisma = transaction
         } else {

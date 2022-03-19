@@ -8,16 +8,16 @@ import {
     UnknownRepositoryError,
 } from "../../../../domain/repository/RepositoryError"
 
-import { ILoginCredentialsQueryRepository } from "../../../../domain/repository/query/LoginCredentials"
+import { ILoginCredentialQueryRepository } from "../../../../domain/repository/query/LoginCredential"
 import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
 import { LoginCredentialModel } from "../../schema/LoginCredential"
 import { MongoError } from "mongodb"
 import { UserId } from "../../../../domain/types"
 import mongoose from "mongoose"
 
-export class LoginCredentialsQueryRepository implements ILoginCredentialsQueryRepository {
-    private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
-    constructor(transaction?: TransactionRepository) {
+export class LoginCredentialQueryRepository<T> implements ILoginCredentialQueryRepository {
+    private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
+    constructor(transaction?: TransactionRepository<T>) {
         if (transaction) {
             this._transaction = transaction
         }

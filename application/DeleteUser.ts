@@ -1,15 +1,15 @@
 import {
-    ILoginSessionsQueryRepository,
+    ILoginSessionQueryRepository,
     SortBy,
     SortOrder,
-} from "../domain/repository/query/LoginSessions"
+} from "../domain/repository/query/LoginSession"
 
 import { ApplicationError } from "./ApplicationError"
-import { ILoginCredentialsCommandRepository } from "../domain/repository/command/LoginCredentials"
-import { ILoginCredentialsQueryRepository } from "../domain/repository/query/LoginCredentials"
-import { ILoginSessionsCommandRepository } from "../domain/repository/command/LoginSessions"
-import { IUsersCommandRepository } from "../domain/repository/command/Users"
-import { IUsersQueryRepository } from "../domain/repository/query/Users"
+import { ILoginCredentialCommandRepository } from "../domain/repository/command/LoginCredential"
+import { ILoginCredentialQueryRepository } from "../domain/repository/query/LoginCredential"
+import { ILoginSessionCommandRepository } from "../domain/repository/command/LoginSession"
+import { IUserCommandRepository } from "../domain/repository/command/User"
+import { IUserQueryRepository } from "../domain/repository/query/User"
 import { UserId } from "../domain/types"
 
 export const ErrorCodes = {
@@ -19,19 +19,19 @@ export const ErrorCodes = {
 } as const
 
 export class DeleteUserApplication {
-    private usersQueryRepository: IUsersQueryRepository
-    private usersCommandRepository: IUsersCommandRepository
-    private loginCredentialsQueryRepository: ILoginCredentialsQueryRepository
-    private loginCredentialsCommandRepository: ILoginCredentialsCommandRepository
-    private loginSessionsQueryRepository: ILoginSessionsQueryRepository
-    private loginSessionsCommandRepository: ILoginSessionsCommandRepository
+    private usersQueryRepository: IUserQueryRepository
+    private usersCommandRepository: IUserCommandRepository
+    private loginCredentialsQueryRepository: ILoginCredentialQueryRepository
+    private loginCredentialsCommandRepository: ILoginCredentialCommandRepository
+    private loginSessionsQueryRepository: ILoginSessionQueryRepository
+    private loginSessionsCommandRepository: ILoginSessionCommandRepository
     constructor(
-        usersQueryRepository: IUsersQueryRepository,
-        usersCommandRepository: IUsersCommandRepository,
-        loginCredentialsQueryRepository: ILoginCredentialsQueryRepository,
-        loginCredentialsCommandRepository: ILoginCredentialsCommandRepository,
-        loginSessionsQueryRepository: ILoginSessionsQueryRepository,
-        loginSessionsCommandRepository: ILoginSessionsCommandRepository
+        usersQueryRepository: IUserQueryRepository,
+        usersCommandRepository: IUserCommandRepository,
+        loginCredentialsQueryRepository: ILoginCredentialQueryRepository,
+        loginCredentialsCommandRepository: ILoginCredentialCommandRepository,
+        loginSessionsQueryRepository: ILoginSessionQueryRepository,
+        loginSessionsCommandRepository: ILoginSessionCommandRepository
     ) {
         this.usersCommandRepository = usersCommandRepository
         this.usersQueryRepository = usersQueryRepository

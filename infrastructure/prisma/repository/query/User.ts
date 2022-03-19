@@ -1,4 +1,4 @@
-import { IUsersQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/Users"
+import { IUserQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/User"
 import { PrismaClient, User } from "@prisma/client"
 import {
     RepositoryError,
@@ -40,7 +40,7 @@ function toEntity(user: User) {
         registrationIpAddress: user.registrationIpAddress,
     })
 }
-export class UsersQueryRepository implements IUsersQueryRepository {
+export class UserQueryRepository implements IUserQueryRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
         if (transaction) {

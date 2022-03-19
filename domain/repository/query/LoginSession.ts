@@ -10,7 +10,7 @@ export const SortOrder = {
     Descending: "Descending",
 } as const
 
-export interface ILoginSessionsQueryRepository {
+export interface ILoginSessionQueryRepository {
     findBySessionId(sessionId: string): Promise<LoginSessionEntity | null>
     findByUserId(
         userId: UserId,

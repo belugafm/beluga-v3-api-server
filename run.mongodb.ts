@@ -4,8 +4,8 @@ import { LoginCredentialModel } from "./infrastructure/mongodb/schema/LoginCrede
 import { LoginSessionModel } from "./infrastructure/mongodb/schema/LoginSession"
 import { MongoClient } from "mongodb"
 import { MongoMemoryReplSet } from "mongodb-memory-server"
+import { UserCommandRepository } from "./infrastructure/mongodb/repository/command/User"
 import { UserModel } from "./infrastructure/mongodb/schema/User"
-import { UsersCommandRepository } from "./infrastructure/mongodb/repository/command/Users"
 import config from "./config/app"
 import mongoose from "mongoose"
 
@@ -53,7 +53,7 @@ async function startServer() {
                 res.end()
             },
         },
-        new UsersCommandRepository()
+        new UserCommandRepository()
     )
 
     // トランザクション中はcollectionの作成ができないので先に作っておく

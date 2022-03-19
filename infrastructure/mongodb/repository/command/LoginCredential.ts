@@ -10,18 +10,18 @@ import {
 } from "../../../../domain/repository/RepositoryError"
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
-import { ILoginCredentialsCommandRepository } from "../../../../domain/repository/command/LoginCredentials"
+import { ILoginCredentialCommandRepository } from "../../../../domain/repository/command/LoginCredential"
 import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
 import { MongoError } from "mongodb"
 import mongoose from "mongoose"
 
-export class LoginCredentialsCommandRepository
+export class LoginCredentialCommandRepository<T>
     extends ChangeEventHandler
-    implements ILoginCredentialsCommandRepository
+    implements ILoginCredentialCommandRepository
 {
-    private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
-    constructor(transaction?: TransactionRepository) {
-        super(LoginCredentialsCommandRepository)
+    private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
+    constructor(transaction?: TransactionRepository<T>) {
+        super(LoginCredentialCommandRepository)
         if (transaction) {
             this._transaction = transaction
         }

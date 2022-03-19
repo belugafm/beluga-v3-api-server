@@ -1,6 +1,6 @@
 import { Request, Response, TurboServer } from "./web/turbo"
 
-import { UsersCommandRepository } from "./infrastructure/prisma/repository/command/Users"
+import { UserCommandRepository } from "./infrastructure/prisma/repository/command/User"
 import config from "./config/app"
 
 async function startServer() {
@@ -21,7 +21,7 @@ async function startServer() {
                 res.end()
             },
         },
-        new UsersCommandRepository()
+        new UserCommandRepository()
     )
 
     // routerにendpointを登録

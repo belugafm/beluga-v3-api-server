@@ -1,8 +1,8 @@
+import { LoginCredentialCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginCredential"
 import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
-import { LoginCredentialsCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginCredentials"
-import { LoginCredentialsQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginCredentials"
+import { LoginCredentialQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginCredential"
+import { UserCommandRepository } from "../../../../infrastructure/mongodb/repository/command/User"
 import { UserEntity } from "../../../../domain/entity/User"
-import { UsersCommandRepository } from "../../../../infrastructure/mongodb/repository/command/Users"
 import { db } from "../../../mongodb"
 
 jest.setTimeout(30000)
@@ -15,9 +15,9 @@ describe("LoginCredentialsRepository", () => {
         await db.disconnect()
     })
     test("Normal", async () => {
-        const usersCommandRepository = new UsersCommandRepository()
-        const loginCredentialQueryRepository = new LoginCredentialsQueryRepository()
-        const loginCredentialsCommandRepository = new LoginCredentialsCommandRepository()
+        const usersCommandRepository = new UserCommandRepository()
+        const loginCredentialQueryRepository = new LoginCredentialQueryRepository()
+        const loginCredentialsCommandRepository = new LoginCredentialCommandRepository()
 
         const user = new UserEntity({ id: -1, name: "hoge", registrationIpAddress: "192.168.1.1" })
         const userId = await usersCommandRepository.add(user)

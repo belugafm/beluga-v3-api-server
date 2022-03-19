@@ -2,7 +2,7 @@ import { InvalidContentTypeErrorSpec, WebApiRuntimeError } from "../api/error"
 import { Request, Response, read_body } from "./turbo"
 
 import { ContentTypesUnion } from "../api/facts/content_type"
-import { IUsersCommandRepository } from "../../domain/repository/command/Users"
+import { IUserCommandRepository } from "../../domain/repository/command/User"
 import { MethodFacts } from "../api/define"
 import Router from "find-my-way"
 import { UserEntity } from "../../domain/entity/User"
@@ -102,8 +102,8 @@ type Options = {}
 export class TurboServer {
     router: Router.Instance
     server: turbo.Server
-    usersRepository: IUsersCommandRepository
-    constructor(opt: Router.Config, usersRepository: IUsersCommandRepository) {
+    usersRepository: IUserCommandRepository
+    constructor(opt: Router.Config, usersRepository: IUserCommandRepository) {
         if (opt.defaultRoute == null) {
             opt.defaultRoute = DefaultRoute
         }

@@ -3,7 +3,7 @@ import {
     TransactionRepository,
     TransactionRepositoryInterface,
 } from "../Transaction"
-import { IUsersQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/Users"
+import { IUserQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/User"
 import {
     RepositoryError,
     UnknownRepositoryError,
@@ -15,9 +15,9 @@ import { UserId } from "../../../../domain/types"
 import { UserModel } from "../../schema/User"
 import mongoose from "mongoose"
 
-export class UsersQueryRepository implements IUsersQueryRepository {
-    private _transaction: TransactionRepositoryInterface = new EmptyTransactionRepository()
-    constructor(transaction?: TransactionRepository) {
+export class UserQueryRepository<T> implements IUserQueryRepository {
+    private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
+    constructor(transaction?: TransactionRepository<T>) {
         if (transaction) {
             this._transaction = transaction
         }

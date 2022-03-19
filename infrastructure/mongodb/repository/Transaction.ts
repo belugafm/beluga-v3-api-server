@@ -50,13 +50,13 @@ export class TransactionRepository<T> implements TransactionRepositoryInterface<
     }
 }
 
-export class EmptyTransactionRepository implements TransactionRepositoryInterface<void> {
+export class EmptyTransactionRepository<T> implements TransactionRepositoryInterface<T> {
     async begin() {}
     async commit() {}
     async rollback() {}
     async end() {}
-    async $transaction(func: (session: any) => void) {
-        func(null)
+    async $transaction(func: (session: any) => T) {
+        return func(null)
     }
     getSession() {
         return null

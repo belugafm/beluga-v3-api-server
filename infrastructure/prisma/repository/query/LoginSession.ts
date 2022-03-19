@@ -3,9 +3,9 @@ import {
     RepositoryError,
     UnknownRepositoryError,
 } from "../../../../domain/repository/RepositoryError"
-import { SortBy, SortOrder } from "../../../../domain/repository/query/LoginSessions"
+import { SortBy, SortOrder } from "../../../../domain/repository/query/LoginSession"
 
-import { ILoginSessionsQueryRepository } from "../../../../domain/repository/query/LoginSessions"
+import { ILoginSessionQueryRepository } from "../../../../domain/repository/query/LoginSession"
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { UserId } from "../../../../domain/types"
 import { prisma } from "../client"
@@ -22,7 +22,7 @@ function toEntity(session: LoginSession) {
         device: session.device,
     })
 }
-export class LoginSessionsQueryRepository implements ILoginSessionsQueryRepository {
+export class LoginSessionQueryRepository implements ILoginSessionQueryRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
         if (transaction) {
