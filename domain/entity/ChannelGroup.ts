@@ -39,7 +39,7 @@ export class ChannelGroupEntity extends Entity {
     @ValidateBy(vn.channelGroup.uniqueName(), { errorCode: ErrorCodes.InvalidUniqueName })
     uniqueName: string
 
-    @ValidateBy(vn.number(), { errorCode: ErrorCodes.InvalidLevel })
+    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidLevel })
     level: number
 
     @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidParentId })

@@ -4,7 +4,7 @@ import {
     RequestTokenResponse,
     TwitterAuthenticationApplication,
 } from "../../../../../application/authentication/Twitter"
-import { UsersCommandRepository, UsersQueryRepository } from "../../../../repositories"
+import { UserCommandRepository, UserQueryRepository } from "../../../../repositories"
 
 import { ApplicationError } from "../../../../../application/ApplicationError"
 import { ContentTypes } from "../../../facts/content_type"
@@ -41,8 +41,8 @@ export default defineMethod(
     async (args, errors): Promise<RequestTokenResponse | null> => {
         try {
             return await new TwitterAuthenticationApplication(
-                new UsersQueryRepository(),
-                new UsersCommandRepository()
+                new UserQueryRepository(),
+                new UserCommandRepository()
             ).getRequestToken()
         } catch (error) {
             if (error instanceof ApplicationError) {

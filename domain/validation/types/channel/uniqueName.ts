@@ -10,6 +10,7 @@ export function uniqueName() {
     const options: Options = {
         minLength: config.channel.unique_name.min_length,
         maxLength: config.channel.unique_name.max_length,
+        regexp: config.channel.unique_name.regexp,
     }
     return new Validator<string>(options, [
         checkIsString,

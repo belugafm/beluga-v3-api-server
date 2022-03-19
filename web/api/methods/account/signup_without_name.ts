@@ -2,12 +2,12 @@ import * as vs from "../../../../domain/validation"
 
 import {
     AuthenticityTokenCommandRepository,
-    LoginCredentialsCommandRepository,
-    LoginCredentialsQueryRepository,
-    LoginSessionsCommandRepository,
+    LoginCredentialCommandRepository,
+    LoginCredentialQueryRepository,
+    LoginSessionCommandRepository,
     TransactionRepository,
-    UsersCommandRepository,
-    UsersQueryRepository,
+    UserCommandRepository,
+    UserQueryRepository,
 } from "../../../repositories"
 import {
     ErrorCodes,
@@ -116,9 +116,9 @@ export default defineMethod(
                     (config.user.name.max_length - config.user.name.min_length) / 2
                 )
                 await new RegisterPasswordBasedUserApplication(
-                    new UsersQueryRepository(transactionSession),
-                    new UsersCommandRepository(transactionSession),
-                    new LoginCredentialsCommandRepository(transactionSession)
+                    new UserQueryRepository(transactionSession),
+                    new UserCommandRepository(transactionSession),
+                    new LoginCredentialCommandRepository(transactionSession)
                 ).register({
                     name: name,
                     password: args.password,
@@ -126,9 +126,9 @@ export default defineMethod(
                 })
                 const [user, loginCredential, loginSession, authenticityToken] =
                     await new SignInWithPasswordApplication(
-                        new UsersQueryRepository(transactionSession),
-                        new LoginCredentialsQueryRepository(transactionSession),
-                        new LoginSessionsCommandRepository(transactionSession),
+                        new UserQueryRepository(transactionSession),
+                        new LoginCredentialQueryRepository(transactionSession),
+                        new LoginSessionCommandRepository(transactionSession),
                         new AuthenticityTokenCommandRepository(transactionSession)
                     ).signin({
                         name: name,

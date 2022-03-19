@@ -2,8 +2,8 @@ import * as vs from "../../../../../domain/validation"
 
 import {
     AuthenticityTokenQueryRepository,
-    LoginSessionsQueryRepository,
-    UsersQueryRepository,
+    LoginSessionQueryRepository,
+    UserQueryRepository,
 } from "../../../../repositories"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../../define"
@@ -59,8 +59,8 @@ export default defineMethod(
     async (args, errors): Promise<[UserEntity, AuthenticityTokenEntity]> => {
         try {
             const [user, _, authenticityToken] = await new CookieAuthenticationApplication(
-                new UsersQueryRepository(),
-                new LoginSessionsQueryRepository(),
+                new UserQueryRepository(),
+                new LoginSessionQueryRepository(),
                 new AuthenticityTokenQueryRepository()
             ).authenticate({ sessionId: args.session_id })
             return [user, authenticityToken]

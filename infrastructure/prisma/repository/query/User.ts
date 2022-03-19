@@ -27,8 +27,6 @@ function toEntity(user: User) {
         favoritedCount: user.favoritedCount,
         likesCount: user.likesCount,
         likedCount: user.likedCount,
-        channelsCount: user.channelsCount,
-        followingChannelsCount: user.followingChannelsCount,
         createdAt: user.createdAt,
         active: user.active,
         dormant: user.dormant,

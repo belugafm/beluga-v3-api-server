@@ -10,6 +10,7 @@ export function name() {
     const options: Options = {
         minLength: config.channel.name.min_length,
         maxLength: config.channel.name.max_length,
+        regexp: config.channel.name.regexp,
     }
     return new Validator<string>(options, [
         checkIsString,

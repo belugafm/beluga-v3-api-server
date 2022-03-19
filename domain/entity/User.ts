@@ -91,9 +91,6 @@ export class UserEntity extends Entity {
     @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     channelsCount: number // 作成したチャンネル数
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
-    followingChannelsCount: number // フォロー中のチャンネル数
-
     @ValidateBy(vn.date(), { errorCode: ErrorCodes.InvalidDate })
     createdAt: Date
 
@@ -149,10 +146,6 @@ export class UserEntity extends Entity {
         this.favoritedCount = params.favoritedCount ? params.favoritedCount : 0
         this.likesCount = params.likesCount ? params.likesCount : 0
         this.likedCount = params.likedCount ? params.likedCount : 0
-        this.channelsCount = params.channelsCount ? params.channelsCount : 0
-        this.followingChannelsCount = params.followingChannelsCount
-            ? params.followingChannelsCount
-            : 0
         this.bot = params.bot ? params.bot : false
         this.active = params.active ? params.active : false
         this.dormant = params.dormant ? params.dormant : false
@@ -185,8 +178,6 @@ export class UserEntity extends Entity {
             favorited_count: this.favoritedCount,
             likes_count: this.likesCount,
             liked_count: this.likedCount,
-            channels_count: this.channelsCount,
-            following_channels_count: this.followingChannelsCount,
             bot: this.bot,
             active: this.active,
             dormant: this.dormant,

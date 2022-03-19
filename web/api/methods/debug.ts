@@ -2,10 +2,10 @@ import * as vs from "../../../domain/validation"
 
 import {
     AuthenticityTokenCommandRepository,
-    LoginCredentialsCommandRepository,
-    LoginSessionsCommandRepository,
-    UsersCommandRepository,
-    UsersQueryRepository,
+    LoginCredentialCommandRepository,
+    LoginSessionCommandRepository,
+    UserCommandRepository,
+    UserQueryRepository,
 } from "../../repositories"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../define"
@@ -91,18 +91,18 @@ export default defineMethod(
                 (config.user.name.max_length - config.user.name.min_length) / 2
             )
             await new RegisterPasswordBasedUserApplication(
-                new UsersQueryRepository(transaction),
-                new UsersCommandRepository(transaction),
-                new LoginCredentialsCommandRepository(transaction)
+                new UserQueryRepository(transaction),
+                new UserCommandRepository(transaction),
+                new LoginCredentialCommandRepository(transaction)
             ).register({
                 name: name,
                 password: args.password,
                 ipAddress: "127.0.0.1",
             })
             const [user, _, loginSession] = await new SignInWithPasswordApplication(
-                new UsersQueryRepository(transaction),
+                new UserQueryRepository(transaction),
                 new LoginCredentialsQueryRepository(transaction),
-                new LoginSessionsCommandRepository(transaction),
+                new LoginSessionCommandRepository(transaction),
                 new AuthenticityTokenCommandRepository(transaction)
             ).signin({
                 name: name,

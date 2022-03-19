@@ -2,12 +2,12 @@ import * as vs from "../../../../../domain/validation"
 
 import {
     AuthenticityTokenCommandRepository,
-    LoginSessionsCommandRepository,
+    LoginSessionCommandRepository,
     TransactionRepository,
 } from "../../../../repositories"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../../define"
-import { UsersCommandRepository, UsersQueryRepository } from "../../../../repositories"
+import { UserCommandRepository, UserQueryRepository } from "../../../../repositories"
 
 import { ApplicationError } from "../../../../../application/ApplicationError"
 import { AuthenticityTokenEntity } from "../../../../../domain/entity/AuthenticityToken"
@@ -81,8 +81,8 @@ export default defineMethod(
         try {
             return await transaction.$transaction(async (transactionSession) => {
                 const user = await new TwitterAuthenticationApplication(
-                    new UsersQueryRepository(),
-                    new UsersCommandRepository()
+                    new UserQueryRepository(),
+                    new UserCommandRepository()
                 ).authenticate({
                     requestToken: args.oauth_token,
                     verifier: args.oauth_verifier,
@@ -90,8 +90,8 @@ export default defineMethod(
                     authSessionId: args.auth_session_id,
                 })
                 const [_, loginSession, authenticityToken] = await new SignInWithTwitterApplication(
-                    new UsersQueryRepository(transactionSession),
-                    new LoginSessionsCommandRepository(transactionSession),
+                    new UserQueryRepository(transactionSession),
+                    new LoginSessionCommandRepository(transactionSession),
                     new AuthenticityTokenCommandRepository(transactionSession)
                 ).signin({
                     // @ts-ignore

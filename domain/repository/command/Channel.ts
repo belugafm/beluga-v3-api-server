@@ -1,10 +1,8 @@
-import { UserEntity } from "../../entity/User"
-import { UserId } from "../../types"
+import { ChannelEntity } from "../../entity/Channel"
+import { ChannelId } from "../../types"
 
-export interface IUsersCommandRepository {
-    add(user: UserEntity): Promise<UserId>
-    delete(user: UserEntity): Promise<boolean>
-    update(user: UserEntity): Promise<boolean>
-    activate(user: UserEntity): Promise<boolean>
-    updateLastActivityDate(user: UserEntity, date: Date): Promise<boolean>
+export interface IChannelCommandRepository {
+    add(channel: ChannelEntity): Promise<ChannelId>
+    delete(channel: ChannelEntity): Promise<boolean>
+    update(channel: ChannelEntity): Promise<boolean>
 }

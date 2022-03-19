@@ -27,8 +27,6 @@ export function has_changed(a: UserEntity, b: User) {
         a.favoritedCount === b.favoritedCount &&
         a.likesCount === b.likesCount &&
         a.likedCount === b.likedCount &&
-        a.channelsCount === b.channelsCount &&
-        a.followingChannelsCount === b.followingChannelsCount &&
         a.createdAt?.getTime() === b.createdAt?.getTime() &&
         a.bot === b.bot &&
         a.active === b.active &&
@@ -74,8 +72,6 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
                     favoritedCount: user.favoritedCount,
                     likesCount: user.likesCount,
                     likedCount: user.likedCount,
-                    channelsCount: user.channelsCount,
-                    followingChannelsCount: user.followingChannelsCount,
                     createdAt: user.createdAt,
                     bot: user.bot,
                     active: user.active,
@@ -123,8 +119,6 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
                     favoritedCount: user.favoritedCount,
                     likesCount: user.likesCount,
                     likedCount: user.likedCount,
-                    channelsCount: user.channelsCount,
-                    followingChannelsCount: user.followingChannelsCount,
                     createdAt: user.createdAt,
                     bot: user.bot,
                     active: user.active,
