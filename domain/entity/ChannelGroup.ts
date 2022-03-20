@@ -85,7 +85,7 @@ export class ChannelGroupEntity extends Entity {
             statuses_count: this.statusesCount,
         }
     }
-    static generateUniqueName(): String {
+    static generateUniqueName(): string {
         return generateRandomName(12)
     }
 }

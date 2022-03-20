@@ -19,5 +19,7 @@ export { UserQueryRepository } from "../infrastructure/prisma/repository/query/U
 export { UserCommandRepository } from "../infrastructure/prisma/repository/command/User"
 export { ChannelCommandRepository } from "../infrastructure/prisma/repository/command/Channel"
 export { ChannelQueryRepository } from "../infrastructure/prisma/repository/query/Channel"
+export { ChannelGroupCommandRepository } from "../infrastructure/prisma/repository/command/ChannelGroup"
+export { ChannelGroupQueryRepository } from "../infrastructure/prisma/repository/query/ChannelGroup"
 export { TransactionRepository } from "../infrastructure/prisma/repository/Transaction"
 export { IPGeolocationQueryRepository } from "../infrastructure/ipqualityscore/IPGeolocation"

@@ -155,18 +155,16 @@ const tmpSessionStore = new InMemoryCache<string>({
 // oauth/access_tokenが返すoauth_tokenをaccess_tokenと呼ぶ
 
 export class TwitterAuthenticationApplication {
-    private usersQueryRepository: IUserQueryRepository
-    private usersCommandRepository: IUserCommandRepository
+    private userQueryRepository: IUserQueryRepository
+    private userCommandRepository: IUserCommandRepository
     private userNameAvailabilityService: CheckUserNameAvailabilityService
     constructor(
-        usersQueryRepository: IUserQueryRepository,
-        usersCommandRepository: IUserCommandRepository
+        userQueryRepository: IUserQueryRepository,
+        userCommandRepository: IUserCommandRepository
     ) {
-        this.usersQueryRepository = usersQueryRepository
-        this.usersCommandRepository = usersCommandRepository
-        this.userNameAvailabilityService = new CheckUserNameAvailabilityService(
-            usersQueryRepository
-        )
+        this.userQueryRepository = userQueryRepository
+        this.userCommandRepository = userCommandRepository
+        this.userNameAvailabilityService = new CheckUserNameAvailabilityService(userQueryRepository)
     }
     async getRequestToken(): Promise<RequestTokenResponse | null> {
         const url = "https://api.twitter.com/oauth/request_token"
@@ -318,7 +316,7 @@ export class TwitterAuthenticationApplication {
         }
     }
     async generateUserName(screenName: string) {
-        const existingUser = await this.usersQueryRepository.findByName(screenName)
+        const existingUser = await this.userQueryRepository.findByName(screenName)
         if (existingUser) {
             const name = generateRandomName(
                 (config.user.name.max_length - config.user.name.min_length) / 2
@@ -364,7 +362,7 @@ export class TwitterAuthenticationApplication {
         if (userResponse == null) {
             throw new ApplicationError(ErrorCodes.InternalError)
         }
-        const existingUser = await this.usersQueryRepository.findByTwitterUserId(userResponse.id)
+        const existingUser = await this.userQueryRepository.findByTwitterUserId(userResponse.id)
         if (existingUser) {
             return existingUser
         }
@@ -381,7 +379,7 @@ export class TwitterAuthenticationApplication {
                 twitterAccountCreatedAt: userResponse.createdAt,
             }),
         })
-        user.id = await this.usersCommandRepository.add(user)
+        user.id = await this.userCommandRepository.add(user)
         return user
     }
 }

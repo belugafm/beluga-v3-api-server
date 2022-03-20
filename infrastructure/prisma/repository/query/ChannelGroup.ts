@@ -26,7 +26,7 @@ function toEntity(channelGroup: ChannelGroup) {
         statusesCount: channelGroup.statusesCount,
     })
 }
-export class ChannelQueryRepository implements IChannelGroupQueryRepository {
+export class ChannelGroupQueryRepository implements IChannelGroupQueryRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
         if (transaction) {

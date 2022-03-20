@@ -18,15 +18,15 @@ export const ErrorCodes = {
 } as const
 
 export class CookieAuthenticationApplication {
-    private usersQueryRepository: IUserQueryRepository
+    private userQueryRepository: IUserQueryRepository
     private loginSessionQueryRepository: ILoginSessionQueryRepository
     private authenticityTokenQueryRepository: IAuthenticityTokenQueryRepository
     constructor(
-        usersQueryRepository: IUserQueryRepository,
+        userQueryRepository: IUserQueryRepository,
         loginSessionQueryRepository: ILoginSessionQueryRepository,
         authenticityTokenQueryRepository: IAuthenticityTokenQueryRepository
     ) {
-        this.usersQueryRepository = usersQueryRepository
+        this.userQueryRepository = userQueryRepository
         this.loginSessionQueryRepository = loginSessionQueryRepository
         this.authenticityTokenQueryRepository = authenticityTokenQueryRepository
     }
@@ -38,7 +38,7 @@ export class CookieAuthenticationApplication {
             if (session == null) {
                 throw new ApplicationError(ErrorCodes.SessionNotFound)
             }
-            const user = await this.usersQueryRepository.findById(session.userId)
+            const user = await this.userQueryRepository.findById(session.userId)
             if (user == null) {
                 throw new ApplicationError(ErrorCodes.UserNotFound)
             }

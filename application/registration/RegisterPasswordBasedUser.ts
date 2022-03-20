@@ -33,25 +33,23 @@ export const ErrorCodes = {
 } as const
 
 export class RegisterPasswordBasedUserApplication {
-    private usersCommandRepository: IUserCommandRepository
+    private userCommandRepository: IUserCommandRepository
     // private usersQueryRepository: IUsersQueryRepository
     private loginCredentialsCommandRepository: ILoginCredentialCommandRepository
     private registrationRateLimitService: CheckRegistrationRateLimitService
     private userNameAvailabilityService: CheckUserNameAvailabilityService
     constructor(
-        usersQueryRepository: IUserQueryRepository,
-        usersCommandRepository: IUserCommandRepository,
+        userQueryRepository: IUserQueryRepository,
+        userCommandRepository: IUserCommandRepository,
         loginCredentialsCommandRepository: ILoginCredentialCommandRepository
     ) {
-        this.usersCommandRepository = usersCommandRepository
+        this.userCommandRepository = userCommandRepository
         // this.usersQueryRepository = usersQueryRepository
         this.loginCredentialsCommandRepository = loginCredentialsCommandRepository
         this.registrationRateLimitService = new CheckRegistrationRateLimitService(
-            usersQueryRepository
+            userQueryRepository
         )
-        this.userNameAvailabilityService = new CheckUserNameAvailabilityService(
-            usersQueryRepository
-        )
+        this.userNameAvailabilityService = new CheckUserNameAvailabilityService(userQueryRepository)
     }
     async createUser({ name, ipAddress }: { name: string; ipAddress: string }) {
         await this.registrationRateLimitService.tryCheckIfRateIsLimited(ipAddress)
@@ -66,7 +64,7 @@ export class RegisterPasswordBasedUserApplication {
                 twitterAccountCreatedAt: null,
             }),
         })
-        user.id = await this.usersCommandRepository.add(user)
+        user.id = await this.userCommandRepository.add(user)
         return user
     }
     async registerUser({ user, password }: { user: UserEntity; password: string }) {

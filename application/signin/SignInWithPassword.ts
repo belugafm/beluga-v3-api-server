@@ -25,17 +25,17 @@ export const ErrorCodes = {
 } as const
 
 export class SignInWithPasswordApplication {
-    private usersQueryRepository: IUserQueryRepository
+    private userQueryRepository: IUserQueryRepository
     private loginCredentialsQueryRepository: ILoginCredentialQueryRepository
     private loginSessionCommandRepository: ILoginSessionCommandRepository
     private authenticityTokenCommandRepository: IAuthenticityTokenCommandRepository
     constructor(
-        usersQueryRepository: IUserQueryRepository,
+        userQueryRepository: IUserQueryRepository,
         loginCredentialsQueryRepository: ILoginCredentialQueryRepository,
         loginSessionCommandRepository: ILoginSessionCommandRepository,
         authenticityTokenCommandRepository: IAuthenticityTokenCommandRepository
     ) {
-        this.usersQueryRepository = usersQueryRepository
+        this.userQueryRepository = userQueryRepository
         this.loginCredentialsQueryRepository = loginCredentialsQueryRepository
         this.loginSessionCommandRepository = loginSessionCommandRepository
         this.authenticityTokenCommandRepository = authenticityTokenCommandRepository
@@ -70,7 +70,7 @@ export class SignInWithPasswordApplication {
         [UserEntity, LoginCredentialEntity, LoginSessionEntity, AuthenticityTokenEntity]
     > {
         try {
-            const user = await this.usersQueryRepository.findByName(name)
+            const user = await this.userQueryRepository.findByName(name)
             if (user == null) {
                 throw new ApplicationError(ErrorCodes.UserNotFound)
             }

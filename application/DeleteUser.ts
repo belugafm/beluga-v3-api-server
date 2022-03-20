@@ -19,12 +19,12 @@ export const ErrorCodes = {
 } as const
 
 export class DeleteUserApplication {
-    private usersQueryRepository: IUserQueryRepository
-    private usersCommandRepository: IUserCommandRepository
+    private userQueryRepository: IUserQueryRepository
+    private userCommandRepository: IUserCommandRepository
     private loginCredentialsQueryRepository: ILoginCredentialQueryRepository
     private loginCredentialsCommandRepository: ILoginCredentialCommandRepository
-    private loginSessionsQueryRepository: ILoginSessionQueryRepository
-    private loginSessionsCommandRepository: ILoginSessionCommandRepository
+    private loginSessionQueryRepository: ILoginSessionQueryRepository
+    private loginSessionCommandRepository: ILoginSessionCommandRepository
     constructor(
         usersQueryRepository: IUserQueryRepository,
         usersCommandRepository: IUserCommandRepository,
@@ -33,26 +33,26 @@ export class DeleteUserApplication {
         loginSessionsQueryRepository: ILoginSessionQueryRepository,
         loginSessionsCommandRepository: ILoginSessionCommandRepository
     ) {
-        this.usersCommandRepository = usersCommandRepository
-        this.usersQueryRepository = usersQueryRepository
+        this.userCommandRepository = usersCommandRepository
+        this.userQueryRepository = usersQueryRepository
         this.loginCredentialsQueryRepository = loginCredentialsQueryRepository
         this.loginCredentialsCommandRepository = loginCredentialsCommandRepository
-        this.loginSessionsQueryRepository = loginSessionsQueryRepository
-        this.loginSessionsCommandRepository = loginSessionsCommandRepository
+        this.loginSessionQueryRepository = loginSessionsQueryRepository
+        this.loginSessionCommandRepository = loginSessionsCommandRepository
     }
     async delete(userId: UserId) {
-        const user = await this.usersQueryRepository.findById(userId)
+        const user = await this.userQueryRepository.findById(userId)
         if (user == null) {
             throw new ApplicationError(ErrorCodes.UserNotFound)
         }
-        await this.usersCommandRepository.delete(user)
-        const sessions = await this.loginSessionsQueryRepository.findByUserId(
+        await this.userCommandRepository.delete(user)
+        const sessions = await this.loginSessionQueryRepository.findByUserId(
             user.id,
             SortBy.CreatedAt,
             SortOrder.Descending
         )
         for (const session of sessions) {
-            await this.loginSessionsCommandRepository.delete(session)
+            await this.loginSessionCommandRepository.delete(session)
         }
         const credential = await this.loginCredentialsQueryRepository.findByUserId(user.id)
         if (credential == null) {

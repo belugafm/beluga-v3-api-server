@@ -22,13 +22,13 @@ export function has_changed(a: ChannelGroup, b: ChannelGroup) {
     )
 }
 
-export class ChannelCommandRepository
+export class ChannelGroupCommandRepository
     extends ChangeEventHandler
     implements IChannelGroupCommandRepository
 {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
-        super(ChannelCommandRepository)
+        super(ChannelGroupCommandRepository)
         if (transaction) {
             this._prisma = transaction
         } else {

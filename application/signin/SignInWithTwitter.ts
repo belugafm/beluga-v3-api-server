@@ -21,15 +21,15 @@ export const ErrorCodes = {
 } as const
 
 export class SignInWithTwitterApplication {
-    private usersQueryRepository: IUserQueryRepository
+    private userQueryRepository: IUserQueryRepository
     private loginSessionCommandRepository: ILoginSessionCommandRepository
     private authenticityTokenCommandRepository: IAuthenticityTokenCommandRepository
     constructor(
-        usersQueryRepository: IUserQueryRepository,
+        userQueryRepository: IUserQueryRepository,
         loginSessionCommandRepository: ILoginSessionCommandRepository,
         authenticityTokenCommandRepository: IAuthenticityTokenCommandRepository
     ) {
-        this.usersQueryRepository = usersQueryRepository
+        this.userQueryRepository = userQueryRepository
         this.loginSessionCommandRepository = loginSessionCommandRepository
         this.authenticityTokenCommandRepository = authenticityTokenCommandRepository
     }
@@ -60,7 +60,7 @@ export class SignInWithTwitterApplication {
         device,
     }: Argument): Promise<[UserEntity, LoginSessionEntity, AuthenticityTokenEntity]> {
         try {
-            const user = await this.usersQueryRepository.findByTwitterUserId(twitterUserId)
+            const user = await this.userQueryRepository.findByTwitterUserId(twitterUserId)
             if (user == null) {
                 throw new ApplicationError(ErrorCodes.UserNotFound)
             }

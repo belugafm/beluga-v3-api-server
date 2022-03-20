@@ -30,8 +30,8 @@ export const expectedErrorSpecs = defineErrors(
     argumentSpecs,
     {
         session_not_found: {
-            description: ["セッションが見つかりません"],
-            hint: [],
+            description: ["ログインしていません"],
+            hint: ["ログインしてください"],
             argument: "session_id",
             code: "session_not_found",
         },
