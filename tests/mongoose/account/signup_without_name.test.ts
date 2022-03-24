@@ -3,7 +3,7 @@ import signup, {
     generateRandomName,
 } from "../../../web/api/methods/account/signup_without_name"
 
-import { DeleteUserApplication } from "../../../application/DeleteUser"
+import { DeleteUserApplication } from "../../../application/registration/DeleteUser"
 import { LoginCredentialCommandRepository } from "../../../infrastructure/mongoose/repository/command/LoginCredential"
 import { LoginCredentialQueryRepository } from "../../../infrastructure/mongoose/repository/query/LoginCredential"
 import { LoginSessionCommandRepository } from "../../../infrastructure/mongoose/repository/command/LoginSession"

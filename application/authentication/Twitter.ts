@@ -150,7 +150,7 @@ const tmpSessionStore = new InMemoryCache<string>({
     defaultExpireSeconds: authSessionExpireSeconds,
 })
 
-// Log in with Twitterの実装では'oauth_token'という名前の全く違う２つのトークンを扱うことになる
+// Log-in with Twitterの実装では'oauth_token'という名前の全く違う２つのトークンを扱うことになる
 // oauth/request_tokenが返すoauth_tokenをrequest_token、
 // oauth/access_tokenが返すoauth_tokenをaccess_tokenと呼ぶ
 

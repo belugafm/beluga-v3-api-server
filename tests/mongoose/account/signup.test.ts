@@ -1,6 +1,6 @@
 import signup, { expectedErrorSpecs } from "../../../../web/api/methods/account/signup"
 
-import { DeleteUserApplication } from "../../../application/DeleteUser"
+import { DeleteUserApplication } from "../../../application/registration/DeleteUser"
 import { LoginCredentialCommandRepository } from "../../../infrastructure/mongoose/repository/command/LoginCredential"
 import { LoginCredentialQueryRepository } from "../../../infrastructure/mongoose/repository/query/LoginCredential"
 import { LoginSessionCommandRepository } from "../../../infrastructure/mongoose/repository/command/LoginSession"
