@@ -37,7 +37,11 @@ export class LoginCredentialQueryRepository implements ILoginCredentialQueryRepo
             return toEntity(loginCredential)
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "LoginCredentialQueryRepository::findByUserId"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }

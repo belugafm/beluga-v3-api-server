@@ -24,7 +24,7 @@ const registrationIpAddress = "192.168.1.1"
 describe("UserEntity::constructor", () => {
     test("Normal", async () => {
         const user = new UserEntity({
-            id: "507f1f77bcf86cd799439011",
+            id: id,
             name,
             registrationIpAddress,
         })
@@ -146,7 +146,7 @@ describe("UserEntity::constructor", () => {
 describe("UserEntity::id", () => {
     test("Normal", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
-        user.id = "1111"
+        user.id = 111
     })
     test("Normal", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
@@ -1011,13 +1011,11 @@ describe("UserEntity::backgroundImageUrl", () => {
 })
 
 for (const key of [
-    "statusCount",
+    "statusesCount",
     "favoritesCount",
     "favoritedCount",
     "likesCount",
     "likedCount",
-    "channelsCount",
-    "followingChannelsCount",
     "trustLevel",
 ]) {
     describe(`UserEntity::${key}`, () => {

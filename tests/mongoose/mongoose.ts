@@ -1,7 +1,7 @@
-import { LoginCredentialModel } from "../infrastructure/mongodb/schema/LoginCredential"
-import { LoginSessionModel } from "../infrastructure/mongodb/schema/LoginSession"
+import { LoginCredentialModel } from "../infrastructure/mongoose/schema/LoginCredential"
+import { LoginSessionModel } from "../infrastructure/mongoose/schema/LoginSession"
 import { MongoMemoryReplSet } from "mongodb-memory-server"
-import { UserModel } from "../infrastructure/mongodb/schema/User"
+import { UserModel } from "../infrastructure/mongoose/schema/User"
 import mongoose from "mongoose"
 import { sleep } from "./functions"
 

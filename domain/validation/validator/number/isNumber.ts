@@ -1,5 +1,6 @@
+import { CommonErrorMessages, ValidationError } from "../../error"
+
 import { isNumber } from "../../functions"
-import { ValidationError, CommonErrorMessages } from "../../ValidationError"
 
 export type Options = {}
 export function checkIsNumber(value: number, options: Options): void {

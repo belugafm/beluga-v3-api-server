@@ -57,6 +57,7 @@ export class CreateChannelGroupApplication {
                 name: name,
                 uniqueName: ChannelGroupEntity.generateUniqueName(),
                 parentId: parentId,
+                level: parentChannel.level,
                 createdBy: createdBy,
                 createdAt: new Date(),
             })

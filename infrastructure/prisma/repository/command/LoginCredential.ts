@@ -35,11 +35,12 @@ export class LoginCredentialCommandRepository
             })
             return true
         } catch (error) {
-            console.log(typeof credential.userId)
-            console.log(typeof credential.passwordHash)
-            console.log(error)
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "LoginCredentialCommandRepository::add"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -58,7 +59,11 @@ export class LoginCredentialCommandRepository
             return true
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "LoginCredentialCommandRepository::delete"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -80,7 +85,11 @@ export class LoginCredentialCommandRepository
             return true
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "LoginCredentialCommandRepository::update"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }

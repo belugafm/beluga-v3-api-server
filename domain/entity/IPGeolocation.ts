@@ -1,7 +1,7 @@
 import * as vn from "../validation"
 
 import { Entity } from "./Entity"
-import { ValidateBy } from "../validation/ValidateBy"
+import { validateBy } from "../validation/validateBy"
 
 export const ErrorCodes = {
     InvalidCountry: "invalid_country",
@@ -11,16 +11,16 @@ export const ErrorCodes = {
 } as const
 
 export class IPGeolocationEntity extends Entity {
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidCountry })
+    @validateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidCountry })
     country: string | null
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidRegion })
+    @validateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidRegion })
     region: string | null
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidIsp })
+    @validateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidIsp })
     isp: string | null
 
-    @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidTor })
+    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidTor })
     tor: boolean
 
     constructor(params: IPGeolocationEntity) {

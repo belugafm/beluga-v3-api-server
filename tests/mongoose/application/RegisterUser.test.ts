@@ -1,9 +1,9 @@
-import * as mongodb_repositories from "../../infrastructure/mongodb/repository/"
+import * as mongodb_repositories from "../../../infrastructure/mongoose/repository"
 
-import { LoginCredentialEntity } from "../../domain/entity/LoginCredential"
+import { LoginCredentialEntity } from "../../../domain/entity/LoginCredential"
 import { RegisterUserTests } from "./RegisterUser"
-import { RepositoryError } from "../../domain/repository/RepositoryError"
-import { db } from "../env"
+import { RepositoryError } from "../../../domain/repository/RepositoryError"
+import { db } from "../../env"
 
 jest.setTimeout(60000)
 

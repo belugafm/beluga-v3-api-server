@@ -1,9 +1,9 @@
-import { LoginCredentialCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginCredential"
+import { LoginCredentialCommandRepository } from "../../../../infrastructure/mongoose/repository/command/LoginCredential"
 import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
-import { LoginCredentialQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginCredential"
-import { UserCommandRepository } from "../../../../infrastructure/mongodb/repository/command/User"
+import { LoginCredentialQueryRepository } from "../../../../infrastructure/mongoose/repository/query/LoginCredential"
+import { UserCommandRepository } from "../../../../infrastructure/mongoose/repository/command/User"
 import { UserEntity } from "../../../../domain/entity/User"
-import { db } from "../../../mongodb"
+import { db } from "../../../mongoose"
 
 jest.setTimeout(30000)
 

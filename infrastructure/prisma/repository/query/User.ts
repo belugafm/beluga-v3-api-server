@@ -60,7 +60,11 @@ export class UserQueryRepository implements IUserQueryRepository {
             return toEntity(user)
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "UserQueryRepository::findById"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -79,7 +83,11 @@ export class UserQueryRepository implements IUserQueryRepository {
             return toEntity(user)
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "UserQueryRepository::findByName"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -98,7 +106,11 @@ export class UserQueryRepository implements IUserQueryRepository {
             return toEntity(user)
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "UserQueryRepository::findByTwitterUserId"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -122,7 +134,11 @@ export class UserQueryRepository implements IUserQueryRepository {
             return ret
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "UserQueryRepository::findByRegistrationIpAddress"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }

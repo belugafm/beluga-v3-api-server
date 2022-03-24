@@ -88,7 +88,7 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
             return userId
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(error.message, error.stack, "UserCommandRepository::add")
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -138,7 +138,11 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
             return false
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "UserCommandRepository::update"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -158,7 +162,11 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
             return true
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "UserCommandRepository::delete"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -177,7 +185,11 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
         } catch (error) {
             user.active = false
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "UserCommandRepository::activate"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -194,7 +206,11 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
         } catch (error) {
             user.lastActivityDate = origValue
             if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
+                throw new RepositoryError(
+                    error.message,
+                    error.stack,
+                    "UserCommandRepository::updateLastActivityDate"
+                )
             } else {
                 throw new UnknownRepositoryError()
             }

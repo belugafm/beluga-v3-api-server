@@ -3,8 +3,8 @@ import * as vn from "../validation"
 import { ChannelGroupdId, ChannelId, UserId } from "../types"
 
 import { Entity } from "./Entity"
-import { ValidateBy } from "../validation/ValidateBy"
 import crypto from "crypto"
+import { validateBy } from "../validation/validateBy"
 
 export const generateRandomName = (length: number): string => {
     const S = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -17,7 +17,7 @@ export const ErrorCodes = {
     InvalidId: "invalid_id",
     InvalidName: "invalid_name",
     InvalidUniqueName: "invalid_unique_name",
-    InvalidChanelGroupId: "invalid_channel_group_id",
+    InvalidParentChanelGroupId: "invalid_parent_channel_group_id",
     InvalidCreatedBy: "invalid_created_by",
     InvalidCreatedAt: "invalid_created_at",
     InvalidStatusesCount: "invalid_statuses_count",
@@ -26,28 +26,28 @@ export const ErrorCodes = {
 export class ChannelEntity extends Entity {
     // 一意なid DBの実装に依存する
     // 変更不可
-    @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidId })
+    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidId })
     id: ChannelId
 
-    @ValidateBy(vn.channel.name(), { errorCode: ErrorCodes.InvalidName })
+    @validateBy(vn.channel.name(), { errorCode: ErrorCodes.InvalidName })
     name: string
 
     // チャンネルを識別する文字列
     // URLで使われる
     // https://beluga/channel/{uniqueName}
-    @ValidateBy(vn.channel.uniqueName(), { errorCode: ErrorCodes.InvalidUniqueName })
+    @validateBy(vn.channel.uniqueName(), { errorCode: ErrorCodes.InvalidUniqueName })
     uniqueName: string
 
-    @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidChanelGroupId })
+    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidParentChanelGroupId })
     parentChannelGroupId: ChannelGroupdId
 
-    @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidCreatedBy })
+    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidCreatedBy })
     createdBy: UserId
 
-    @ValidateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
+    @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
     createdAt: Date
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidStatusesCount })
+    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidStatusesCount })
     statusesCount: number
 
     constructor(

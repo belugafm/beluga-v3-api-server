@@ -1,13 +1,13 @@
 import * as uuid from "uuid"
 
-import { LoginSessionCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginSession"
+import { LoginSessionCommandRepository } from "../../../../infrastructure/mongoose/repository/command/LoginSession"
 import { RepositoryError } from "../../../../domain/repository/RepositoryError"
-import { UserCommandRepository } from "../../../../infrastructure/mongodb/repository/command/User"
+import { UserCommandRepository } from "../../../../infrastructure/mongoose/repository/command/User"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
-import { UserQueryRepository } from "../../../../infrastructure/mongodb/repository/query/User"
+import { UserQueryRepository } from "../../../../infrastructure/mongoose/repository/query/User"
 import config from "../../../../config/app"
-import { db } from "../../../mongodb"
+import { db } from "../../../mongoose"
 import { sleep } from "../../../env"
 
 jest.setTimeout(30000)

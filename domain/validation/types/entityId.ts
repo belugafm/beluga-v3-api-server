@@ -1,5 +1,5 @@
 import { ChannelGroupdId, ChannelId, EntityId, UserId } from "../../types"
-import { CommonErrorMessages, ValidationError } from "../ValidationError"
+import { CommonErrorMessages, ValidationError } from "../error"
 
 import { Validator } from "../Validator"
 import { isNumber } from "../functions"

@@ -12,7 +12,7 @@ const registry = new FinalizationRegistry((uuid: string) => {
     delete storage[uuid]
 })
 
-export function ValidateBy<T>(validator: Validator<T>, options?: ValidateByOptions) {
+export function validateBy<T>(validator: Validator<T>, options?: ValidateByOptions) {
     return (target: object, propertyKey: string) => {
         const getter = function (this: Entity) {
             if (this.uuid in storage) {

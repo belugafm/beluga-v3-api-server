@@ -1,14 +1,14 @@
 import * as vn from "../../../domain/validation"
 
-import { ValidateBy, storage } from "../../../domain/validation/ValidateBy"
+import { storage, validateBy } from "../../../domain/validation/validateBy"
 
 import { Entity } from "../../../domain/entity/Entity"
-import { sleep } from "../../env"
+import { sleep } from "../functions"
 
 jest.setTimeout(30000)
 
 class Example extends Entity {
-    @ValidateBy(vn.string())
+    @validateBy(vn.string())
     property: string
 }
 

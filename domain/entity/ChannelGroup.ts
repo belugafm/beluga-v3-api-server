@@ -3,8 +3,8 @@ import * as vn from "../validation"
 import { ChannelGroupdId, ChannelId, UserId } from "../types"
 
 import { Entity } from "./Entity"
-import { ValidateBy } from "../validation/ValidateBy"
 import crypto from "crypto"
+import { validateBy } from "../validation/validateBy"
 
 export const generateRandomName = (length: number): string => {
     const S = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -27,31 +27,31 @@ export const ErrorCodes = {
 export class ChannelGroupEntity extends Entity {
     // 一意なid DBの実装に依存する
     // 変更不可
-    @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidId })
+    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidId })
     id: ChannelId
 
-    @ValidateBy(vn.channelGroup.name(), { errorCode: ErrorCodes.InvalidName })
+    @validateBy(vn.channelGroup.name(), { errorCode: ErrorCodes.InvalidName })
     name: string
 
     // チャンネルを識別する文字列
     // URLで使われる
     // https://beluga/channel/{uniqueName}
-    @ValidateBy(vn.channelGroup.uniqueName(), { errorCode: ErrorCodes.InvalidUniqueName })
+    @validateBy(vn.channelGroup.uniqueName(), { errorCode: ErrorCodes.InvalidUniqueName })
     uniqueName: string
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidLevel })
+    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidLevel })
     level: number
 
-    @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidParentId })
+    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidParentId })
     parentId: ChannelGroupdId
 
-    @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidCreatedBy })
+    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidCreatedBy })
     createdBy: UserId
 
-    @ValidateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
+    @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
     createdAt: Date
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidStatusesCount })
+    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidStatusesCount })
     statusesCount: number
 
     constructor(
@@ -60,6 +60,7 @@ export class ChannelGroupEntity extends Entity {
             name: ChannelGroupEntity["name"]
             uniqueName: ChannelGroupEntity["uniqueName"]
             parentId: ChannelGroupEntity["parentId"]
+            level: ChannelGroupEntity["level"]
             createdBy: ChannelGroupEntity["createdBy"]
             createdAt: ChannelGroupEntity["createdAt"]
         } & Partial<ChannelGroupEntity>
@@ -69,6 +70,7 @@ export class ChannelGroupEntity extends Entity {
         this.name = params.name
         this.uniqueName = params.uniqueName
         this.parentId = params.parentId
+        this.level = params.level
         this.createdBy = params.createdBy
         this.createdAt = params.createdAt
         this.statusesCount = params.statusesCount ? params.statusesCount : 0

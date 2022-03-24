@@ -2,9 +2,9 @@ import * as vn from "../validation"
 
 import { Entity } from "./Entity"
 import { UserId } from "../types"
-import { ValidateBy } from "../validation/ValidateBy"
 import config from "../../config/app"
 import { v4 } from "uuid"
+import { validateBy } from "../validation/validateBy"
 
 export const ErrorCodes = {
     InvalidUserId: "invalid_user_id",
@@ -18,28 +18,28 @@ export const ErrorCodes = {
 } as const
 
 export class LoginSessionEntity extends Entity {
-    @ValidateBy(vn.objectId(), { errorCode: ErrorCodes.InvalidUserId })
+    @validateBy(vn.objectId(), { errorCode: ErrorCodes.InvalidUserId })
     userId: UserId
 
-    @ValidateBy(vn.sessionId(), { errorCode: ErrorCodes.InvalidSessionId })
+    @validateBy(vn.sessionId(), { errorCode: ErrorCodes.InvalidSessionId })
     sessionId: string
 
-    @ValidateBy(vn.ipAddress(), { errorCode: ErrorCodes.InvalidIpAddress })
+    @validateBy(vn.ipAddress(), { errorCode: ErrorCodes.InvalidIpAddress })
     ipAddress: string
 
-    @ValidateBy(vn.date(), { errorCode: ErrorCodes.InvalidExpireDate })
+    @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidExpireDate })
     expireDate: Date
 
-    @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidExpired })
+    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidExpired })
     expired: boolean
 
-    @ValidateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
+    @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
     createdAt: Date
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidCreatedAt })
+    @validateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidCreatedAt })
     lastLocation: string | null
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidDevice })
+    @validateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidDevice })
     device: string | null
 
     constructor(

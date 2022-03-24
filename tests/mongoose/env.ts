@@ -1,2 +1,2 @@
-export { db } from "./mongodb"
+export { db } from "./mongoose"
 export { sleep } from "./functions"

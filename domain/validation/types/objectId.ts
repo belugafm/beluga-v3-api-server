@@ -1,4 +1,4 @@
-import { CommonErrorMessages, ValidationError } from "../ValidationError"
+import { CommonErrorMessages, ValidationError } from "../error"
 import { isNumber, isString } from "../functions"
 
 import { EntityId } from "../../types"

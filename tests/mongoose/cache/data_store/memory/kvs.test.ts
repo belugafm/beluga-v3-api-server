@@ -1,6 +1,6 @@
 import { InMemoryCache } from "../../../../cache/data_store/memory"
 import { UserEntity } from "../../../../domain/entity/User"
-import { db } from "../../../mongodb"
+import { db } from "../../../mongoose"
 import { sleep } from "../../../functions"
 
 jest.setTimeout(30000)

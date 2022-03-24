@@ -1,5 +1,6 @@
+import { CommonErrorMessages, ValidationError } from "../../error"
+
 import { isString } from "../../functions"
-import { ValidationError, CommonErrorMessages } from "../../ValidationError"
 
 export type Options = {}
 export function checkIsString(value: string, options: Options): void {

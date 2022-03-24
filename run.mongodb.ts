@@ -1,11 +1,11 @@
 import { Request, Response, TurboServer } from "./web/turbo"
 
-import { LoginCredentialModel } from "./infrastructure/mongodb/schema/LoginCredential"
-import { LoginSessionModel } from "./infrastructure/mongodb/schema/LoginSession"
+import { LoginCredentialModel } from "./infrastructure/mongoose/schema/LoginCredential"
+import { LoginSessionModel } from "./infrastructure/mongoose/schema/LoginSession"
 import { MongoClient } from "mongodb"
 import { MongoMemoryReplSet } from "mongodb-memory-server"
-import { UserCommandRepository } from "./infrastructure/mongodb/repository/command/User"
-import { UserModel } from "./infrastructure/mongodb/schema/User"
+import { UserCommandRepository } from "./infrastructure/mongoose/repository/command/User"
+import { UserModel } from "./infrastructure/mongoose/schema/User"
 import config from "./config/app"
 import mongoose from "mongoose"
 

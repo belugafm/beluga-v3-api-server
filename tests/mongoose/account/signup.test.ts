@@ -1,13 +1,13 @@
 import signup, { expectedErrorSpecs } from "../../../../web/api/methods/account/signup"
 
-import { DeleteUserApplication } from "../../../../application/DeleteUser"
-import { LoginCredentialCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginCredential"
-import { LoginCredentialQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginCredential"
-import { LoginSessionCommandRepository } from "../../../../infrastructure/mongodb/repository/command/LoginSession"
-import { LoginSessionQueryRepository } from "../../../../infrastructure/mongodb/repository/query/LoginSession"
-import { UserCommandRepository } from "../../../../infrastructure/mongodb/repository/command/User"
-import { UserQueryRepository } from "../../../../infrastructure/mongodb/repository/query/User"
-import { WebApiRuntimeError } from "../../../../web/api/error"
+import { DeleteUserApplication } from "../../../application/DeleteUser"
+import { LoginCredentialCommandRepository } from "../../../infrastructure/mongoose/repository/command/LoginCredential"
+import { LoginCredentialQueryRepository } from "../../../infrastructure/mongoose/repository/query/LoginCredential"
+import { LoginSessionCommandRepository } from "../../../infrastructure/mongoose/repository/command/LoginSession"
+import { LoginSessionQueryRepository } from "../../../infrastructure/mongoose/repository/query/LoginSession"
+import { UserCommandRepository } from "../../../infrastructure/mongoose/repository/command/User"
+import { UserQueryRepository } from "../../../infrastructure/mongoose/repository/query/User"
+import { WebApiRuntimeError } from "../../../web/api/error"
 import { db } from "../../../env"
 
 jest.setTimeout(60000)

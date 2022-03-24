@@ -1,17 +1,17 @@
 import {
     ErrorCodes,
     RegisterPasswordBasedUserApplication,
-} from "../../application/registration/RegisterPasswordBasedUser"
+} from "../../../application/registration/RegisterPasswordBasedUser"
 
-import { ApplicationError } from "../../application/ApplicationError"
-import { ILoginCredentialCommandRepository } from "../../domain/repository/command/LoginCredential"
-import { ITransactionRepository } from "../../domain/repository/Transaction"
-import { IUserCommandRepository } from "../../domain/repository/command/User"
-import { IUserQueryRepository } from "../../domain/repository/query/User"
-import { LoginCredentialEntity } from "../../domain/entity/LoginCredential"
-import { UserEntity } from "../../domain/entity/User"
-import config from "../../config/app"
-import { sleep } from "../functions"
+import { ApplicationError } from "../../../application/ApplicationError"
+import { ILoginCredentialCommandRepository } from "../../../domain/repository/command/LoginCredential"
+import { ITransactionRepository } from "../../../domain/repository/Transaction"
+import { IUserCommandRepository } from "../../../domain/repository/command/User"
+import { IUserQueryRepository } from "../../../domain/repository/query/User"
+import { LoginCredentialEntity } from "../../../domain/entity/LoginCredential"
+import { UserEntity } from "../../../domain/entity/User"
+import config from "../../../config/app"
+import { sleep } from "../../functions"
 
 interface NewableRepository<T> {
     new (transaction?: ITransactionRepository): T

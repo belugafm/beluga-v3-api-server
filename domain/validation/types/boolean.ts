@@ -1,5 +1,6 @@
+import { CommonErrorMessages, ValidationError } from "../error"
+
 import { Validator } from "../Validator"
-import { CommonErrorMessages, ValidationError } from "../ValidationError"
 
 export function boolean() {
     return new Validator<boolean>({}, [

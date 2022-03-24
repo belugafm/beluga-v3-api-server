@@ -3,9 +3,9 @@ import * as vn from "../validation"
 import { DomainError } from "../DomainError"
 import { Entity } from "./Entity"
 import { UserId } from "../types"
-import { ValidateBy } from "../validation/ValidateBy"
 import bcrypt from "bcrypt"
 import config from "../../config/app"
+import { validateBy } from "../validation/validateBy"
 
 export const ErrorCodes = {
     InvalidUserId: "invalid_user_id",
@@ -17,10 +17,10 @@ export const ErrorCodes = {
 export class LoginCredentialEntity extends Entity {
     // @ts-ignore
 
-    @ValidateBy(vn.objectId(), ErrorCodes.InvalidUserId)
+    @validateBy(vn.objectId(), ErrorCodes.InvalidUserId)
     userId: UserId
     // @ts-ignore
-    @ValidateBy(vn.string(), ErrorCodes.InvaidPasswordInput)
+    @validateBy(vn.string(), ErrorCodes.InvaidPasswordInput)
     passwordHash: string
 
     static async new(userId: UserId, password: string) {

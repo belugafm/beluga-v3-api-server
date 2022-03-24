@@ -3,8 +3,8 @@ import * as vn from "../validation"
 import { Entity } from "./Entity"
 import { TrustLevel } from "../../config/trust_level"
 import { UserId } from "../types"
-import { ValidateBy } from "../validation/ValidateBy"
 import crypto from "crypto"
+import { validateBy } from "../validation/validateBy"
 
 export const generateRandomName = (length: number): string => {
     const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -36,89 +36,86 @@ export const ErrorCodes = {
 export class UserEntity extends Entity {
     // 一意なid DBの実装に依存する
     // 変更不可
-    @ValidateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidId })
+    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidId })
     id: UserId
 
     // ログイン時に使う一意な英数字
     // idのエイリアス
     // 変更可
-    @ValidateBy(vn.user.name(), { errorCode: ErrorCodes.InvalidName })
+    @validateBy(vn.user.name(), { errorCode: ErrorCodes.InvalidName })
     name: string
 
     // Twitterログイン時に保存したTwitterユーザーID
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidTwitterId })
+    @validateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidTwitterId })
     twitterUserId: string | null
 
-    @ValidateBy(vn.user.displayName(), { nullable: true, errorCode: ErrorCodes.InvalidDisplayName })
+    @validateBy(vn.user.displayName(), { nullable: true, errorCode: ErrorCodes.InvalidDisplayName })
     displayName: string | null
 
-    @ValidateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidProfileImageUrl })
+    @validateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidProfileImageUrl })
     profileImageUrl: string | null
 
-    @ValidateBy(vn.user.location(), { nullable: true, errorCode: ErrorCodes.InvalidLocation })
+    @validateBy(vn.user.location(), { nullable: true, errorCode: ErrorCodes.InvalidLocation })
     location: string | null
 
-    @ValidateBy(vn.user.url(), { nullable: true, errorCode: ErrorCodes.InvalidUrl })
+    @validateBy(vn.user.url(), { nullable: true, errorCode: ErrorCodes.InvalidUrl })
     url: string | null
 
-    @ValidateBy(vn.user.description(), { nullable: true, errorCode: ErrorCodes.InvalidDescription })
+    @validateBy(vn.user.description(), { nullable: true, errorCode: ErrorCodes.InvalidDescription })
     description: string | null
 
-    @ValidateBy(vn.colorCode(), { nullable: true, errorCode: ErrorCodes.InvalidThemeColor })
+    @validateBy(vn.colorCode(), { nullable: true, errorCode: ErrorCodes.InvalidThemeColor })
     themeColor: string | null
 
-    @ValidateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidBackgroundImageUrl })
+    @validateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidBackgroundImageUrl })
     backgroundImageUrl: string | null
 
-    @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
+    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
     defaultProfile: boolean
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     statusesCount: number // 全投稿数
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     favoritesCount: number // ふぁぼった投稿数
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     favoritedCount: number // ふぁぼられた投稿数
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     likesCount: number // いいねした投稿数
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     likedCount: number // いいねされた投稿数
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
-    channelsCount: number // 作成したチャンネル数
-
-    @ValidateBy(vn.date(), { errorCode: ErrorCodes.InvalidDate })
+    @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidDate })
     createdAt: Date
 
-    @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
+    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
     bot: boolean
 
-    @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
+    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
     active: boolean // 登録後サイトを利用したかどうか
 
-    @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
+    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
     dormant: boolean // サイトを長期間利用しなかったかどうか
 
-    @ValidateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
+    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
     suspended: boolean // 凍結されたかどうか
 
-    @ValidateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     trustLevel: number // 信用レベル
 
-    @ValidateBy(vn.date(), { nullable: true, errorCode: ErrorCodes.InvalidDate })
+    @validateBy(vn.date(), { nullable: true, errorCode: ErrorCodes.InvalidDate })
     lastActivityDate: Date | null // 最後に活動した日
 
-    @ValidateBy(vn.date(), { nullable: true, errorCode: ErrorCodes.InvalidDate })
+    @validateBy(vn.date(), { nullable: true, errorCode: ErrorCodes.InvalidDate })
     termsOfServiceAgreementDate: Date | null // 利用規約に同意した日
 
-    @ValidateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidValue })
+    @validateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidValue })
     termsOfServiceAgreementVersion: string | null // 同意した利用規約のバージョン
 
-    @ValidateBy(vn.ipAddress(), { errorCode: ErrorCodes.InvalidValue })
+    @validateBy(vn.ipAddress(), { errorCode: ErrorCodes.InvalidValue })
     registrationIpAddress: string // 登録時のIPアドレス
 
     constructor(
