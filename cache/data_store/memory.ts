@@ -23,6 +23,9 @@ export class InMemoryCache<T> {
         this.defaultExpireSeconds = params.defaultExpireSeconds
         this.data = {}
     }
+    size() {
+        return Object.keys(this.data).length
+    }
     clear() {}
     get(key: string): T | null {
         if (key in this.data !== true) {

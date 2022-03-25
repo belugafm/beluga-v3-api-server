@@ -91,6 +91,9 @@ export class SignInWithPasswordApplication {
             const authenticityToken = await this.createAuthenticityToken(loginSession.sessionId)
             return [user, loginCredential, loginSession, authenticityToken]
         } catch (error) {
+            if (error instanceof ApplicationError) {
+                throw error
+            }
             throw new ApplicationError(ErrorCodes.InternalError)
         }
     }

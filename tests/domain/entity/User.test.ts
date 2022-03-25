@@ -34,7 +34,7 @@ describe("UserEntity::constructor", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect(user).toBeInstanceOf(UserEntity)
     })
-    test("Errors", async () => {
+    test("InvalidId", async () => {
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -46,7 +46,7 @@ describe("UserEntity::constructor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidId", async () => {
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -58,7 +58,7 @@ describe("UserEntity::constructor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -70,7 +70,7 @@ describe("UserEntity::constructor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -82,7 +82,7 @@ describe("UserEntity::constructor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidValue", async () => {
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -94,7 +94,7 @@ describe("UserEntity::constructor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidValue", async () => {
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -106,7 +106,7 @@ describe("UserEntity::constructor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidId", async () => {
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -118,7 +118,7 @@ describe("UserEntity::constructor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -130,7 +130,7 @@ describe("UserEntity::constructor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidValue", async () => {
         expect.assertions(2)
         try {
             // @ts-ignore
@@ -152,7 +152,7 @@ describe("UserEntity::id", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.id = 1
     })
-    test("Errors", async () => {
+    test("InvalidId", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -165,7 +165,7 @@ describe("UserEntity::id", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidId", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -178,7 +178,7 @@ describe("UserEntity::id", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidId", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -209,7 +209,7 @@ describe("UserEntity::name", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.name = generateRandomStringWithLength(config.user.name.max_length, CHARSET_USERNAME)
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -221,7 +221,7 @@ describe("UserEntity::name", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -236,7 +236,7 @@ describe("UserEntity::name", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -251,7 +251,7 @@ describe("UserEntity::name", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -263,7 +263,7 @@ describe("UserEntity::name", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -276,7 +276,7 @@ describe("UserEntity::name", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -289,7 +289,7 @@ describe("UserEntity::name", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -302,7 +302,7 @@ describe("UserEntity::name", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -315,7 +315,7 @@ describe("UserEntity::name", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -349,7 +349,7 @@ describe("UserEntity::displayName", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.displayName = null
     })
-    test("Errors", async () => {
+    test("InvalidDisplayName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -363,7 +363,7 @@ describe("UserEntity::displayName", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDisplayName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -377,7 +377,7 @@ describe("UserEntity::displayName", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDisplayName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -390,7 +390,7 @@ describe("UserEntity::displayName", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDisplayName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -403,7 +403,7 @@ describe("UserEntity::displayName", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDisplayName", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -427,7 +427,7 @@ describe("UserEntity::twitterUserId", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.twitterUserId = null
     })
-    test("Errors", async () => {
+    test("InvalidTwitterId", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -440,7 +440,7 @@ describe("UserEntity::twitterUserId", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidTwitterId", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -453,7 +453,7 @@ describe("UserEntity::twitterUserId", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidTwitterId", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -477,7 +477,7 @@ describe("UserEntity::profileImageUrl", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.profileImageUrl = null
     })
-    test("Errors", async () => {
+    test("InvalidProfileImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -489,7 +489,7 @@ describe("UserEntity::profileImageUrl", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidProfileImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -502,7 +502,7 @@ describe("UserEntity::profileImageUrl", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidProfileImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -515,7 +515,7 @@ describe("UserEntity::profileImageUrl", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidProfileImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -549,7 +549,7 @@ describe("UserEntity::location", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.location = null
     })
-    test("Errors", async () => {
+    test("InvalidLocation", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -561,7 +561,7 @@ describe("UserEntity::location", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidLocation", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -573,7 +573,7 @@ describe("UserEntity::location", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidLocation", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -586,7 +586,7 @@ describe("UserEntity::location", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidLocation", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -599,7 +599,7 @@ describe("UserEntity::location", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidLocation", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -627,7 +627,7 @@ describe("UserEntity::url", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.url = null
     })
-    test("Errors", async () => {
+    test("registrationIpAddress", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -639,7 +639,7 @@ describe("UserEntity::url", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("registrationIpAddress", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -651,7 +651,7 @@ describe("UserEntity::url", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("registrationIpAddress", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -663,7 +663,7 @@ describe("UserEntity::url", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("registrationIpAddress", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -675,7 +675,7 @@ describe("UserEntity::url", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("registrationIpAddress", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -687,7 +687,7 @@ describe("UserEntity::url", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("registrationIpAddress", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -700,7 +700,7 @@ describe("UserEntity::url", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("registrationIpAddress", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -713,7 +713,7 @@ describe("UserEntity::url", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("registrationIpAddress", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -741,7 +741,7 @@ describe("UserEntity::description", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.description = null
     })
-    test("Errors", async () => {
+    test("InvalidDescription", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -755,7 +755,7 @@ describe("UserEntity::description", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDescription", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -769,7 +769,7 @@ describe("UserEntity::description", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDescription", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -782,7 +782,7 @@ describe("UserEntity::description", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDescription", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -795,7 +795,7 @@ describe("UserEntity::description", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDescription", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -819,7 +819,7 @@ describe("UserEntity::themeColor", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.themeColor = null
     })
-    test("Errors", async () => {
+    test("InvalidThemeColor", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -831,7 +831,7 @@ describe("UserEntity::themeColor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidThemeColor", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -843,7 +843,7 @@ describe("UserEntity::themeColor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidThemeColor", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -855,7 +855,7 @@ describe("UserEntity::themeColor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidThemeColor", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -868,7 +868,7 @@ describe("UserEntity::themeColor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidThemeColor", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -881,7 +881,7 @@ describe("UserEntity::themeColor", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidThemeColor", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -909,7 +909,7 @@ describe("UserEntity::backgroundImageUrl", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.backgroundImageUrl = null
     })
-    test("Errors", async () => {
+    test("InvalidBackgroundImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -921,7 +921,7 @@ describe("UserEntity::backgroundImageUrl", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidBackgroundImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -933,7 +933,7 @@ describe("UserEntity::backgroundImageUrl", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidBackgroundImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -945,7 +945,7 @@ describe("UserEntity::backgroundImageUrl", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidBackgroundImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -957,7 +957,7 @@ describe("UserEntity::backgroundImageUrl", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidBackgroundImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -969,7 +969,7 @@ describe("UserEntity::backgroundImageUrl", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidBackgroundImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -982,7 +982,7 @@ describe("UserEntity::backgroundImageUrl", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidBackgroundImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -995,7 +995,7 @@ describe("UserEntity::backgroundImageUrl", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidBackgroundImageUrl", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1029,7 +1029,7 @@ for (const key of [
             // @ts-ignore
             user[key] = 1000
         })
-        test("Errors", async () => {
+        test("InvalidNumber", async () => {
             const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
@@ -1042,7 +1042,7 @@ for (const key of [
                 }
             }
         })
-        test("Errors", async () => {
+        test("InvalidNumber", async () => {
             const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
@@ -1055,7 +1055,7 @@ for (const key of [
                 }
             }
         })
-        test("Errors", async () => {
+        test("InvalidNumber", async () => {
             const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
@@ -1068,7 +1068,7 @@ for (const key of [
                 }
             }
         })
-        test("Errors", async () => {
+        test("InvalidNumber", async () => {
             const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
@@ -1096,7 +1096,7 @@ for (const key of ["defaultProfile", "active", "dormant", "suspended"]) {
             // @ts-ignore
             user[key] = false
         })
-        test("Errors", async () => {
+        test("InvalidValue", async () => {
             const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
@@ -1109,7 +1109,7 @@ for (const key of ["defaultProfile", "active", "dormant", "suspended"]) {
                 }
             }
         })
-        test("Errors", async () => {
+        test("InvalidValue", async () => {
             const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
@@ -1122,7 +1122,7 @@ for (const key of ["defaultProfile", "active", "dormant", "suspended"]) {
                 }
             }
         })
-        test("Errors", async () => {
+        test("InvalidValue", async () => {
             const user = new UserEntity({ id, name, registrationIpAddress })
             expect.assertions(2)
             try {
@@ -1143,7 +1143,7 @@ describe("UserEntity::createdAt", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.createdAt = new Date()
     })
-    test("Errors", async () => {
+    test("InvalidDate", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1156,7 +1156,7 @@ describe("UserEntity::createdAt", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDate", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1169,7 +1169,7 @@ describe("UserEntity::createdAt", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDate", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1193,7 +1193,7 @@ describe("UserEntity::lastActivityDate", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.lastActivityDate = null
     })
-    test("Errors", async () => {
+    test("InvalidDate", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1206,7 +1206,7 @@ describe("UserEntity::lastActivityDate", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDate", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1219,7 +1219,7 @@ describe("UserEntity::lastActivityDate", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDate", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1243,7 +1243,7 @@ describe("UserEntity::termsOfServiceAgreementDate", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.termsOfServiceAgreementDate = null
     })
-    test("Errors", async () => {
+    test("InvalidDate", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1256,7 +1256,7 @@ describe("UserEntity::termsOfServiceAgreementDate", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDate", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1269,7 +1269,7 @@ describe("UserEntity::termsOfServiceAgreementDate", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDate", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1293,7 +1293,7 @@ describe("UserEntity::termsOfServiceAgreementVersion", () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         user.termsOfServiceAgreementVersion = null
     })
-    test("Errors", async () => {
+    test("InvalidValue", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1306,7 +1306,7 @@ describe("UserEntity::termsOfServiceAgreementVersion", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidValue", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {
@@ -1319,7 +1319,7 @@ describe("UserEntity::termsOfServiceAgreementVersion", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidValue", async () => {
         const user = new UserEntity({ id, name, registrationIpAddress })
         expect.assertions(2)
         try {

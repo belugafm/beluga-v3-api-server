@@ -1,3 +1,9 @@
+import {
+    ErrorCodes,
+    SignInWithPasswordApplication,
+} from "../../../application/signin/SignInWithPassword"
+
+import { ApplicationError } from "../../../application/ApplicationError"
 import { AuthenticityTokenEntity } from "../../../domain/entity/AuthenticityToken"
 import { IAuthenticityTokenCommandRepository } from "../../../domain/repository/command/AuthenticityToken"
 import { ILoginCredentialCommandRepository } from "../../../domain/repository/command/LoginCredential"
@@ -9,11 +15,10 @@ import { LoginCredentialEntity } from "../../../domain/entity/LoginCredential"
 import { LoginSessionEntity } from "../../../domain/entity/LoginSession"
 import { PrismaClient } from "@prisma/client"
 import { RegisterPasswordBasedUserApplication } from "../../../application/registration/RegisterPasswordBasedUser"
-import { SignInWithPasswordApplication } from "../../../application/signin/SignInWithPassword"
 import { TransactionRepository } from "../../../infrastructure/prisma/repository/Transaction"
 import { UserEntity } from "../../../domain/entity/User"
 import config from "../../../config/app"
-import crypto from "crypto"
+import { generateRandomName } from "../functions"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -23,13 +28,6 @@ type _ReturnType = ReturnType<SignInWithPasswordApplication["signin"]>
 
 type NewableTransaction = {
     new: () => Promise<TransactionRepository<_ReturnType>>
-}
-
-export const generateRandomName = (length: number): string => {
-    const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    return Array.from(crypto.randomFillSync(new Uint8Array(length)))
-        .map((n) => S[n % S.length])
-        .join("")
 }
 
 export class SignInWithPasswordAplicationTests {
@@ -89,6 +87,66 @@ export class SignInWithPasswordAplicationTests {
         expect(registeredLoginCredential.userId).toEqual(loginCredential.userId)
         expect(registeredLoginCredential.userId).toEqual(user.id)
 
+        const userQueryRepository = new UserQueryRepository()
+        const userCommandRepository = new UserCommandRepository()
+        const foundUser = await userQueryRepository.findByName(name)
+        expect(foundUser).not.toBeNull()
+        if (foundUser) {
+            await userCommandRepository.delete(foundUser)
+        }
+    }
+    async testIncorrectPassword<
+        S extends IUserQueryRepository,
+        T extends IUserCommandRepository,
+        U extends ILoginCredentialQueryRepository,
+        V extends ILoginCredentialCommandRepository,
+        W extends ILoginSessionCommandRepository,
+        X extends IAuthenticityTokenCommandRepository
+    >(
+        UserQueryRepository: NewableRepository<S>,
+        UserCommandRepository: NewableRepository<T>,
+        LoginCredentialQueryRepository: NewableRepository<U>,
+        LoginCredentialCommandRepository: NewableRepository<V>,
+        LoginSessionCommandRepository: NewableRepository<W>,
+        AuthenticityTokenCommandRepository: NewableRepository<X>
+    ) {
+        expect.assertions(5)
+        const name = generateRandomName(config.user.name.max_length)
+        const ipAddress = "192.168.1.1"
+        const lastLocation = "Tokyo"
+        const device = "Desktop Chrome"
+
+        const [registeredUser, registeredLoginCredential] =
+            await new RegisterPasswordBasedUserApplication(
+                new UserQueryRepository(),
+                new UserCommandRepository(),
+                new LoginCredentialCommandRepository()
+            ).register({
+                name: name,
+                password: generateRandomName(config.user_login_credential.password.max_length),
+                ipAddress: "192.168.1.1",
+            })
+        expect(registeredUser).toBeInstanceOf(UserEntity)
+        expect(registeredLoginCredential).toBeInstanceOf(LoginCredentialEntity)
+        try {
+            await new SignInWithPasswordApplication(
+                new UserQueryRepository(),
+                new LoginCredentialQueryRepository(),
+                new LoginSessionCommandRepository(),
+                new AuthenticityTokenCommandRepository()
+            ).signin({
+                name,
+                password: generateRandomName(config.user_login_credential.password.max_length),
+                ipAddress,
+                lastLocation,
+                device,
+            })
+        } catch (error) {
+            expect(error).toBeInstanceOf(ApplicationError)
+            if (error instanceof ApplicationError) {
+                expect(error.code).toBe(ErrorCodes.IncorrectPassword)
+            }
+        }
         const userQueryRepository = new UserQueryRepository()
         const userCommandRepository = new UserCommandRepository()
         const foundUser = await userQueryRepository.findByName(name)

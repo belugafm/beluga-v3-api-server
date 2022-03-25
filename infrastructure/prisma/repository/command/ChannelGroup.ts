@@ -72,7 +72,7 @@ export class ChannelGroupCommandRepository
             })
             if (origChannelGroup == null) {
                 throw new RepositoryError(
-                    `ChannelGroup not found (id=${channelGroup.id}, uniqueName='${channelGroup.uniqueName}')`
+                    `'channelGroup' not found (id=${channelGroup.id}, uniqueName='${channelGroup.uniqueName}')`
                 )
             }
             const updatedChannelGroup = await this._prisma.channelGroup.update({

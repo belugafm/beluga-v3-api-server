@@ -19,7 +19,7 @@ describe("LoginSessionEntity", () => {
         expect(typeof session.sessionId).toBe("string")
         expect(typeof session.device).toBe("string")
     })
-    test("Errors", async () => {
+    test("InvalidUserId", async () => {
         expect.assertions(2)
         const userId = true
         const ipAddress = "192.168.1.1"
@@ -33,7 +33,7 @@ describe("LoginSessionEntity", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDevice", async () => {
         expect.assertions(2)
         const userId = 1
         const device = true
@@ -48,7 +48,7 @@ describe("LoginSessionEntity", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidDevice", async () => {
         expect.assertions(2)
         const userId = 1
         const device = 1
@@ -63,7 +63,7 @@ describe("LoginSessionEntity", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvalidIpAddress", async () => {
         expect.assertions(2)
         const userId = 1
         const device = "chrome"

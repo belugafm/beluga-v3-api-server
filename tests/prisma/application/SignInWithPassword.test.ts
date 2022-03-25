@@ -16,6 +16,16 @@ describe("RegisterUserApplication", () => {
             repo.AuthenticityTokenCommandRepository
         )
     })
+    test("IncorrectPassword", async () => {
+        await testing.testIncorrectPassword(
+            repo.UserQueryRepository,
+            repo.UserCommandRepository,
+            repo.LoginCredentialQueryRepository,
+            repo.LoginCredentialCommandRepository,
+            repo.LoginSessionCommandRepository,
+            repo.AuthenticityTokenCommandRepository
+        )
+    })
     test("Transaction", async () => {
         await testing.testTransaction(
             repo.UserQueryRepository,

@@ -20,7 +20,7 @@ describe("LoginCredentialEntity", () => {
         const credential = await LoginCredentialEntity.new(userId, password)
         expect(credential).toBeInstanceOf(LoginCredentialEntity)
     })
-    test("Errors", async () => {
+    test("PasswordNotMeetPolicy", async () => {
         expect.assertions(2)
         const userId = 1
         const password = generateRandomPassword(
@@ -35,7 +35,7 @@ describe("LoginCredentialEntity", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("PasswordNotMeetPolicy", async () => {
         expect.assertions(2)
         const userId = 1
         const password = generateRandomPassword(
@@ -50,7 +50,7 @@ describe("LoginCredentialEntity", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvaidPasswordInput", async () => {
         expect.assertions(2)
         const userId = 1
         const password = null
@@ -64,7 +64,7 @@ describe("LoginCredentialEntity", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvaidPasswordInput", async () => {
         expect.assertions(2)
         const userId = 1
         const password = true
@@ -78,7 +78,7 @@ describe("LoginCredentialEntity", () => {
             }
         }
     })
-    test("Errors", async () => {
+    test("InvaidPasswordInput", async () => {
         expect.assertions(2)
         const userId = 1
         const password = new Date()

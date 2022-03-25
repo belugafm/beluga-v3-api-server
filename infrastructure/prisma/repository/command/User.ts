@@ -10,7 +10,7 @@ import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
 import { prisma } from "../client"
 
-export function has_changed(a: UserEntity, b: User) {
+export function has_changed(a: User, b: User) {
     return !(
         a.twitterUserId === b.twitterUserId &&
         a.name === b.name &&
@@ -99,6 +99,14 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
             throw new RepositoryError("`user` must be an instance of UserEntity")
         }
         try {
+            const origUser = await this._prisma.user.findUnique({
+                where: {
+                    id: user.id,
+                },
+            })
+            if (origUser == null) {
+                throw new RepositoryError(`'user' not found (id=${user.id}, name='${user.name}')`)
+            }
             const updatedUser = await this._prisma.user.update({
                 where: {
                     id: user.id,
@@ -131,7 +139,7 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
                     registrationIpAddress: user.registrationIpAddress,
                 },
             })
-            if (has_changed(user, updatedUser)) {
+            if (has_changed(origUser, updatedUser)) {
                 await this.emitChanges(user.id)
                 return true
             }

@@ -52,7 +52,7 @@ export class CreateChannelGroupApplication {
             await this.checkPermissionToCreateChannelGroupService.tryCheckIfUserHasPermission(
                 createdBy
             )
-            const channel = new ChannelGroupEntity({
+            const channelGroup = new ChannelGroupEntity({
                 id: -1,
                 name: name,
                 uniqueName: ChannelGroupEntity.generateUniqueName(),
@@ -61,8 +61,8 @@ export class CreateChannelGroupApplication {
                 createdBy: createdBy,
                 createdAt: new Date(),
             })
-            channel.id = await this.channelGroupCommandRepository.add(channel)
-            return channel
+            channelGroup.id = await this.channelGroupCommandRepository.add(channelGroup)
+            return channelGroup
         } catch (error) {
             if (error instanceof DomainError) {
                 if (error.code === DomainErrorCodes.InvalidName) {

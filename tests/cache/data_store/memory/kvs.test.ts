@@ -1,17 +1,10 @@
 import { InMemoryCache } from "../../../../cache/data_store/memory"
 import { UserEntity } from "../../../../domain/entity/User"
-import { db } from "../../../mongoose"
-import { sleep } from "../../../functions"
+import { sleep } from "../../../mongoose/functions"
 
 jest.setTimeout(30000)
 
 describe("UsersRepository", () => {
-    beforeAll(async () => {
-        await db.connect()
-    })
-    afterAll(async () => {
-        await db.disconnect()
-    })
     test("Normal", async () => {
         const user1 = new UserEntity({ id: 1, name: "hoge", registrationIpAddress: "192.168.1.1" })
         const user2 = new UserEntity({ id: 2, name: "fuga", registrationIpAddress: "192.168.1.1" })
@@ -52,7 +45,7 @@ describe("UsersRepository", () => {
         }
         {
             kvs.set(`user_${user3.id}`, user3)
-            expect(Object.keys(kvs.data).length).toBe(1)
+            expect(kvs.size()).toBe(1)
         }
     })
 })

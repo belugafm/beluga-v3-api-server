@@ -1,9 +1,13 @@
 export { LoginCredentialQueryRepository } from "./query/LoginCredential"
-export { LoginCredentialCommandRepository } from "./command/LoginCredential"
 export { LoginSessionQueryRepository } from "./query/LoginSession"
-export { LoginSessionCommandRepository } from "./command/LoginSession"
 export { UserQueryRepository } from "./query/User"
-export { UserCommandRepository } from "./command/User"
-export { TransactionRepository } from "./Transaction"
 export { AuthenticityTokenQueryRepository } from "./query/AuthenticityToken"
+export { ChannelGroupQueryRepository } from "./query/ChannelGroup"
+
+export { LoginCredentialCommandRepository } from "./command/LoginCredential"
+export { LoginSessionCommandRepository } from "./command/LoginSession"
+export { UserCommandRepository } from "./command/User"
 export { AuthenticityTokenCommandRepository } from "./command/AuthenticityToken"
+export { ChannelGroupCommandRepository } from "./command/ChannelGroup"
+
+export { TransactionRepository } from "./Transaction"

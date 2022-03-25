@@ -2,6 +2,7 @@ import {
     ErrorCodes,
     RegisterPasswordBasedUserApplication,
 } from "../../../application/registration/RegisterPasswordBasedUser"
+import { generateRandomName, sleep } from "../functions"
 
 import { ApplicationError } from "../../../application/ApplicationError"
 import { ILoginCredentialCommandRepository } from "../../../domain/repository/command/LoginCredential"
@@ -12,8 +13,6 @@ import { PrismaClient } from "@prisma/client"
 import { TransactionRepository } from "../../../infrastructure/prisma/repository/Transaction"
 import { UserEntity } from "../../../domain/entity/User"
 import config from "../../../config/app"
-import crypto from "crypto"
-import { sleep } from "../functions"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -23,13 +22,6 @@ type _ReturnType = ReturnType<RegisterPasswordBasedUserApplication["register"]>
 
 type NewableTransaction = {
     new: () => Promise<TransactionRepository<_ReturnType>>
-}
-
-export const generateRandomName = (length: number): string => {
-    const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    return Array.from(crypto.randomFillSync(new Uint8Array(length)))
-        .map((n) => S[n % S.length])
-        .join("")
 }
 
 export class RegisterPasswordBasedUserApplicationTests {
