@@ -27,6 +27,7 @@ async function startServer() {
     // routerにendpointを登録
     console.log("Register endpoints")
     server.register(require("./web/endpoint/account/signup"))
+    server.register(require("./web/endpoint/account/signin"))
     server.register(require("./web/endpoint/auth/cookie/authenticate"))
     server.register(require("./web/endpoint/auth/twitter/request_token"))
     server.register(require("./web/endpoint/auth/twitter/authenticate"))

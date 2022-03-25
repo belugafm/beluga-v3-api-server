@@ -1,4 +1,4 @@
-import signup_without_name, { facts } from "../../api/methods/account/signup_without_name"
+import signin, { facts } from "../../api/methods/account/signin"
 
 import { TurboServer } from "../../turbo"
 import config from "../../../config/app"
@@ -6,10 +6,12 @@ import config from "../../../config/app"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = req.headers["x-real-ip"]
-        const [user, _, loginSession, __] = await signup_without_name(
+        const [user, _, loginSession, __] = await signin(
             {
+                name: req.body.name,
                 password: req.body.password,
-                confirmation_password: req.body.confirmation_password,
+                last_location: "Tokyo, Japan",
+                device: "Chrome on Linux",
                 ip_address: remoteIpAddress,
             },
             remoteIpAddress,
@@ -18,14 +20,6 @@ export default (server: TurboServer) => {
         if (loginSession) {
             res.setCookie("session_id", loginSession.sessionId, {
                 expires: loginSession.expireDate,
-                domain: config.server.domain,
-                path: "/",
-                httpOnly: true,
-                secure: config.server.https,
-            })
-            // ユーザー名は乱数なのでCookieに保存して入力補助する
-            res.setCookie("user_name", user.name, {
-                expires: new Date(Date.now() + 86400 * 365 * 1000),
                 domain: config.server.domain,
                 path: "/",
                 httpOnly: true,

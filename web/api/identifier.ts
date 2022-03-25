@@ -4,6 +4,7 @@ export const MethodIdentifiers = {
     GetTwitterRequestToken: "auth/twitter/request_token",
     AuthenticateUserWithTwitter: "auth/twitter/authenticate",
     CreateAccount: "account/signup",
+    SignInToAccount: "account/signin",
     CreateChannelGroup: "channel_groups/create",
     CreateChannel: "channels/create",
     DestroyChannel: "channels/destroy",
