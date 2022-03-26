@@ -1,32 +1,29 @@
 import * as vs from "../../../../domain/validation"
 
 import {
-    ChannelGroupCommandRepository,
+    ChannelCommandRepository,
     ChannelGroupQueryRepository,
     TransactionRepository,
     UserQueryRepository,
 } from "../../../repositories"
-import {
-    CreateChannelGroupApplication,
-    ErrorCodes,
-} from "../../../../application/channel_group/CreateChannelGroup"
+import { CreateChannelApplication, ErrorCodes } from "../../../../application/channel/CreateChannel"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
-import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
+import { ChannelEntity } from "../../../../domain/entity/Channel"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
 
-export const argumentSpecs = defineArguments(["name", "parent_id"] as const, {
+export const argumentSpecs = defineArguments(["unique_name", "channel_id"] as const, {
     name: {
-        description: ["チャンネルグループ名"],
+        description: ["チャンネル名"],
         examples: ["general"],
         required: true,
         validator: vs.channelGroup.name(),
     },
-    parent_id: {
+    parent_channel_group_id: {
         description: ["親のチャンネルグループID"],
         examples: ["123456"],
         required: true,
@@ -50,12 +47,12 @@ export const expectedErrorSpecs = defineErrors(
     argumentSpecs,
     {
         do_not_have_permission: {
-            description: ["チャンネルグループを作成する権限がありません"],
+            description: ["チャンネルを作成する権限がありませんん"],
             hint: ["信用レベルを上げると作れるようになります"],
             code: "do_not_have_permission",
         },
         name_not_meet_policy: {
-            description: ["チャンネルグループ名に使用できない文字が含まれています"],
+            description: ["チャンネル名に使用できない文字が含まれています"],
             hint: ["空白は入力できません"],
             argument: "name",
             code: "name_not_meet_policy",
@@ -66,7 +63,7 @@ export const expectedErrorSpecs = defineErrors(
 )
 
 export const facts: MethodFacts = {
-    url: MethodIdentifiers.CreateChannelGroup,
+    url: MethodIdentifiers.CreateChannel,
     httpMethod: HttpMethods.POST,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
@@ -74,10 +71,10 @@ export const facts: MethodFacts = {
     private: false,
     acceptedAuthenticationMethods: [],
     acceptedScopes: {},
-    description: ["新規チャンネルグループを作成します"],
+    description: ["新規チャンネルを作成します"],
 }
 
-type ReturnType = Promise<ChannelGroupEntity>
+type ReturnType = Promise<ChannelEntity>
 
 export default defineMethod(
     facts,
@@ -87,13 +84,13 @@ export default defineMethod(
         const transaction = await TransactionRepository.new<ReturnType>()
         try {
             return await transaction.$transaction(async (transactionSession) => {
-                const channel = await new CreateChannelGroupApplication(
+                const channel = await new CreateChannelApplication(
                     new UserQueryRepository(transactionSession),
                     new ChannelGroupQueryRepository(transactionSession),
-                    new ChannelGroupCommandRepository(transactionSession)
+                    new ChannelCommandRepository(transactionSession)
                 ).create({
                     name: args.name,
-                    parentId: args.parent_id,
+                    parentChannelGroupId: args.parent_channel_group_id,
                     createdBy: args.created_by,
                 })
                 return channel

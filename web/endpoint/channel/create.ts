@@ -11,6 +11,7 @@ export default (server: TurboServer) => {
         if (user == null) {
             return {
                 ok: false,
+                needs_login: true,
             }
         }
         const channel = await create_channel(

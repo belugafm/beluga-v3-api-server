@@ -1,4 +1,4 @@
-import signup_without_name, { facts } from "../../api/methods/account/signup_without_name"
+import signupWithoutName, { facts } from "../../api/methods/account/signup_without_name"
 
 import { TurboServer } from "../../turbo"
 import config from "../../../config/app"
@@ -6,7 +6,7 @@ import config from "../../../config/app"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = req.headers["x-real-ip"]
-        const [user, _, loginSession] = await signup_without_name(
+        const [user, _, loginSession] = await signupWithoutName(
             {
                 password: req.body.password,
                 confirmation_password: req.body.confirmation_password,

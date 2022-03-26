@@ -1,10 +1,10 @@
-import create_channel_group, { facts } from "../../api/methods/channel_group/create"
+import show, { facts } from "../../api/methods/channel_group/show"
 
 import { TurboServer } from "../../turbo"
 import authenticate from "../../api/methods/auth/cookie/authenticate"
 
 export default (server: TurboServer) => {
-    server.post(facts, async (req, res, params) => {
+    server.get(facts, async (req, res, params) => {
         const remoteIpAddress = req.headers["x-real-ip"]
         const sessionId = req.cookies["session_id"]
         const [user] = await authenticate({ session_id: sessionId }, remoteIpAddress, null)
@@ -14,18 +14,23 @@ export default (server: TurboServer) => {
                 needs_login: true,
             }
         }
-        const channel = await create_channel_group(
+        const channel = await show(
             {
-                name: req.body.name,
-                parent_id: req.body.parent_id,
-                created_by: user.id,
+                unique_name: req.query.unique_name ? req.query.unique_name : null,
+                id: req.query.id ? Math.trunc(req.query.id) : undefined,
             },
             remoteIpAddress,
             null
         )
+        if (channel) {
+            return {
+                ok: true,
+                channel_group: channel.toResponseObject(),
+            }
+        }
         return {
             ok: true,
-            channel_group: channel.toResponseObject(),
+            channel_group: null,
         }
     })
 }

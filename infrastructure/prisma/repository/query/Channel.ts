@@ -14,7 +14,7 @@ import { isNumber, isString } from "../../../../domain/validation"
 import { ChannelEntity } from "../../../../domain/entity/Channel"
 import { prisma } from "../client"
 
-function toEntity(channel: Channel) {
+export function toEntity(channel: Channel) {
     return new ChannelEntity({
         id: channel.id,
         name: channel.name,
@@ -25,6 +25,7 @@ function toEntity(channel: Channel) {
         statusesCount: channel.statusesCount,
     })
 }
+
 export class ChannelQueryRepository implements IChannelQueryRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
