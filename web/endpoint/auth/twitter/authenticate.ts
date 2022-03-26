@@ -9,7 +9,7 @@ export default (server: TurboServer) => {
         const authSessionId = req.cookies["tw_auth_session_id"]
         console.log("callback token", req.body.oauth_token)
         console.log("callback verifier", req.body.oauth_verifier)
-        const [user, loginSession, _] = await authenticate(
+        const [user, loginSession] = await authenticate(
             {
                 oauth_token: req.body.oauth_token,
                 oauth_verifier: req.body.oauth_verifier,

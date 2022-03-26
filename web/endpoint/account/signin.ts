@@ -6,7 +6,7 @@ import config from "../../../config/app"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = req.headers["x-real-ip"]
-        const [user, _, loginSession, __] = await signin(
+        const [user, _, loginSession] = await signin(
             {
                 name: req.body.name,
                 password: req.body.password,

@@ -44,8 +44,8 @@ export class CreateChannelGroupApplication {
         name: string
         parentId: ChannelGroupdId
     }) {
-        const parentChannel = await this.channelGroupQueryRepository.findById(parentId)
-        if (parentChannel == null) {
+        const parentChannelGroup = await this.channelGroupQueryRepository.findById(parentId)
+        if (parentChannelGroup == null) {
             throw new ApplicationError(ErrorCodes.ParentNotFound)
         }
         try {
@@ -57,7 +57,7 @@ export class CreateChannelGroupApplication {
                 name: name,
                 uniqueName: ChannelGroupEntity.generateUniqueName(),
                 parentId: parentId,
-                level: parentChannel.level,
+                level: parentChannelGroup.level,
                 createdBy: createdBy,
                 createdAt: new Date(),
             })

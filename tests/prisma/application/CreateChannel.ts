@@ -1,13 +1,12 @@
-import {
-    CreateChannelGroupApplication,
-    ErrorCodes,
-} from "../../../application/channel_group/CreateChannelGroup"
+import { CreateChannelApplication, ErrorCodes } from "../../../application/channel/CreateChannel"
 
 import { ApplicationError } from "../../../application/ApplicationError"
+import { ChannelEntity } from "../../../domain/entity/Channel"
 import { ChannelGroupEntity } from "../../../domain/entity/ChannelGroup"
-import { ChannelQueryRepository } from "../../../web/repositories"
+import { IChannelCommandRepository } from "../../../domain/repository/command/Channel"
 import { IChannelGroupCommandRepository } from "../../../domain/repository/command/ChannelGroup"
 import { IChannelGroupQueryRepository } from "../../../domain/repository/query/ChannelGroup"
+import { IChannelQueryRepository } from "../../../domain/repository/query/Channel"
 import { IUserCommandRepository } from "../../../domain/repository/command/User"
 import { IUserQueryRepository } from "../../../domain/repository/query/User"
 import { PrismaClient } from "@prisma/client"
@@ -24,18 +23,20 @@ type NewableTransaction = {
     new: () => Promise<TransactionRepository<any>>
 }
 
-export class CreateChannelGroupApplicationTests {
+export class CreateChannelApplicationTests {
     constructor() {}
     async testNormal<
         S extends IUserQueryRepository,
         T extends IUserCommandRepository,
-        U extends IChannelGroupQueryRepository,
-        V extends IChannelGroupCommandRepository
+        U extends IChannelCommandRepository,
+        V extends IChannelGroupQueryRepository,
+        W extends IChannelGroupCommandRepository
     >(
         UserQueryRepository: NewableRepository<S>,
         UserCommandRepository: NewableRepository<T>,
-        ChannelGroupQueryRepository: NewableRepository<U>,
-        ChannelGroupCommandRepository: NewableRepository<V>
+        ChannelCommandRepository: NewableRepository<U>,
+        ChannelGroupQueryRepository: NewableRepository<V>,
+        ChannelGroupCommandRepository: NewableRepository<W>
     ) {
         const trustLevel = UserEntity.getInitialTrustLevel({
             signedUpWithTwitter: false,
@@ -61,31 +62,33 @@ export class CreateChannelGroupApplicationTests {
         })
         parentChannelGroup.id = await new ChannelGroupCommandRepository().add(parentChannelGroup)
 
-        const channelGroup = await new CreateChannelGroupApplication(
+        const channel = await new CreateChannelApplication(
             new UserQueryRepository(),
             new ChannelGroupQueryRepository(),
-            new ChannelGroupCommandRepository()
+            new ChannelCommandRepository()
         ).create({
             name: generateRandomName(config.channel_group.name.max_length),
-            parentId: parentChannelGroup.id,
+            parentChannelGroupId: parentChannelGroup.id,
             createdBy: user.id,
         })
-        expect(channelGroup).toBeInstanceOf(ChannelGroupEntity)
+        expect(channel).toBeInstanceOf(ChannelEntity)
 
         await new UserCommandRepository().delete(user)
         await new ChannelGroupCommandRepository().delete(parentChannelGroup)
-        await new ChannelGroupCommandRepository().delete(channelGroup)
+        await new ChannelCommandRepository().delete(channel)
     }
     async testVisitor<
         S extends IUserQueryRepository,
         T extends IUserCommandRepository,
-        U extends IChannelGroupQueryRepository,
-        V extends IChannelGroupCommandRepository
+        U extends IChannelCommandRepository,
+        V extends IChannelGroupQueryRepository,
+        W extends IChannelGroupCommandRepository
     >(
         UserQueryRepository: NewableRepository<S>,
         UserCommandRepository: NewableRepository<T>,
-        ChannelGroupQueryRepository: NewableRepository<U>,
-        ChannelGroupCommandRepository: NewableRepository<V>
+        ChannelCommandRepository: NewableRepository<U>,
+        ChannelGroupQueryRepository: NewableRepository<V>,
+        ChannelGroupCommandRepository: NewableRepository<W>
     ) {
         expect.assertions(2)
         const trustLevel = UserEntity.getInitialTrustLevel({
@@ -111,15 +114,14 @@ export class CreateChannelGroupApplicationTests {
             createdAt: new Date(),
         })
         parentChannelGroup.id = await new ChannelGroupCommandRepository().add(parentChannelGroup)
-
         try {
-            await new CreateChannelGroupApplication(
+            await new CreateChannelApplication(
                 new UserQueryRepository(),
                 new ChannelGroupQueryRepository(),
-                new ChannelGroupCommandRepository()
+                new ChannelCommandRepository()
             ).create({
                 name: generateRandomName(config.channel_group.name.max_length),
-                parentId: parentChannelGroup.id,
+                parentChannelGroupId: parentChannelGroup.id,
                 createdBy: user.id,
             })
         } catch (error) {
@@ -135,18 +137,23 @@ export class CreateChannelGroupApplicationTests {
     async testTransaction<
         S extends IUserQueryRepository,
         T extends IUserCommandRepository,
-        U extends IChannelGroupQueryRepository,
-        V extends IChannelGroupCommandRepository
+        U extends IChannelQueryRepository,
+        V extends IChannelCommandRepository,
+        W extends IChannelGroupQueryRepository,
+        X extends IChannelGroupCommandRepository
     >(
         UserQueryRepository: NewableRepository<S>,
         UserCommandRepository: NewableRepository<T>,
-        ChannelGroupQueryRepository: NewableRepository<U>,
-        ChannelGroupCommandRepository: NewableRepository<V>,
+        ChannelQueryRepository: NewableRepository<U>,
+        ChannelCommandRepository: NewableRepository<V>,
+        ChannelGroupQueryRepository: NewableRepository<W>,
+        ChannelGroupCommandRepository: NewableRepository<X>,
         TransactionRepository: NewableTransaction
     ) {
         const transaction = await TransactionRepository.new()
         const userName = generateRandomName(config.user.name.max_length)
         const parentUniqueName = generateRandomName(config.channel_group.unique_name.max_length)
+        const uniqueName = generateRandomName(config.channel_group.unique_name.max_length)
         try {
             await transaction.$transaction(async (transactionSession) => {
                 const trustLevel = UserEntity.getInitialTrustLevel({
@@ -174,22 +181,26 @@ export class CreateChannelGroupApplicationTests {
                     transactionSession
                 ).add(parentChannelGroup)
 
-                const channelGroup = await new CreateChannelGroupApplication(
+                const channel = await new CreateChannelApplication(
                     new UserQueryRepository(transactionSession),
                     new ChannelGroupQueryRepository(transactionSession),
-                    new ChannelGroupCommandRepository(transactionSession)
+                    new ChannelCommandRepository(transactionSession)
                 ).create({
-                    name: generateRandomName(config.channel_group.unique_name.max_length),
-                    parentId: parentChannelGroup.id,
+                    name: uniqueName,
+                    parentChannelGroupId: parentChannelGroup.id,
                     createdBy: user.id,
                 })
                 throw new Error()
-                return channelGroup
+                return channel
             })
         } catch (error) {}
         const user = await new UserQueryRepository().findByName(userName)
         expect(user).toBeNull()
-        const channelGroup = await new ChannelQueryRepository().findByUniqueName(parentUniqueName)
+        const channelGroup = await new ChannelGroupQueryRepository().findByUniqueName(
+            parentUniqueName
+        )
         expect(channelGroup).toBeNull()
+        const channel = await new ChannelQueryRepository().findByUniqueName(uniqueName)
+        expect(channel).toBeNull()
     }
 }

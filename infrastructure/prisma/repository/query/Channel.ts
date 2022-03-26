@@ -1,4 +1,5 @@
 import { Channel, PrismaClient } from "@prisma/client"
+import { ChannelGroupdId, UserId } from "../../../../domain/types"
 import {
     IChannelQueryRepository,
     SortBy,
@@ -11,7 +12,6 @@ import {
 import { isNumber, isString } from "../../../../domain/validation"
 
 import { ChannelEntity } from "../../../../domain/entity/Channel"
-import { UserId } from "../../../../domain/types"
 import { prisma } from "../client"
 
 function toEntity(channel: Channel) {
@@ -90,6 +90,33 @@ export class ChannelQueryRepository implements IChannelQueryRepository {
             const channels = await this._prisma.channel.findMany({
                 where: {
                     createdBy: userId,
+                },
+            })
+            const ret: ChannelEntity[] = []
+            channels.forEach((channel) => {
+                ret.push(toEntity(channel))
+            })
+            return ret
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
+    async findByParentChannelGroupId(
+        channelGroupId: ChannelGroupdId,
+        sortBy: typeof SortBy[keyof typeof SortBy],
+        sortOrder: typeof SortOrder[keyof typeof SortOrder]
+    ): Promise<ChannelEntity[]> {
+        try {
+            if (isNumber(channelGroupId) !== true) {
+                throw new RepositoryError("`channelGroupId` must be a number")
+            }
+            const channels = await this._prisma.channel.findMany({
+                where: {
+                    parentChannelGroupId: channelGroupId,
                 },
             })
             const ret: ChannelEntity[] = []

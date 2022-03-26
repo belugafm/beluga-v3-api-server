@@ -1,4 +1,4 @@
-import { ChannelId, UserId } from "../../types"
+import { ChannelGroupdId, ChannelId, UserId } from "../../types"
 
 import { ChannelEntity } from "../../entity/Channel"
 
@@ -16,6 +16,11 @@ export interface IChannelQueryRepository {
     findByUniqueName(uniqueName: string): Promise<ChannelEntity | null>
     findByUserId(
         userId: UserId,
+        sortBy: typeof SortBy[keyof typeof SortBy],
+        sortOrder: typeof SortOrder[keyof typeof SortOrder]
+    ): Promise<ChannelEntity[]>
+    findByParentChannelGroupId(
+        channelGroupId: ChannelGroupdId,
         sortBy: typeof SortBy[keyof typeof SortBy],
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
     ): Promise<ChannelEntity[]>

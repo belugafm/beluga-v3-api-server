@@ -21,6 +21,6 @@ services:
     image: adminer
     restart: always
     ports:
-      - 127.0.0.2:8090:8080
+      - 127.0.0.2:7000:8080
     depends_on:
       - mysql

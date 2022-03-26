@@ -32,6 +32,7 @@ async function startServer() {
     server.register(require("./web/endpoint/auth/twitter/request_token"))
     server.register(require("./web/endpoint/auth/twitter/authenticate"))
     server.register(require("./web/endpoint/channel_group/create"))
+    server.register(require("./web/endpoint/channel/create"))
     // server.register(require("./web/endpoint/debug"))
 
     server.listen(config.server.port)

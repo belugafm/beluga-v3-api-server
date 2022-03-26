@@ -21,6 +21,7 @@ export const ErrorCodes = {
     InvalidCreatedBy: "invalid_created_by",
     InvalidCreatedAt: "invalid_created_at",
     InvalidStatusesCount: "invalid_statuses_count",
+    InvalidStatusString: "invalid_status_string",
 } as const
 
 export class ChannelEntity extends Entity {
@@ -50,6 +51,11 @@ export class ChannelEntity extends Entity {
     @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidStatusesCount })
     statusesCount: number
 
+    @validateBy(vn.string({ minLength: 1, maxLength: 1 }), {
+        errorCode: ErrorCodes.InvalidStatusesCount,
+    })
+    statusString: string
+
     constructor(
         params: {
             id: ChannelEntity["id"]
@@ -68,6 +74,7 @@ export class ChannelEntity extends Entity {
         this.createdBy = params.createdBy
         this.createdAt = params.createdAt
         this.statusesCount = params.statusesCount ? params.statusesCount : 0
+        this.statusString = params.statusString ? params.statusString : "#"
     }
     toResponseObject() {
         return {
@@ -78,9 +85,10 @@ export class ChannelEntity extends Entity {
             created_by: this.createdBy,
             created_at: this.createdAt,
             statuses_count: this.statusesCount,
+            status_string: this.statusString,
         }
     }
-    static generateUniqueName(): String {
+    static generateUniqueName(): string {
         return generateRandomName(12)
     }
 }

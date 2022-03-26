@@ -81,4 +81,5 @@ model Channel {
     createdBy            Int
     createdAt            DateTime @default(now())
     statusesCount        Int      @default(0)
+    statusString         String   @default("#") @db.VarChar(1)
 }

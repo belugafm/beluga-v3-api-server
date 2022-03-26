@@ -1,4 +1,4 @@
-import create_channel_group, { facts } from "../../api/methods/channel_group/create"
+import create_channel, { facts } from "../../api/methods/channel/create"
 
 import { TurboServer } from "../../turbo"
 import authenticate from "../../api/methods/auth/cookie/authenticate"
@@ -13,10 +13,10 @@ export default (server: TurboServer) => {
                 ok: false,
             }
         }
-        const channel = await create_channel_group(
+        const channel = await create_channel(
             {
                 name: req.body.name,
-                parent_id: req.body.parent_id,
+                parent_channel_group_id: req.body.parent_channel_group_id,
                 created_by: user.id,
             },
             remoteIpAddress,
@@ -24,7 +24,7 @@ export default (server: TurboServer) => {
         )
         return {
             ok: true,
-            channel_group: channel.toResponseObject(),
+            channel: channel.toResponseObject(),
         }
     })
 }

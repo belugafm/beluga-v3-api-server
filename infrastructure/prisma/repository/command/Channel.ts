@@ -17,6 +17,7 @@ export function has_changed(a: Channel, b: Channel) {
         a.parentChannelGroupId === b.parentChannelGroupId &&
         a.createdAt?.getTime() === b.createdAt?.getTime() &&
         a.createdBy === b.createdBy &&
+        a.statusString === b.statusString &&
         a.statusesCount === b.statusesCount
     )
 }
@@ -47,6 +48,7 @@ export class ChannelCommandRepository
                     createdAt: channel.createdAt,
                     createdBy: channel.createdBy,
                     statusesCount: channel.statusesCount,
+                    statusString: channel.statusString,
                 },
             })
             return result.id
@@ -83,6 +85,7 @@ export class ChannelCommandRepository
                     createdAt: channel.createdAt,
                     createdBy: channel.createdBy,
                     statusesCount: channel.statusesCount,
+                    statusString: channel.statusString,
                 },
             })
             if (has_changed(origChannel, updatedChannel)) {

@@ -48,7 +48,7 @@ declare module "find-my-way" {
         params: { ipAddress: string; authUser: UserEntity | null },
         store?: any
     ) => object | string
-    type HTTPMethod = "GET" | "POST"
+    type HTTPMethod = "GET" | "POST" | "OPTIONS"
     interface Config {
         ignoreTrailingSlash?: boolean
         allowUnsafeRegex?: boolean
