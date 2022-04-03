@@ -74,13 +74,19 @@ export class MessageEntity extends Entity {
         return {
             id: this.id.toString(),
             channel_id: this.channelId,
+            channel: {},
             user_id: this.userId,
+            user: {},
             text: this.text,
             created_at: this.createdAt,
             favorite_count: this.favoriteCount,
             like_count: this.likeCount,
             reply_count: this.replyCount,
             thread_id: this.threadId,
+            entities: {
+                channels: [],
+                messages: [],
+            },
         }
     }
 }

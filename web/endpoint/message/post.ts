@@ -5,18 +5,18 @@ import { TurboServer } from "../../turbo"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = req.headers["x-real-ip"]
-        const channel = await postMessage(
+        const message = await postMessage(
             {
                 text: req.body.text,
-                channel_id: req.body.channel_id,
-                thread_id: req.body.thread_id,
+                channel_id: req.body.channel_id ? Math.trunc(req.body.channel_id) : undefined,
+                thread_id: req.body.thread_id ? Math.trunc(req.body.thread_id) : undefined,
             },
             remoteIpAddress,
             params["authUser"]
         )
         return {
             ok: true,
-            channel_group: channel.toResponseObject(),
+            message: message.toResponseObject(),
         }
     })
 }

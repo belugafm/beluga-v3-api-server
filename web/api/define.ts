@@ -1,9 +1,4 @@
-import {
-    EndpointUnavailableErrorSpec,
-    InternalErrorSpec,
-    InvalidAuth,
-    WebApiRuntimeError,
-} from "./error"
+import { EndpointUnavailableErrorSpec, InternalErrorSpec, InvalidAuth, WebApiRuntimeError } from "./error"
 
 import { AuthenticationMethodsLiteralUnion } from "./facts/authentication_method"
 import { ContentTypesUnion } from "./facts/content_type"
@@ -134,13 +129,9 @@ export function defineMethod<
         undefined
     >,
     Args extends {
-        [ArgumentName in RequiredArgNames]: ReturnType<
-            ArgumentSpecs[ArgumentName]["validator"]["type"]
-        >
+        [ArgumentName in RequiredArgNames]: ReturnType<ArgumentSpecs[ArgumentName]["validator"]["type"]>
     } & {
-        [ArgumentName in OptionalArgNames]?: ReturnType<
-            ArgumentSpecs[ArgumentName]["validator"]["type"]
-        >
+        [ArgumentName in OptionalArgNames]?: ReturnType<ArgumentSpecs[ArgumentName]["validator"]["type"]>
     },
     ErrorCodes,
     CallbackReturnType
@@ -153,11 +144,7 @@ export function defineMethod<
         errors: ExpectedErrorSpecs<ArgumentSpecs, ErrorCodes>,
         authUser: UserEntity | null
     ) => Promise<CallbackReturnType>
-): (
-    args: Args,
-    remoteIpAddress: string,
-    authUser: UserEntity | null
-) => Promise<CallbackReturnType> {
+): (args: Args, remoteIpAddress: string, authUser: UserEntity | null) => Promise<CallbackReturnType> {
     return (args: Args, remoteIpAddress: string, authUser: UserEntity | null) => {
         if (facts.authenticationRequired) {
             if (authUser === null) {
@@ -205,18 +192,12 @@ export function defineMethod<
                         const error = errorsAssociatedWithArgs[argumentName]
                         if (error == null) {
                             // エラーメッセージの定義漏れがあるとここに到達する
-                            throw new WebApiRuntimeError(
-                                new InternalErrorSpec(),
-                                "引数の値チェックを完了できません"
-                            )
+                            throw new WebApiRuntimeError(new InternalErrorSpec(), "引数の値チェックを完了できません")
                         } else {
                             throw new WebApiRuntimeError(error, validationError.message)
                         }
                     } else {
-                        throw new WebApiRuntimeError(
-                            new InternalErrorSpec(),
-                            "引数の値チェックを完了できません"
-                        )
+                        throw new WebApiRuntimeError(new InternalErrorSpec(), "引数の値チェックを完了できません")
                     }
                 }
             }

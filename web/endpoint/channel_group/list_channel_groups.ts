@@ -12,13 +12,9 @@ export default (server: TurboServer) => {
             remoteIpAddress,
             params["authUser"]
         )
-        const channelGroupObjects: any[] = []
-        channelGroups.forEach((channelGroup) => {
-            channelGroupObjects.push(channelGroup.toResponseObject())
-        })
         return {
             ok: true,
-            channel_groups: channelGroupObjects,
+            channel_groups: channelGroups.map((channelGroup) => channelGroup.toResponseObject()),
         }
     })
 }

@@ -1,9 +1,6 @@
 import { IUserQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/User"
 import { PrismaClient, User } from "@prisma/client"
-import {
-    RepositoryError,
-    UnknownRepositoryError,
-} from "../../../../domain/repository/RepositoryError"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
@@ -60,11 +57,7 @@ export class UserQueryRepository implements IUserQueryRepository {
             return toEntity(user)
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(
-                    error.message,
-                    error.stack,
-                    "UserQueryRepository::findById"
-                )
+                throw new RepositoryError(error.message, error.stack, "UserQueryRepository::findById")
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -83,11 +76,7 @@ export class UserQueryRepository implements IUserQueryRepository {
             return toEntity(user)
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(
-                    error.message,
-                    error.stack,
-                    "UserQueryRepository::findByName"
-                )
+                throw new RepositoryError(error.message, error.stack, "UserQueryRepository::findByName")
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -106,11 +95,7 @@ export class UserQueryRepository implements IUserQueryRepository {
             return toEntity(user)
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(
-                    error.message,
-                    error.stack,
-                    "UserQueryRepository::findByTwitterUserId"
-                )
+                throw new RepositoryError(error.message, error.stack, "UserQueryRepository::findByTwitterUserId")
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -127,11 +112,7 @@ export class UserQueryRepository implements IUserQueryRepository {
                     registrationIpAddress: ipAddress,
                 },
             })
-            const ret: UserEntity[] = []
-            users.forEach((user) => {
-                ret.push(toEntity(user))
-            })
-            return ret
+            return users.map((user) => toEntity(user))
         } catch (error) {
             if (error instanceof Error) {
                 throw new RepositoryError(

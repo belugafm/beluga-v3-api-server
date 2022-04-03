@@ -87,11 +87,7 @@ export class ChannelQueryRepository implements IChannelQueryRepository {
                     createdBy: userId,
                 },
             })
-            const ret: ChannelEntity[] = []
-            channels.forEach((channel) => {
-                ret.push(toEntity(channel))
-            })
-            return ret
+            return channels.map((channel) => toEntity(channel))
         } catch (error) {
             if (error instanceof Error) {
                 throw new RepositoryError(error.message, error.stack)
@@ -114,11 +110,7 @@ export class ChannelQueryRepository implements IChannelQueryRepository {
                     parentChannelGroupId: channelGroupId,
                 },
             })
-            const ret: ChannelEntity[] = []
-            channels.forEach((channel) => {
-                ret.push(toEntity(channel))
-            })
-            return ret
+            return channels.map((channel) => toEntity(channel))
         } catch (error) {
             if (error instanceof Error) {
                 throw new RepositoryError(error.message, error.stack)

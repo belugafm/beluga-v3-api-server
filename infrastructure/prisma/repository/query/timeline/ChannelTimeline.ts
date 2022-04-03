@@ -24,14 +24,6 @@ function toEntity(message: Message) {
     })
 }
 
-function toEntityList(messages: Message[]) {
-    const ret: MessageEntity[] = []
-    messages.forEach((message) => {
-        ret.push(toEntity(message))
-    })
-    return ret
-}
-
 function getSortOrder(sortOrderString: keyof typeof SortOrder) {
     if (sortOrderString == "Descending") {
         return "desc"
@@ -73,7 +65,7 @@ export class ChannelTimelineQueryRepository implements IChannelTimelineQueryRepo
                     },
                     take: params.limit,
                 })
-                return toEntityList(messages)
+                return messages.map((message) => toEntity(message))
             } else if (params.maxId) {
                 if (isInteger(params.maxId) !== true) {
                     throw new RepositoryError("`maxId` must be a number")
@@ -91,7 +83,7 @@ export class ChannelTimelineQueryRepository implements IChannelTimelineQueryRepo
                     },
                     take: params.limit,
                 })
-                return toEntityList(messages)
+                return messages.map((message) => toEntity(message))
             } else {
                 const messages = await this._prisma.message.findMany({
                     where: {
@@ -103,7 +95,7 @@ export class ChannelTimelineQueryRepository implements IChannelTimelineQueryRepo
                     },
                     take: params.limit,
                 })
-                return toEntityList(messages)
+                return messages.map((message) => toEntity(message))
             }
         } catch (error) {
             if (error instanceof Error) {

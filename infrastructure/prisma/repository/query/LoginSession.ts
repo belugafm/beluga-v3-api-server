@@ -1,8 +1,5 @@
 import { LoginSession, PrismaClient } from "@prisma/client"
-import {
-    RepositoryError,
-    UnknownRepositoryError,
-} from "../../../../domain/repository/RepositoryError"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 import { SortBy, SortOrder } from "../../../../domain/repository/query/LoginSession"
 
 import { ILoginSessionQueryRepository } from "../../../../domain/repository/query/LoginSession"
@@ -61,11 +58,7 @@ export class LoginSessionQueryRepository implements ILoginSessionQueryRepository
                     userId: userId,
                 },
             })
-            const ret: LoginSessionEntity[] = []
-            sessions.forEach((session) => {
-                ret.push(toEntity(session))
-            })
-            return ret
+            return sessions.map((session) => toEntity(session))
         } catch (error) {
             if (error instanceof Error) {
                 throw new RepositoryError(error.message, error.stack)

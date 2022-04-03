@@ -89,11 +89,7 @@ export class ChannelGroupQueryRepository implements IChannelGroupQueryRepository
                     parentChannelGroupId: id,
                 },
             })
-            const ret: ChannelEntity[] = []
-            channels.forEach((channelGroup) => {
-                ret.push(channelToEntity(channelGroup))
-            })
-            return ret
+            return channels.map((channel) => channelToEntity(channel))
         } catch (error) {
             if (error instanceof Error) {
                 throw new RepositoryError(error.message, error.stack)
@@ -111,16 +107,12 @@ export class ChannelGroupQueryRepository implements IChannelGroupQueryRepository
             if (isInteger(id) !== true) {
                 throw new RepositoryError("`id` must be a number")
             }
-            const channels = await this._prisma.channelGroup.findMany({
+            const channelGroups = await this._prisma.channelGroup.findMany({
                 where: {
                     parentId: id,
                 },
             })
-            const ret: ChannelGroupEntity[] = []
-            channels.forEach((channelGroup) => {
-                ret.push(toEntity(channelGroup))
-            })
-            return ret
+            return channelGroups.map((channelGroup) => toEntity(channelGroup))
         } catch (error) {
             if (error instanceof Error) {
                 throw new RepositoryError(error.message, error.stack)
