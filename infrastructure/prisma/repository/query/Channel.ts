@@ -1,15 +1,8 @@
 import { Channel, PrismaClient } from "@prisma/client"
 import { ChannelGroupdId, UserId } from "../../../../domain/types"
-import {
-    IChannelQueryRepository,
-    SortBy,
-    SortOrder,
-} from "../../../../domain/repository/query/Channel"
-import {
-    RepositoryError,
-    UnknownRepositoryError,
-} from "../../../../domain/repository/RepositoryError"
-import { isNumber, isString } from "../../../../domain/validation"
+import { IChannelQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/Channel"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
+import { isInteger, isString } from "../../../../domain/validation"
 
 import { ChannelEntity } from "../../../../domain/entity/Channel"
 import { prisma } from "../client"
@@ -23,6 +16,7 @@ export function toEntity(channel: Channel) {
         createdAt: channel.createdAt,
         parentChannelGroupId: channel.parentChannelGroupId,
         statusesCount: channel.statusesCount,
+        statusString: channel.statusString,
     })
 }
 
@@ -37,7 +31,7 @@ export class ChannelQueryRepository implements IChannelQueryRepository {
     }
     async findById(userId: UserId): Promise<ChannelEntity | null> {
         try {
-            if (isNumber(userId) !== true) {
+            if (isInteger(userId) !== true) {
                 throw new RepositoryError("`userId` must be a number")
             }
             const channel = await this._prisma.channel.findUnique({
@@ -85,7 +79,7 @@ export class ChannelQueryRepository implements IChannelQueryRepository {
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
     ): Promise<ChannelEntity[]> {
         try {
-            if (isNumber(userId) !== true) {
+            if (isInteger(userId) !== true) {
                 throw new RepositoryError("`userId` must be a number")
             }
             const channels = await this._prisma.channel.findMany({
@@ -112,7 +106,7 @@ export class ChannelQueryRepository implements IChannelQueryRepository {
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
     ): Promise<ChannelEntity[]> {
         try {
-            if (isNumber(channelGroupId) !== true) {
+            if (isInteger(channelGroupId) !== true) {
                 throw new RepositoryError("`channelGroupId` must be a number")
             }
             const channels = await this._prisma.channel.findMany({

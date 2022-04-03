@@ -3,6 +3,7 @@ import * as vs from "../../../../domain/validation"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
+import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
 import { ChannelGroupQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
@@ -39,7 +40,11 @@ export const facts: MethodFacts = {
     acceptedContentTypes: [ContentTypes.ApplicationJson],
     authenticationRequired: false,
     private: false,
-    acceptedAuthenticationMethods: [],
+    acceptedAuthenticationMethods: [
+        AuthenticationMethods.OAuth,
+        AuthenticationMethods.AccessToken,
+        AuthenticationMethods.Cookie,
+    ],
     acceptedScopes: {},
     description: [
         "チャンネルグループに属しているチャンネルグループの一覧を取得します",
@@ -49,23 +54,14 @@ export const facts: MethodFacts = {
 
 type ReturnType = Promise<ChannelGroupEntity[]>
 
-export default defineMethod(
-    facts,
-    argumentSpecs,
-    expectedErrorSpecs,
-    async (args, errors): ReturnType => {
-        try {
-            return await new ChannelGroupQueryRepository().listChannelGroups(
-                args.id,
-                "CreatedAt",
-                "Ascending"
-            )
-        } catch (error) {
-            if (error instanceof Error) {
-                raise(errors["unexpected_error"], error)
-            } else {
-                raise(errors["unexpected_error"], new Error("unexpected_error"))
-            }
+export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors): ReturnType => {
+    try {
+        return await new ChannelGroupQueryRepository().listChannelGroups(args.id, "CreatedAt", "Ascending")
+    } catch (error) {
+        if (error instanceof Error) {
+            raise(errors["unexpected_error"], error)
+        } else {
+            raise(errors["unexpected_error"], new Error("unexpected_error"))
         }
     }
-)
+})

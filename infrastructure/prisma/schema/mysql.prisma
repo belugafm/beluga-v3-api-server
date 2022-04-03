@@ -83,3 +83,19 @@ model Channel {
     statusesCount        Int      @default(0)
     statusString         String   @default("#") @db.VarChar(1)
 }
+
+model Message {
+    id            Int      @id @default(autoincrement())
+    channelId     Int
+    userId        Int
+    createdAt     DateTime @default(now())
+    text          String   @db.Text
+    favoriteCount Int      @default(0)
+    likeCount     Int      @default(0)
+    replyCount    Int      @default(0)
+    threadId      Int?
+
+    @@index([threadId])
+    @@index([userId])
+    @@index([channelId])
+}

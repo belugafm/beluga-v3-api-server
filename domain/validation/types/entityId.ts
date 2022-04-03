@@ -1,14 +1,14 @@
-import { ChannelGroupdId, ChannelId, EntityId, UserId } from "../../types"
+import { ChannelGroupdId, ChannelId, EntityId, MessageId, UserId } from "../../types"
 import { CommonErrorMessages, ValidationError } from "../error"
 
 import { Validator } from "../Validator"
-import { isNumber } from "../functions"
+import { isInteger } from "../functions"
 
 export function checkIsEntityId(value: EntityId, options: {}): void {
     // if (isString(value)) {
     //     return
     // }
-    if (isNumber(value)) {
+    if (isInteger(value)) {
         return
     }
     throw new ValidationError(CommonErrorMessages.InvalidType)
@@ -28,4 +28,8 @@ export function channelGroupId() {
 
 export function userId() {
     return new Validator<UserId>({}, [checkIsEntityId])
+}
+
+export function messageId() {
+    return new Validator<MessageId>({}, [checkIsEntityId])
 }

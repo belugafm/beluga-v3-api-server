@@ -17,7 +17,7 @@ export const ErrorCodes = {
 export class LoginCredentialEntity extends Entity {
     // @ts-ignore
 
-    @validateBy(vn.objectId(), ErrorCodes.InvalidUserId)
+    @validateBy(vn.userId(), ErrorCodes.InvalidUserId)
     userId: UserId
     // @ts-ignore
     @validateBy(vn.string(), ErrorCodes.InvaidPasswordInput)

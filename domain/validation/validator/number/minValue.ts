@@ -1,6 +1,6 @@
 import { CommonErrorMessages, ValidationError } from "../../error"
 
-import { isNumber } from "../../functions"
+import { isInteger } from "../../functions"
 
 export type Options = {
     minValue?: number
@@ -9,7 +9,7 @@ export function checkMinValue(value: number, options: Options): void {
     if (options.minValue == null) {
         return
     }
-    if (isNumber(value) !== true) {
+    if (isInteger(value) !== true) {
         throw new ValidationError(CommonErrorMessages.InvalidType)
     }
     if (value < options.minValue) {

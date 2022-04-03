@@ -36,7 +36,7 @@ export const ErrorCodes = {
 export class UserEntity extends Entity {
     // 一意なid DBの実装に依存する
     // 変更不可
-    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidId })
+    @validateBy(vn.userId(), { errorCode: ErrorCodes.InvalidId })
     id: UserId
 
     // ログイン時に使う一意な英数字
@@ -73,19 +73,19 @@ export class UserEntity extends Entity {
     @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
     defaultProfile: boolean
 
-    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     statusesCount: number // 全投稿数
 
-    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     favoritesCount: number // ふぁぼった投稿数
 
-    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     favoritedCount: number // ふぁぼられた投稿数
 
-    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     likesCount: number // いいねした投稿数
 
-    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     likedCount: number // いいねされた投稿数
 
     @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidDate })
@@ -103,7 +103,7 @@ export class UserEntity extends Entity {
     @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
     suspended: boolean // 凍結されたかどうか
 
-    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     trustLevel: number // 信用レベル
 
     @validateBy(vn.date(), { nullable: true, errorCode: ErrorCodes.InvalidDate })

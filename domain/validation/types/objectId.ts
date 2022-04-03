@@ -1,11 +1,11 @@
 import { CommonErrorMessages, ValidationError } from "../error"
-import { isNumber, isString } from "../functions"
+import { isInteger, isString } from "../functions"
 
 import { EntityId } from "../../types"
 import { Validator } from "../Validator"
 
 function checkIsObjectId(value: any) {
-    if (isNumber(value)) {
+    if (isInteger(value)) {
         return
     }
     if (isString(value)) {

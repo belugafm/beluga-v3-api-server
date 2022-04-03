@@ -90,8 +90,9 @@ const config: {
         create_limit_per_day: number
         min_trust_level_required_to_create: number
     }
-    status: {
+    message: {
         no_editing_after: number
+        wait_until: number
         text: {
             min_length: number
             max_length: number
@@ -226,11 +227,13 @@ const config: {
         // 作成に必要な最低Trust Level
         min_trust_level_required_to_create: 2,
     },
-    status: {
+    message: {
         // 投稿を編集可能な期間（秒）
-        no_editing_after: 60 * 5,
+        no_editing_after: 86400 * 30,
+        // 次に投稿するまでに待たなければならない時間（ミリ秒）
+        wait_until: 500,
         text: {
-            min_length: 0,
+            min_length: 1,
             max_length: 3000,
         },
         like: {

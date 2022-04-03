@@ -1,5 +1,8 @@
+import { AuthenticityTokenQueryRepository, LoginSessionQueryRepository, UserQueryRepository } from "./web/repositories"
 import { Request, Response, TurboServer } from "./web/turbo"
 
+import { Authenticator } from "./web/auth"
+import { CookieAuthenticationApplication } from "./application/authentication/Cookie"
 import { UserCommandRepository } from "./infrastructure/prisma/repository/command/User"
 import config from "./config/app"
 
@@ -21,7 +24,14 @@ async function startServer() {
                 res.end()
             },
         },
-        new UserCommandRepository()
+        new UserCommandRepository(),
+        new Authenticator(
+            new CookieAuthenticationApplication(
+                new UserQueryRepository(),
+                new LoginSessionQueryRepository(),
+                new AuthenticityTokenQueryRepository()
+            )
+        )
     )
 
     // routerにendpointを登録
@@ -36,6 +46,7 @@ async function startServer() {
     server.register(require("./web/endpoint/channel_group/list_channels"))
     server.register(require("./web/endpoint/channel_group/list_channel_groups"))
     server.register(require("./web/endpoint/channel/create"))
+    server.register(require("./web/endpoint/channel/show"))
     // server.register(require("./web/endpoint/debug"))
 
     server.listen(config.server.port)

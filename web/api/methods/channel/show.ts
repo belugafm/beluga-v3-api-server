@@ -1,61 +1,43 @@
 import * as vs from "../../../../domain/validation"
 
-import {
-    ChannelCommandRepository,
-    ChannelGroupQueryRepository,
-    TransactionRepository,
-    UserQueryRepository,
-} from "../../../repositories"
-import { CreateChannelApplication, ErrorCodes } from "../../../../application/channel/CreateChannel"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
-import { ApplicationError } from "../../../../application/ApplicationError"
+import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ChannelEntity } from "../../../../domain/entity/Channel"
+import { ChannelQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
 
-export const argumentSpecs = defineArguments(["unique_name", "channel_id"] as const, {
-    name: {
-        description: ["チャンネル名"],
-        examples: ["general"],
-        required: true,
-        validator: vs.channelGroup.name(),
+export const argumentSpecs = defineArguments(["unique_name", "id"] as const, {
+    unique_name: {
+        description: [],
+        examples: ["0TI4SjhQJLy2"],
+        required: false,
+        validator: vs.channelGroup.uniqueName(),
     },
-    parent_channel_group_id: {
-        description: ["親のチャンネルグループID"],
+    id: {
+        description: [],
         examples: ["123456"],
-        required: true,
+        required: false,
         validator: vs.channelGroupId(),
-    },
-    created_by: {
-        description: ["作成者のユーザーID"],
-        examples: ["123456"],
-        required: true,
-        validator: vs.userId(),
     },
 })
 
 export const expectedErrorSpecs = defineErrors(
-    [
-        ErrorCodes.DoNotHavePermission,
-        ErrorCodes.NameNotMeetPolicy,
-        "internal_error",
-        "unexpected_error",
-    ] as const,
+    ["missing_argument", "not_found", "internal_error", "unexpected_error"] as const,
     argumentSpecs,
     {
-        do_not_have_permission: {
-            description: ["チャンネルを作成する権限がありませんん"],
-            hint: ["信用レベルを上げると作れるようになります"],
-            code: "do_not_have_permission",
+        missing_argument: {
+            description: ["引数を指定してください"],
+            hint: ["`unique_name`と`id`のどちらかを必ず指定してください"],
+            code: "missing_argument",
         },
-        name_not_meet_policy: {
-            description: ["チャンネル名に使用できない文字が含まれています"],
-            hint: ["空白は入力できません"],
-            argument: "name",
-            code: "name_not_meet_policy",
+        not_found: {
+            description: ["指定されたチャンネルが見つかりませんでした"],
+            hint: [],
+            code: "not_found",
         },
         internal_error: new InternalErrorSpec(),
         unexpected_error: new UnexpectedErrorSpec(),
@@ -63,52 +45,40 @@ export const expectedErrorSpecs = defineErrors(
 )
 
 export const facts: MethodFacts = {
-    url: MethodIdentifiers.CreateChannel,
-    httpMethod: HttpMethods.POST,
+    url: MethodIdentifiers.ShowChannel,
+    httpMethod: HttpMethods.GET,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    authenticationRequired: false,
+    authenticationRequired: true,
     private: false,
-    acceptedAuthenticationMethods: [],
+    acceptedAuthenticationMethods: [
+        AuthenticationMethods.OAuth,
+        AuthenticationMethods.AccessToken,
+        AuthenticationMethods.Cookie,
+    ],
     acceptedScopes: {},
-    description: ["新規チャンネルを作成します"],
+    description: ["チャンネルの情報を取得します"],
 }
 
-type ReturnType = Promise<ChannelEntity>
+type ReturnType = Promise<ChannelEntity | null>
 
-export default defineMethod(
-    facts,
-    argumentSpecs,
-    expectedErrorSpecs,
-    async (args, errors): ReturnType => {
-        const transaction = await TransactionRepository.new<ReturnType>()
-        try {
-            return await transaction.$transaction(async (transactionSession) => {
-                const channel = await new CreateChannelApplication(
-                    new UserQueryRepository(transactionSession),
-                    new ChannelGroupQueryRepository(transactionSession),
-                    new ChannelCommandRepository(transactionSession)
-                ).create({
-                    name: args.name,
-                    parentChannelGroupId: args.parent_channel_group_id,
-                    createdBy: args.created_by,
-                })
-                return channel
-            })
-        } catch (error) {
-            if (error instanceof ApplicationError) {
-                if (error.code === ErrorCodes.DoNotHavePermission) {
-                    raise(errors["do_not_have_permission"], error)
-                } else if (error.code === ErrorCodes.NameNotMeetPolicy) {
-                    raise(errors["name_not_meet_policy"], error)
-                } else {
-                    raise(errors["internal_error"], error)
-                }
-            } else if (error instanceof Error) {
-                raise(errors["unexpected_error"], error)
-            } else {
-                raise(errors["unexpected_error"], new Error("unexpected_error"))
-            }
+export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors): ReturnType => {
+    if (args.unique_name == null && args.id == null) {
+        raise(errors["internal_error"])
+    }
+    try {
+        if (args.unique_name) {
+            return await new ChannelQueryRepository().findByUniqueName(args.unique_name)
+        }
+        if (args.id) {
+            return await new ChannelQueryRepository().findById(args.id)
+        }
+        throw new Error()
+    } catch (error) {
+        if (error instanceof Error) {
+            raise(errors["unexpected_error"], error)
+        } else {
+            raise(errors["unexpected_error"], new Error("unexpected_error"))
         }
     }
-)
+})

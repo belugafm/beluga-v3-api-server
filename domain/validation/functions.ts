@@ -2,8 +2,8 @@ export function isString(value: any): value is string {
     return typeof value === "string"
 }
 
-export function isNumber(value: any): value is number {
-    return typeof value === "number"
+export function isInteger(value: any): value is number {
+    return Number.isInteger(value)
 }
 
 export function isDate(value: any): value is Date {

@@ -18,7 +18,7 @@ export const ErrorCodes = {
 } as const
 
 export class LoginSessionEntity extends Entity {
-    @validateBy(vn.objectId(), { errorCode: ErrorCodes.InvalidUserId })
+    @validateBy(vn.userId(), { errorCode: ErrorCodes.InvalidUserId })
     userId: UserId
 
     @validateBy(vn.sessionId(), { errorCode: ErrorCodes.InvalidSessionId })

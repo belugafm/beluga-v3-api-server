@@ -3,6 +3,7 @@ import * as vn from "../validation"
 import { ChannelGroupdId, ChannelId, UserId } from "../types"
 
 import { Entity } from "./Entity"
+import config from "../../config/app"
 import crypto from "crypto"
 import { validateBy } from "../validation/validateBy"
 
@@ -27,7 +28,7 @@ export const ErrorCodes = {
 export class ChannelEntity extends Entity {
     // 一意なid DBの実装に依存する
     // 変更不可
-    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidId })
+    @validateBy(vn.channelId(), { errorCode: ErrorCodes.InvalidId })
     id: ChannelId
 
     @validateBy(vn.channel.name(), { errorCode: ErrorCodes.InvalidName })
@@ -48,11 +49,11 @@ export class ChannelEntity extends Entity {
     @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
     createdAt: Date
 
-    @validateBy(vn.number({ minValue: 0 }), { errorCode: ErrorCodes.InvalidStatusesCount })
+    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidStatusesCount })
     statusesCount: number
 
     @validateBy(vn.string({ minLength: 1, maxLength: 1 }), {
-        errorCode: ErrorCodes.InvalidStatusesCount,
+        errorCode: ErrorCodes.InvalidStatusString,
     })
     statusString: string
 
@@ -89,6 +90,6 @@ export class ChannelEntity extends Entity {
         }
     }
     static generateUniqueName(): string {
-        return generateRandomName(12)
+        return generateRandomName(config.channel.unique_name.max_length)
     }
 }

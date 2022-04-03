@@ -3,6 +3,7 @@ import * as vs from "../../../../domain/validation"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
+import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ChannelEntity } from "../../../../domain/entity/Channel"
 import { ChannelGroupQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
@@ -37,35 +38,30 @@ export const facts: MethodFacts = {
     httpMethod: HttpMethods.GET,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    authenticationRequired: false,
+    authenticationRequired: true,
     private: false,
-    acceptedAuthenticationMethods: [],
-    acceptedScopes: {},
-    description: [
-        "チャンネルグループに属しているチャンネルの一覧を取得します",
-        "取得できる範囲は直下の階層のみです",
+    acceptedAuthenticationMethods: [
+        AuthenticationMethods.OAuth,
+        AuthenticationMethods.AccessToken,
+        AuthenticationMethods.Cookie,
     ],
+    acceptedScopes: {},
+    description: ["チャンネルグループに属しているチャンネルの一覧を取得します", "取得できる範囲は直下の階層のみです"],
 }
 
 type ReturnType = Promise<ChannelEntity[]>
 
-export default defineMethod(
-    facts,
-    argumentSpecs,
-    expectedErrorSpecs,
-    async (args, errors): ReturnType => {
-        try {
-            return await new ChannelGroupQueryRepository().listChannels(
-                args.id,
-                "CreatedAt",
-                "Ascending"
-            )
-        } catch (error) {
-            if (error instanceof Error) {
-                raise(errors["unexpected_error"], error)
-            } else {
-                raise(errors["unexpected_error"], new Error("unexpected_error"))
-            }
+export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
+    if (authUser == null) {
+        raise(errors["internal_error"])
+    }
+    try {
+        return await new ChannelGroupQueryRepository().listChannels(args.id, "CreatedAt", "Ascending")
+    } catch (error) {
+        if (error instanceof Error) {
+            raise(errors["unexpected_error"], error)
+        } else {
+            raise(errors["unexpected_error"], new Error("unexpected_error"))
         }
     }
-)
+})

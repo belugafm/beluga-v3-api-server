@@ -3,6 +3,7 @@ import * as vs from "../../../../domain/validation"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
+import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
 import { ChannelGroupQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
@@ -50,35 +51,34 @@ export const facts: MethodFacts = {
     acceptedContentTypes: [ContentTypes.ApplicationJson],
     authenticationRequired: false,
     private: false,
-    acceptedAuthenticationMethods: [],
+    acceptedAuthenticationMethods: [
+        AuthenticationMethods.OAuth,
+        AuthenticationMethods.AccessToken,
+        AuthenticationMethods.Cookie,
+    ],
     acceptedScopes: {},
     description: ["チャンネルグループの情報を取得します"],
 }
 
 type ReturnType = Promise<ChannelGroupEntity | null>
 
-export default defineMethod(
-    facts,
-    argumentSpecs,
-    expectedErrorSpecs,
-    async (args, errors): ReturnType => {
-        if (args.unique_name == null && args.id == null) {
-            raise(errors["missing_argument"])
+export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors): ReturnType => {
+    if (args.unique_name == null && args.id == null) {
+        raise(errors["missing_argument"])
+    }
+    try {
+        if (args.unique_name) {
+            return await new ChannelGroupQueryRepository().findByUniqueName(args.unique_name)
         }
-        try {
-            if (args.unique_name) {
-                return await new ChannelGroupQueryRepository().findByUniqueName(args.unique_name)
-            }
-            if (args.id) {
-                return await new ChannelGroupQueryRepository().findById(args.id)
-            }
-            throw new Error()
-        } catch (error) {
-            if (error instanceof Error) {
-                raise(errors["unexpected_error"], error)
-            } else {
-                raise(errors["unexpected_error"], new Error("unexpected_error"))
-            }
+        if (args.id) {
+            return await new ChannelGroupQueryRepository().findById(args.id)
+        }
+        throw new Error()
+    } catch (error) {
+        if (error instanceof Error) {
+            raise(errors["unexpected_error"], error)
+        } else {
+            raise(errors["unexpected_error"], new Error("unexpected_error"))
         }
     }
-)
+})

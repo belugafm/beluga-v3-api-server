@@ -11,6 +11,7 @@ import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
+import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ChannelEntity } from "../../../../domain/entity/Channel"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
@@ -29,21 +30,10 @@ export const argumentSpecs = defineArguments(["name", "parent_channel_group_id"]
         required: true,
         validator: vs.channelGroupId(),
     },
-    created_by: {
-        description: ["作成者のユーザーID"],
-        examples: ["123456"],
-        required: true,
-        validator: vs.userId(),
-    },
 })
 
 export const expectedErrorSpecs = defineErrors(
-    [
-        ErrorCodes.DoNotHavePermission,
-        ErrorCodes.NameNotMeetPolicy,
-        "internal_error",
-        "unexpected_error",
-    ] as const,
+    [ErrorCodes.DoNotHavePermission, ErrorCodes.NameNotMeetPolicy, "internal_error", "unexpected_error"] as const,
     argumentSpecs,
     {
         do_not_have_permission: {
@@ -67,48 +57,50 @@ export const facts: MethodFacts = {
     httpMethod: HttpMethods.POST,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    authenticationRequired: false,
+    authenticationRequired: true,
     private: false,
-    acceptedAuthenticationMethods: [],
+    acceptedAuthenticationMethods: [
+        AuthenticationMethods.OAuth,
+        AuthenticationMethods.AccessToken,
+        AuthenticationMethods.Cookie,
+    ],
     acceptedScopes: {},
     description: ["新規チャンネルを作成します"],
 }
 
 type ReturnType = Promise<ChannelEntity>
 
-export default defineMethod(
-    facts,
-    argumentSpecs,
-    expectedErrorSpecs,
-    async (args, errors): ReturnType => {
-        const transaction = await TransactionRepository.new<ReturnType>()
-        try {
-            return await transaction.$transaction(async (transactionSession) => {
-                const channel = await new CreateChannelApplication(
-                    new UserQueryRepository(transactionSession),
-                    new ChannelGroupQueryRepository(transactionSession),
-                    new ChannelCommandRepository(transactionSession)
-                ).create({
-                    name: args.name,
-                    parentChannelGroupId: args.parent_channel_group_id,
-                    createdBy: args.created_by,
-                })
-                return channel
+export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
+    const transaction = await TransactionRepository.new<ReturnType>()
+    if (authUser == null) {
+        raise(errors["internal_error"])
+    }
+    try {
+        return await transaction.$transaction(async (transactionSession) => {
+            const channel = await new CreateChannelApplication(
+                new UserQueryRepository(transactionSession),
+                new ChannelGroupQueryRepository(transactionSession),
+                new ChannelCommandRepository(transactionSession)
+            ).create({
+                name: args.name,
+                parentChannelGroupId: args.parent_channel_group_id,
+                createdBy: authUser.id,
             })
-        } catch (error) {
-            if (error instanceof ApplicationError) {
-                if (error.code === ErrorCodes.DoNotHavePermission) {
-                    raise(errors["do_not_have_permission"], error)
-                } else if (error.code === ErrorCodes.NameNotMeetPolicy) {
-                    raise(errors["name_not_meet_policy"], error)
-                } else {
-                    raise(errors["internal_error"], error)
-                }
-            } else if (error instanceof Error) {
-                raise(errors["unexpected_error"], error)
+            return channel
+        })
+    } catch (error) {
+        if (error instanceof ApplicationError) {
+            if (error.code === ErrorCodes.DoNotHavePermission) {
+                raise(errors["do_not_have_permission"], error)
+            } else if (error.code === ErrorCodes.NameNotMeetPolicy) {
+                raise(errors["name_not_meet_policy"], error)
             } else {
-                raise(errors["unexpected_error"], new Error("unexpected_error"))
+                raise(errors["internal_error"], error)
             }
+        } else if (error instanceof Error) {
+            raise(errors["unexpected_error"], error)
+        } else {
+            raise(errors["unexpected_error"], new Error("unexpected_error"))
         }
     }
-)
+})

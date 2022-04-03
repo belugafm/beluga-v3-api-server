@@ -1,12 +1,12 @@
 import { InvalidContentTypeErrorSpec, WebApiRuntimeError } from "../api/error"
 import { Request, Response, read_body } from "./turbo"
 
+import { Authenticator } from "../auth"
 import { ContentTypesUnion } from "../api/facts/content_type"
 import { IUserCommandRepository } from "../../domain/repository/command/User"
 import { MethodFacts } from "../api/define"
 import Router from "find-my-way"
 import { UserEntity } from "../../domain/entity/User"
-import { authenticate_user } from "../auth"
 import config from "../../config/app"
 import qs from "qs"
 import turbo from "turbo-http"
@@ -35,6 +35,20 @@ const AccessDeniedRoute = (req: Request, res: Response) => {
             JSON.stringify({
                 ok: false,
                 error: "access_denied",
+            })
+        )
+    )
+    res.end()
+}
+
+const InvalidAuthRoute = (req: Request, res: Response) => {
+    res.setHeader("Content-Type", "application/json")
+    res.setStatusCode(403)
+    res.write(
+        Buffer.from(
+            JSON.stringify({
+                ok: false,
+                error: "invalid_auth",
             })
         )
     )
@@ -102,12 +116,14 @@ type Options = {}
 export class TurboServer {
     router: Router.Instance
     server: turbo.Server
-    usersRepository: IUserCommandRepository
-    constructor(opt: Router.Config, usersRepository: IUserCommandRepository) {
+    userCommandRepository: IUserCommandRepository
+    authenticator: Authenticator
+    constructor(opt: Router.Config, userCommandRepository: IUserCommandRepository, authenticator: Authenticator) {
         if (opt.defaultRoute == null) {
             opt.defaultRoute = DefaultRoute
         }
-        this.usersRepository = usersRepository
+        this.userCommandRepository = userCommandRepository
+        this.authenticator = authenticator
         this.router = Router(opt)
         this.server = turbo.createServer(async (_req, _res) => {
             // アクセスがあるたびここを通る
@@ -135,8 +151,11 @@ export class TurboServer {
 
                 if (facts.authenticationRequired) {
                     // ユーザー認証をここで行う
-                    const auth_user = await authenticate_user(facts, req.query, req.cookies)
-                    params["authUser"] = auth_user
+                    const authUser = await this.authenticator.authenticateUser(facts, req.query, req.cookies)
+                    if (authUser == null) {
+                        return InvalidAuthRoute(req, res)
+                    }
+                    params["authUser"] = authUser
                 }
                 const data = await handler(req, res, params)
                 res.write(Buffer.from(JSON.stringify(data)))
@@ -200,12 +219,13 @@ export class TurboServer {
 
                 if (facts.authenticationRequired) {
                     // ユーザー認証をここで行う
-                    const authUser = await authenticate_user(facts, req.body, req.cookies)
-                    if (authUser) {
-                        // activeなユーザーにする
-                        await this.usersRepository.activate(authUser)
-                        await this.usersRepository.updateLastActivityDate(authUser, new Date())
+                    const authUser = await this.authenticator.authenticateUser(facts, req.body, req.cookies)
+                    if (authUser == null) {
+                        return InvalidAuthRoute(req, res)
                     }
+                    // activeなユーザーにする
+                    await this.userCommandRepository.activate(authUser)
+                    await this.userCommandRepository.updateLastActivityDate(authUser, new Date())
                     params["authUser"] = authUser
                 }
 
