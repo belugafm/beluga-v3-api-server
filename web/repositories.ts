@@ -23,5 +23,6 @@ export { ChannelGroupCommandRepository } from "../infrastructure/prisma/reposito
 export { ChannelGroupQueryRepository } from "../infrastructure/prisma/repository/query/ChannelGroup"
 export { MessageCommandRepository } from "../infrastructure/prisma/repository/command/Message"
 export { MessageQueryRepository } from "../infrastructure/prisma/repository/query/Message"
+export { ChannelTimelineQueryRepository } from "../infrastructure/prisma/repository/query/timeline/ChannelTimeline"
 export { TransactionRepository } from "../infrastructure/prisma/repository/Transaction"
 export { IPGeolocationQueryRepository } from "../infrastructure/ipqualityscore/IPGeolocation"

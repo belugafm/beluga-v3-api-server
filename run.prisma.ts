@@ -47,6 +47,8 @@ async function startServer() {
     server.register(require("./web/endpoint/channel_group/list_channel_groups"))
     server.register(require("./web/endpoint/channel/create"))
     server.register(require("./web/endpoint/channel/show"))
+    server.register(require("./web/endpoint/message/post"))
+    server.register(require("./web/endpoint/timeline/channel"))
     // server.register(require("./web/endpoint/debug"))
 
     server.listen(config.server.port)
