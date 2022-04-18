@@ -16,7 +16,8 @@ export function has_changed(a: Message, b: Message) {
         a.favoriteCount === b.favoriteCount &&
         a.likeCount === b.likeCount &&
         a.replyCount === b.replyCount &&
-        a.threadId === b.threadId
+        a.threadId === b.threadId &&
+        a.deleted === b.deleted
     )
 }
 
@@ -68,7 +69,7 @@ export class MessageCommandRepository extends ChangeEventHandler implements IMes
             if (origMessage == null) {
                 throw new RepositoryError(`Message not found (id=${message.id})`)
             }
-            const updatedChannel = await this._prisma.message.update({
+            const updatedMessage = await this._prisma.message.update({
                 where: {
                     id: message.id,
                 },
@@ -80,9 +81,10 @@ export class MessageCommandRepository extends ChangeEventHandler implements IMes
                     likeCount: message.likeCount,
                     replyCount: message.replyCount,
                     threadId: message.threadId,
+                    deleted: message.deleted,
                 },
             })
-            if (has_changed(origMessage, updatedChannel)) {
+            if (has_changed(origMessage, updatedMessage)) {
                 await this.emitChanges(message.id)
                 return true
             }

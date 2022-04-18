@@ -1,9 +1,6 @@
 import { ChannelEntity, ErrorCodes as DomainErrorCodes } from "../../domain/entity/Channel"
 import { ChannelGroupdId, UserId } from "../../domain/types"
-import {
-    CheckPermissionToCreateChannelService,
-    ErrorCodes as ServiceErrorCodes,
-} from "../../domain/service/CheckPermissionToCreateChannel"
+import { CreateChannelPermission, ErrorCodes as ServiceErrorCodes } from "../../domain/permission/CreateChannel"
 
 import { ApplicationError } from "../ApplicationError"
 import { DomainError } from "../../domain/DomainError"
@@ -21,7 +18,7 @@ export const ErrorCodes = {
 export class CreateChannelApplication {
     private channelCommandRepository: IChannelCommandRepository
     private channelGroupQueryRepository: IChannelGroupQueryRepository
-    private checkPermissionToCreateChannelService: CheckPermissionToCreateChannelService
+    private checkPermissionToCreateChannelService: CreateChannelPermission
     constructor(
         userQueryRepository: IUserQueryRepository,
         channelGroupQueryRepository: IChannelGroupQueryRepository,
@@ -29,9 +26,7 @@ export class CreateChannelApplication {
     ) {
         this.channelCommandRepository = channelCommandRepository
         this.channelGroupQueryRepository = channelGroupQueryRepository
-        this.checkPermissionToCreateChannelService = new CheckPermissionToCreateChannelService(
-            userQueryRepository
-        )
+        this.checkPermissionToCreateChannelService = new CreateChannelPermission(userQueryRepository)
     }
     async create({
         createdBy,
@@ -42,14 +37,12 @@ export class CreateChannelApplication {
         name: string
         parentChannelGroupId: ChannelGroupdId
     }) {
-        const parentChannelGroup = await this.channelGroupQueryRepository.findById(
-            parentChannelGroupId
-        )
+        const parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
         if (parentChannelGroup == null) {
             throw new ApplicationError(ErrorCodes.ParentNotFound)
         }
         try {
-            await this.checkPermissionToCreateChannelService.tryCheckIfUserHasPermission(createdBy)
+            await this.checkPermissionToCreateChannelService.hasThrow(createdBy)
             const channelGroup = new ChannelEntity({
                 id: -1,
                 name: name,

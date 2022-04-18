@@ -66,9 +66,7 @@ export class SignInWithPasswordApplication {
         ipAddress,
         lastLocation,
         device,
-    }: Argument): Promise<
-        [UserEntity, LoginCredentialEntity, LoginSessionEntity, AuthenticityTokenEntity]
-    > {
+    }: Argument): Promise<[UserEntity, LoginCredentialEntity, LoginSessionEntity, AuthenticityTokenEntity]> {
         try {
             const user = await this.userQueryRepository.findByName(name)
             if (user == null) {
@@ -82,12 +80,7 @@ export class SignInWithPasswordApplication {
             if (match == false) {
                 throw new ApplicationError(ErrorCodes.IncorrectPassword)
             }
-            const loginSession = await this.createLoginSession(
-                user.id,
-                ipAddress,
-                lastLocation,
-                device
-            )
+            const loginSession = await this.createLoginSession(user.id, ipAddress, lastLocation, device)
             const authenticityToken = await this.createAuthenticityToken(loginSession.sessionId)
             return [user, loginCredential, loginSession, authenticityToken]
         } catch (error) {

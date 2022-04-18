@@ -3,7 +3,7 @@ import { ChannelEntity, ErrorCodes } from "../../../domain/entity/Channel"
 import { DomainError } from "../../../domain/DomainError"
 
 const id = 1
-const name = "hoge"
+const name = "beluga"
 const uniqueName = "fuga"
 const parentChannelGroupId = 1
 const createdBy = 1
@@ -19,7 +19,7 @@ describe("ChannelEntity", () => {
             parentChannelGroupId,
             createdBy,
             createdAt,
-            statusesCount,
+            messageCount: statusesCount,
         })
         expect(channel).toBeInstanceOf(ChannelEntity)
     })
@@ -32,10 +32,10 @@ describe("ChannelEntity", () => {
             parentChannelGroupId,
             createdBy,
             createdAt,
-            statusesCount,
+            messageCount: statusesCount,
         })
         expect(channel).toBeInstanceOf(ChannelEntity)
-        expect(channel.statusesCount).toEqual(statusesCount)
+        expect(channel.messageCount).toEqual(statusesCount)
     })
     test("Missing 'id'", async () => {
         expect.assertions(2)
@@ -48,7 +48,7 @@ describe("ChannelEntity", () => {
                 parentChannelGroupId,
                 createdBy,
                 createdAt,
-                statusesCount,
+                messageCount: statusesCount,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -68,7 +68,7 @@ describe("ChannelEntity", () => {
                 parentChannelGroupId,
                 createdBy,
                 createdAt,
-                statusesCount,
+                messageCount: statusesCount,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -88,7 +88,7 @@ describe("ChannelEntity", () => {
                 parentChannelGroupId,
                 createdBy,
                 createdAt,
-                statusesCount,
+                messageCount: statusesCount,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -108,7 +108,7 @@ describe("ChannelEntity", () => {
                 uniqueName,
                 createdBy,
                 createdAt,
-                statusesCount,
+                messageCount: statusesCount,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -128,7 +128,7 @@ describe("ChannelEntity", () => {
                 uniqueName,
                 parentChannelGroupId,
                 createdAt,
-                statusesCount,
+                messageCount: statusesCount,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -148,7 +148,7 @@ describe("ChannelEntity", () => {
                 uniqueName,
                 parentChannelGroupId,
                 createdBy,
-                statusesCount,
+                messageCount: statusesCount,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -168,10 +168,9 @@ describe("ChannelEntity", () => {
             createdAt,
         })
     })
-    test("Invalid 'name'", async () => {
+    it.each([1.5, new Date(), {}, [], true, false, null, undefined])("Invalid 'name'", (name) => {
         expect.assertions(2)
         try {
-            const name = 1
             new ChannelEntity({
                 id,
                 // @ts-ignore
@@ -188,30 +187,9 @@ describe("ChannelEntity", () => {
             }
         }
     })
-    test("Invalid 'name'", async () => {
+    it.each([1.5, new Date(), {}, [], true, false, null, undefined])("Invalid 'uniqueName'", (uniqueName) => {
         expect.assertions(2)
         try {
-            const name = new Date()
-            new ChannelEntity({
-                id,
-                // @ts-ignore
-                name,
-                uniqueName,
-                parentChannelGroupId,
-                createdBy,
-                createdAt,
-            })
-        } catch (error) {
-            expect(error).toBeInstanceOf(DomainError)
-            if (error instanceof DomainError) {
-                expect(error.code).toBe(ErrorCodes.InvalidName)
-            }
-        }
-    })
-    test("Invalid 'uniqueName'", async () => {
-        expect.assertions(2)
-        try {
-            const uniqueName = 1
             new ChannelEntity({
                 id,
                 name,
@@ -228,70 +206,31 @@ describe("ChannelEntity", () => {
             }
         }
     })
-    test("Invalid 'uniqueName'", async () => {
-        expect.assertions(2)
-        try {
-            const uniqueName = new Date()
-            new ChannelEntity({
-                id,
-                name,
-                // @ts-ignore
-                uniqueName,
-                parentChannelGroupId,
-                createdBy,
-                createdAt,
-            })
-        } catch (error) {
-            expect(error).toBeInstanceOf(DomainError)
-            if (error instanceof DomainError) {
-                expect(error.code).toBe(ErrorCodes.InvalidUniqueName)
+    it.each([1.5, "beluga", new Date(), {}, [], true, false, null, undefined])(
+        "Invalid 'parentChannelGroupId'",
+        (parentChannelGroupId) => {
+            expect.assertions(2)
+            try {
+                new ChannelEntity({
+                    id,
+                    name,
+                    uniqueName,
+                    // @ts-ignore
+                    parentChannelGroupId,
+                    createdBy,
+                    createdAt,
+                })
+            } catch (error) {
+                expect(error).toBeInstanceOf(DomainError)
+                if (error instanceof DomainError) {
+                    expect(error.code).toBe(ErrorCodes.InvalidParentChanelGroupId)
+                }
             }
         }
-    })
-    test("Invalid 'parentChannelGroupId'", async () => {
+    )
+    it.each([1.5, "beluga", new Date(), {}, [], true, false, null, undefined])("Invalid 'createdBy'", (createdBy) => {
         expect.assertions(2)
         try {
-            const parentChannelGroupId = "fuga"
-            new ChannelEntity({
-                id,
-                name,
-                uniqueName,
-                // @ts-ignore
-                parentChannelGroupId,
-                createdBy,
-                createdAt,
-            })
-        } catch (error) {
-            expect(error).toBeInstanceOf(DomainError)
-            if (error instanceof DomainError) {
-                expect(error.code).toBe(ErrorCodes.InvalidParentChanelGroupId)
-            }
-        }
-    })
-    test("Invalid 'parentChannelGroupId'", async () => {
-        expect.assertions(2)
-        try {
-            const parentChannelGroupId = new Date()
-            new ChannelEntity({
-                id,
-                name,
-                uniqueName,
-                // @ts-ignore
-                parentChannelGroupId,
-                createdBy,
-                createdAt,
-            })
-        } catch (error) {
-            expect(error).toBeInstanceOf(DomainError)
-            if (error instanceof DomainError) {
-                expect(error.code).toBe(ErrorCodes.InvalidParentChanelGroupId)
-            }
-        }
-    })
-    test("Invalid 'createdBy'", async () => {
-        expect.assertions(2)
-        try {
-            const createdBy = "fuga"
             new ChannelEntity({
                 id,
                 name,
@@ -308,30 +247,9 @@ describe("ChannelEntity", () => {
             }
         }
     })
-    test("Invalid 'createdBy'", async () => {
+    it.each([1.5, "beluga", {}, true, false, null, undefined])("Invalid 'createdAt'", (createdAt) => {
         expect.assertions(2)
         try {
-            const createdBy = new Date()
-            new ChannelEntity({
-                id,
-                name,
-                uniqueName,
-                parentChannelGroupId,
-                // @ts-ignore
-                createdBy,
-                createdAt,
-            })
-        } catch (error) {
-            expect(error).toBeInstanceOf(DomainError)
-            if (error instanceof DomainError) {
-                expect(error.code).toBe(ErrorCodes.InvalidCreatedBy)
-            }
-        }
-    })
-    test("Invalid 'createdAt'", async () => {
-        expect.assertions(2)
-        try {
-            const createdAt = "fuga"
             new ChannelEntity({
                 id,
                 name,
@@ -348,50 +266,9 @@ describe("ChannelEntity", () => {
             }
         }
     })
-    test("Invalid 'createdAt'", async () => {
+    it.each([1.5, "beluga", new Date(), {}, []])("Invalid 'messageCount'", (messageCount) => {
         expect.assertions(2)
         try {
-            const createdAt = 1
-            new ChannelEntity({
-                id,
-                name,
-                uniqueName,
-                parentChannelGroupId,
-                createdBy,
-                // @ts-ignore
-                createdAt,
-            })
-        } catch (error) {
-            expect(error).toBeInstanceOf(DomainError)
-            if (error instanceof DomainError) {
-                expect(error.code).toBe(ErrorCodes.InvalidCreatedAt)
-            }
-        }
-    })
-    test("Invalid 'statusesCount'", async () => {
-        expect.assertions(2)
-        try {
-            const statusesCount = -1
-            new ChannelEntity({
-                id,
-                name,
-                uniqueName,
-                parentChannelGroupId,
-                createdBy,
-                createdAt,
-                statusesCount,
-            })
-        } catch (error) {
-            expect(error).toBeInstanceOf(DomainError)
-            if (error instanceof DomainError) {
-                expect(error.code).toBe(ErrorCodes.InvalidStatusesCount)
-            }
-        }
-    })
-    test("Invalid 'statusesCount'", async () => {
-        expect.assertions(2)
-        try {
-            const statusesCount = "fuga"
             new ChannelEntity({
                 id,
                 name,
@@ -400,12 +277,12 @@ describe("ChannelEntity", () => {
                 createdBy,
                 createdAt,
                 // @ts-ignore
-                statusesCount,
+                messageCount,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
             if (error instanceof DomainError) {
-                expect(error.code).toBe(ErrorCodes.InvalidStatusesCount)
+                expect(error.code).toBe(ErrorCodes.InvalidMessageCount)
             }
         }
     })

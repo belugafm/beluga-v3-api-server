@@ -6,10 +6,7 @@ import {
     CheckUserNameAvailabilityService,
     ErrorCodes as UserNameAvailabilityErrorCodes,
 } from "../../domain/service/CheckUserNameAvailability"
-import {
-    LoginCredentialEntity,
-    ErrorCodes as LoginCredentialErrorCodes,
-} from "../../domain/entity/LoginCredential"
+import { LoginCredentialEntity, ErrorCodes as LoginCredentialErrorCodes } from "../../domain/entity/LoginCredential"
 import { UserEntity, ErrorCodes as UserModelErrorCodes } from "../../domain/entity/User"
 
 import { ApplicationError } from "../ApplicationError"
@@ -46,14 +43,12 @@ export class RegisterPasswordBasedUserApplication {
         this.userCommandRepository = userCommandRepository
         // this.usersQueryRepository = usersQueryRepository
         this.loginCredentialsCommandRepository = loginCredentialsCommandRepository
-        this.registrationRateLimitService = new CheckRegistrationRateLimitService(
-            userQueryRepository
-        )
+        this.registrationRateLimitService = new CheckRegistrationRateLimitService(userQueryRepository)
         this.userNameAvailabilityService = new CheckUserNameAvailabilityService(userQueryRepository)
     }
     async createUser({ name, ipAddress }: { name: string; ipAddress: string }) {
-        await this.registrationRateLimitService.tryCheckIfRateIsLimited(ipAddress)
-        await this.userNameAvailabilityService.tryCheckIfNameIsTaken(name)
+        await this.registrationRateLimitService.hasThrow(ipAddress)
+        await this.userNameAvailabilityService.hasThrow(name)
         const user = new UserEntity({
             id: -1,
             name: name,
@@ -72,11 +67,7 @@ export class RegisterPasswordBasedUserApplication {
         await this.loginCredentialsCommandRepository.add(loginCredential)
         return loginCredential
     }
-    async register({
-        name,
-        password,
-        ipAddress,
-    }: Argument): Promise<[UserEntity, LoginCredentialEntity]> {
+    async register({ name, password, ipAddress }: Argument): Promise<[UserEntity, LoginCredentialEntity]> {
         try {
             const user = await this.createUser({ name, ipAddress })
             const loginCredential = await this.registerUser({

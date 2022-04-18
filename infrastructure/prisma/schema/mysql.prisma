@@ -41,14 +41,9 @@ model User {
     location                       String?   @db.VarChar(255)
     url                            String?   @db.VarChar(255)
     description                    String?   @db.VarChar(255)
-    themeColor                     String?   @db.VarChar(255)
-    backgroundImageUrl             String?   @db.VarChar(255)
-    defaultProfile                 Boolean   @default(true)
-    statusesCount                  Int // 全投稿数
+    messageCount                   Int // 全投稿数
     favoritesCount                 Int // ふぁぼった投稿数
     favoritedCount                 Int // ふぁぼられた投稿数
-    likesCount                     Int // いいねした投稿数
-    likedCount                     Int // いいねされた投稿数
     createdAt                      DateTime  @default(now())
     bot                            Boolean
     active                         Boolean   @default(false) // 登録後サイトを利用したかどうか
@@ -62,15 +57,15 @@ model User {
 }
 
 model ChannelGroup {
-    id            Int      @id @default(autoincrement())
-    name          String   @db.VarChar(255)
-    uniqueName    String   @unique @db.VarChar(255)
-    parentId      Int
-    createdBy     Int
-    createdAt     DateTime @default(now())
-    level         Int // 階層の深さ 0が最上位
-    channelsCount Int      @default(0)
-    statusesCount Int      @default(0)
+    id           Int      @id @default(autoincrement())
+    name         String   @db.VarChar(255)
+    uniqueName   String   @unique @db.VarChar(255)
+    parentId     Int
+    createdBy    Int
+    createdAt    DateTime @default(now())
+    level        Int // 階層の深さ 0が最上位
+    channelCount Int      @default(0)
+    messageCount Int      @default(0)
 }
 
 model Channel {
@@ -80,7 +75,7 @@ model Channel {
     parentChannelGroupId Int
     createdBy            Int
     createdAt            DateTime @default(now())
-    statusesCount        Int      @default(0)
+    messageCount         Int      @default(0)
     statusString         String   @default("#") @db.VarChar(1)
 }
 
@@ -94,8 +89,10 @@ model Message {
     likeCount     Int      @default(0)
     replyCount    Int      @default(0)
     threadId      Int?
+    deleted       Boolean  @default(false)
 
     @@index([threadId])
     @@index([userId])
     @@index([channelId])
+    @@index([deleted])
 }

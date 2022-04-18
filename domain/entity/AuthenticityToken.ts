@@ -23,6 +23,6 @@ export class AuthenticityTokenEntity extends Entity {
     ) {
         super()
         this.sessionId = params.sessionId
-        this.token = params.token ? params.token : [v4(), v4()].join("-")
+        this.token = params.token != null ? params.token : [v4(), v4()].join("-")
     }
 }

@@ -15,6 +15,7 @@ export const ErrorCodes = {
     InvalidReplyCount: "invalid_reply_count",
     InvalidText: "invalid_text",
     InvalidThreadId: "invalid_thread_id",
+    InvalidDeleted: "invalid_deleted",
 } as const
 
 export class MessageEntity extends Entity {
@@ -47,6 +48,9 @@ export class MessageEntity extends Entity {
     @validateBy(vn.messageId(), { nullable: true, errorCode: ErrorCodes.InvalidThreadId })
     threadId: MessageId | null
 
+    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidDeleted })
+    deleted: boolean
+
     constructor(
         params: {
             id: MessageEntity["id"]
@@ -68,11 +72,12 @@ export class MessageEntity extends Entity {
         this.favoriteCount = params.favoriteCount
         this.likeCount = params.likeCount
         this.replyCount = params.replyCount
-        this.threadId = params.threadId ? params.threadId : null
+        this.threadId = params.threadId != null ? params.threadId : null
+        this.deleted = params.deleted != null ? params.deleted : false
     }
     toResponseObject() {
         return {
-            id: this.id.toString(),
+            id: this.id,
             channel_id: this.channelId,
             channel: {},
             user_id: this.userId,
@@ -83,6 +88,7 @@ export class MessageEntity extends Entity {
             like_count: this.likeCount,
             reply_count: this.replyCount,
             thread_id: this.threadId,
+            deleted: this.deleted,
             entities: {
                 channels: [],
                 messages: [],

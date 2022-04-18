@@ -1,5 +1,5 @@
-export type EntityId = number | string
-export type UserId = number
-export type MessageId = number
-export type ChannelId = number
-export type ChannelGroupdId = number
+export type EntityId = number
+export type UserId = EntityId
+export type MessageId = EntityId
+export type ChannelId = EntityId
+export type ChannelGroupdId = EntityId

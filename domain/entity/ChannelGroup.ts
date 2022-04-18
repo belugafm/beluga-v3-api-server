@@ -22,7 +22,7 @@ export const ErrorCodes = {
     InvalidLevel: "invalid_level",
     InvalidCreatedBy: "invalid_created_by",
     InvalidCreatedAt: "invalid_created_at",
-    InvalidStatusesCount: "invalid_statuses_count",
+    InvalidMessageCount: "invalid_message_count",
 } as const
 
 export class ChannelGroupEntity extends Entity {
@@ -52,8 +52,8 @@ export class ChannelGroupEntity extends Entity {
     @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
     createdAt: Date
 
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidStatusesCount })
-    statusesCount: number
+    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidMessageCount })
+    messageCount: number
 
     constructor(
         params: {
@@ -74,18 +74,18 @@ export class ChannelGroupEntity extends Entity {
         this.level = params.level
         this.createdBy = params.createdBy
         this.createdAt = params.createdAt
-        this.statusesCount = params.statusesCount ? params.statusesCount : 0
+        this.messageCount = params.messageCount != null ? params.messageCount : 0
     }
     toResponseObject() {
         return {
-            id: this.id.toString(),
+            id: this.id,
             name: this.name,
             unique_name: this.uniqueName,
             parent_id: this.parentId,
             level: this.level,
             created_by: this.createdBy,
             created_at: this.createdAt,
-            statuses_count: this.statusesCount,
+            message_count: this.messageCount,
         }
     }
     static generateUniqueName(): string {

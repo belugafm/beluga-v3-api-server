@@ -8,7 +8,7 @@ export const ErrorCodes = {
     DoNotHavePermission: "do_not_have_permission",
 } as const
 
-export class CheckPermissionToPostMessageService {
+export class PostMessagePermission {
     private userRepository: IUserQueryRepository
     private channelRepository: IChannelQueryRepository
     constructor(userRepository: IUserQueryRepository, channelRepository: IChannelQueryRepository) {
@@ -27,7 +27,7 @@ export class CheckPermissionToPostMessageService {
         // TODO: 書き込み制御を実装する
         return true
     }
-    async tryCheckIfUserHasPermission(userId: UserId, channelId: ChannelId) {
+    async hasThrow(userId: UserId, channelId: ChannelId) {
         if ((await this.hasPermission(userId, channelId)) == false) {
             throw new DomainError(ErrorCodes.DoNotHavePermission)
         }

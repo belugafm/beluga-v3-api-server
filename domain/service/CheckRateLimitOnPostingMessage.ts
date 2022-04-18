@@ -34,7 +34,7 @@ export class CheckRateLimitForPostingMessageService {
         }
         return true
     }
-    async tryCheckIfUserExceedsRateLimit(userId: UserId) {
+    async hasThrow(userId: UserId) {
         if ((await this.checkIfUserExceedsRateLimit(userId)) == true) {
             throw new DomainError(ErrorCodes.RateLimitExceeded)
         }

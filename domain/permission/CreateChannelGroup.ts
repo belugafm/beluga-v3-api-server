@@ -7,7 +7,7 @@ export const ErrorCodes = {
     DoNotHavePermission: "do_not_have_permission",
 } as const
 
-export class CheckPermissionToCreateChannelGroupService {
+export class CreateChannelGroupPermission {
     private userRepository: IUserQueryRepository
     constructor(userRepository: IUserQueryRepository) {
         this.userRepository = userRepository
@@ -22,7 +22,7 @@ export class CheckPermissionToCreateChannelGroupService {
         }
         return true
     }
-    async tryCheckIfUserHasPermission(userId: UserId) {
+    async hasThrow(userId: UserId) {
         if ((await this.hasPermission(userId)) == false) {
             throw new DomainError(ErrorCodes.DoNotHavePermission)
         }

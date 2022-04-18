@@ -18,10 +18,8 @@ export const ErrorCodes = {
     InvalidId: "invalid_id",
     InvalidName: "invalid_name",
     InvalidProfileImageUrl: "invalid_profile_image_url",
-    InvalidBackgroundImageUrl: "invalid_background_image_url",
     InvalidDisplayName: "invalid_display_name",
     InvalidDescription: "invalid_description",
-    InvalidThemeColor: "invalid_theme_color",
     InvalidTwitterId: "invalid_twitter_id",
     InvalidLoginCredential: "invalid_login_credential",
     InvalidLoginSession: "invalid_login_session",
@@ -64,29 +62,14 @@ export class UserEntity extends Entity {
     @validateBy(vn.user.description(), { nullable: true, errorCode: ErrorCodes.InvalidDescription })
     description: string | null
 
-    @validateBy(vn.colorCode(), { nullable: true, errorCode: ErrorCodes.InvalidThemeColor })
-    themeColor: string | null
-
-    @validateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidBackgroundImageUrl })
-    backgroundImageUrl: string | null
-
-    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
-    defaultProfile: boolean
-
     @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
-    statusesCount: number // 全投稿数
+    messageCount: number // 全投稿数
 
     @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     favoritesCount: number // ふぁぼった投稿数
 
     @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
     favoritedCount: number // ふぁぼられた投稿数
-
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
-    likesCount: number // いいねした投稿数
-
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
-    likedCount: number // いいねされた投稿数
 
     @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidDate })
     createdAt: Date
@@ -128,57 +111,47 @@ export class UserEntity extends Entity {
         super()
         this.id = params.id
         this.name = params.name
-        this.twitterUserId = params.twitterUserId ? params.twitterUserId : null
-        this.displayName = params.displayName ? params.displayName : null
-        this.profileImageUrl = params.profileImageUrl ? params.profileImageUrl : null
-        this.location = params.location ? params.location : null
-        this.url = params.url ? params.url : null
-        this.description = params.description ? params.description : null
-        this.themeColor = params.themeColor ? params.themeColor : null
-        this.backgroundImageUrl = params.backgroundImageUrl ? params.backgroundImageUrl : null
-        this.defaultProfile = params.defaultProfile === false ? false : true
-        this.createdAt = params.createdAt ? params.createdAt : new Date()
-        this.statusesCount = params.statusesCount ? params.statusesCount : 0
-        this.favoritesCount = params.favoritesCount ? params.favoritesCount : 0
-        this.favoritedCount = params.favoritedCount ? params.favoritedCount : 0
-        this.likesCount = params.likesCount ? params.likesCount : 0
-        this.likedCount = params.likedCount ? params.likedCount : 0
-        this.bot = params.bot ? params.bot : false
-        this.active = params.active ? params.active : false
-        this.dormant = params.dormant ? params.dormant : false
-        this.suspended = params.suspended ? params.suspended : false
-        this.trustLevel = params.trustLevel ? params.trustLevel : 0
-        this.lastActivityDate = params.lastActivityDate ? params.lastActivityDate : null
-        this.termsOfServiceAgreementDate = params.termsOfServiceAgreementDate
-            ? params.termsOfServiceAgreementDate
-            : null
-        this.termsOfServiceAgreementVersion = params.termsOfServiceAgreementVersion
-            ? params.termsOfServiceAgreementVersion
-            : null
+        this.twitterUserId = params.twitterUserId != null ? params.twitterUserId : null
+        this.displayName = params.displayName != null ? params.displayName : null
+        this.profileImageUrl = params.profileImageUrl != null ? params.profileImageUrl : null
+        this.location = params.location != null ? params.location : null
+        this.url = params.url != null ? params.url : null
+        this.description = params.description != null ? params.description : null
+        this.createdAt = params.createdAt != null ? params.createdAt : new Date()
+        this.messageCount = params.messageCount != null ? params.messageCount : 0
+        this.favoritesCount = params.favoritesCount != null ? params.favoritesCount : 0
+        this.favoritedCount = params.favoritedCount != null ? params.favoritedCount : 0
+        this.bot = params.bot != null ? params.bot : false
+        this.active = params.active != null ? params.active : false
+        this.dormant = params.dormant != null ? params.dormant : false
+        this.suspended = params.suspended != null ? params.suspended : false
+        this.trustLevel = params.trustLevel != null ? params.trustLevel : 0
+        this.lastActivityDate = params.lastActivityDate != null ? params.lastActivityDate : null
+        this.termsOfServiceAgreementDate =
+            params.termsOfServiceAgreementDate != null ? params.termsOfServiceAgreementDate : null
+        this.termsOfServiceAgreementVersion =
+            params.termsOfServiceAgreementVersion != null ? params.termsOfServiceAgreementVersion : null
         this.registrationIpAddress = params.registrationIpAddress
     }
     toResponseObject() {
         return {
-            id: this.id.toString(),
+            id: this.id,
             name: this.name,
             display_name: this.displayName,
             profile_image_url: this.profileImageUrl,
             location: this.location,
             url: this.url,
             description: this.description,
-            theme_color: this.themeColor,
-            background_image_url: this.backgroundImageUrl,
-            default_profile: this.defaultProfile,
             created_at: this.createdAt,
-            status_count: this.statusesCount,
+            message_count: this.messageCount,
             favorites_count: this.favoritedCount,
             favorited_count: this.favoritedCount,
-            likes_count: this.likesCount,
-            liked_count: this.likedCount,
             bot: this.bot,
             active: this.active,
             dormant: this.dormant,
             suspended: this.suspended,
+            muted: false,
+            blocked: false,
             trust_level: this.trustLevel,
             last_activity_date: this.lastActivityDate,
         }

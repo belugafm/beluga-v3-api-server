@@ -56,6 +56,7 @@ export class ChannelTimelineQueryRepository implements IChannelTimelineQueryRepo
                     where: {
                         channelId: params.channelId,
                         threadId: null,
+                        deleted: false,
                         id: {
                             gt: params.sinceId,
                         },
@@ -74,6 +75,7 @@ export class ChannelTimelineQueryRepository implements IChannelTimelineQueryRepo
                     where: {
                         channelId: params.channelId,
                         threadId: null,
+                        deleted: false,
                         id: {
                             lt: params.maxId,
                         },
@@ -89,6 +91,7 @@ export class ChannelTimelineQueryRepository implements IChannelTimelineQueryRepo
                     where: {
                         channelId: params.channelId,
                         threadId: null,
+                        deleted: false,
                     },
                     orderBy: {
                         createdAt: getSortOrder(params.sortOrder),

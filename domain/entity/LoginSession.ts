@@ -52,12 +52,13 @@ export class LoginSessionEntity extends Entity {
         this.userId = params.userId
         this.sessionId = params.sessionId ? params.sessionId : [v4(), v4()].join("-")
         this.ipAddress = params.ipAddress
-        this.expireDate = params.expireDate
-            ? params.expireDate
-            : new Date(Date.now() + config.user_login_session.lifetime * 1000)
-        this.expired = params.expired ? params.expired : false
-        this.createdAt = params.createdAt ? params.createdAt : new Date()
-        this.lastLocation = params.lastLocation ? params.lastLocation : null
-        this.device = params.device ? params.device : null
+        this.expireDate =
+            params.expireDate != null
+                ? params.expireDate
+                : new Date(Date.now() + config.user_login_session.lifetime * 1000)
+        this.expired = params.expired != null ? params.expired : false
+        this.createdAt = params.createdAt != null ? params.createdAt : new Date()
+        this.lastLocation = params.lastLocation != null ? params.lastLocation : null
+        this.device = params.device == null ? null : params.device
     }
 }

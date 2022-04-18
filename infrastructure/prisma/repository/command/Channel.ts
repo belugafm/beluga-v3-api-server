@@ -1,8 +1,5 @@
 import { Channel, PrismaClient } from "@prisma/client"
-import {
-    RepositoryError,
-    UnknownRepositoryError,
-} from "../../../../domain/repository/RepositoryError"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { ChannelEntity } from "../../../../domain/entity/Channel"
@@ -22,10 +19,7 @@ export function has_changed(a: Channel, b: Channel) {
     )
 }
 
-export class ChannelCommandRepository
-    extends ChangeEventHandler
-    implements IChannelCommandRepository
-{
+export class ChannelCommandRepository extends ChangeEventHandler implements IChannelCommandRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
         super(ChannelCommandRepository)
@@ -47,7 +41,7 @@ export class ChannelCommandRepository
                     parentChannelGroupId: channel.parentChannelGroupId,
                     createdAt: channel.createdAt,
                     createdBy: channel.createdBy,
-                    statusesCount: channel.statusesCount,
+                    statusesCount: channel.messageCount,
                     statusString: channel.statusString,
                 },
             })
@@ -71,9 +65,7 @@ export class ChannelCommandRepository
                 },
             })
             if (origChannel == null) {
-                throw new RepositoryError(
-                    `Channel not found (id=${channel.id}, uniqueName='${channel.uniqueName}')`
-                )
+                throw new RepositoryError(`Channel not found (id=${channel.id}, uniqueName='${channel.uniqueName}')`)
             }
             const updatedChannel = await this._prisma.channel.update({
                 where: {
@@ -84,7 +76,7 @@ export class ChannelCommandRepository
                     parentChannelGroupId: channel.parentChannelGroupId,
                     createdAt: channel.createdAt,
                     createdBy: channel.createdBy,
-                    statusesCount: channel.statusesCount,
+                    statusesCount: channel.messageCount,
                     statusString: channel.statusString,
                 },
             })

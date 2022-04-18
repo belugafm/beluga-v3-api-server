@@ -17,7 +17,7 @@ export class CheckUserNameAvailabilityService {
         }
         return true
     }
-    async tryCheckIfNameIsTaken(name: string) {
+    async hasThrow(name: string) {
         if (await this.isNameTaken(name)) {
             throw new DomainError(ErrorCodes.NameTaken)
         }

@@ -21,7 +21,7 @@ export const ErrorCodes = {
     InvalidParentChanelGroupId: "invalid_parent_channel_group_id",
     InvalidCreatedBy: "invalid_created_by",
     InvalidCreatedAt: "invalid_created_at",
-    InvalidStatusesCount: "invalid_statuses_count",
+    InvalidMessageCount: "invalid_message_count",
     InvalidStatusString: "invalid_status_string",
 } as const
 
@@ -49,8 +49,8 @@ export class ChannelEntity extends Entity {
     @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
     createdAt: Date
 
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidStatusesCount })
-    statusesCount: number
+    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidMessageCount })
+    messageCount: number
 
     @validateBy(vn.string({ minLength: 1, maxLength: 1 }), {
         errorCode: ErrorCodes.InvalidStatusString,
@@ -74,18 +74,18 @@ export class ChannelEntity extends Entity {
         this.parentChannelGroupId = params.parentChannelGroupId
         this.createdBy = params.createdBy
         this.createdAt = params.createdAt
-        this.statusesCount = params.statusesCount ? params.statusesCount : 0
-        this.statusString = params.statusString ? params.statusString : "#"
+        this.messageCount = params.messageCount != null ? params.messageCount : 0
+        this.statusString = params.statusString != null ? params.statusString : "#"
     }
     toResponseObject() {
         return {
-            id: this.id.toString(),
+            id: this.id,
             name: this.name,
             unique_name: this.uniqueName,
             parent_channel_group_id: this.parentChannelGroupId,
             created_by: this.createdBy,
             created_at: this.createdAt,
-            statuses_count: this.statusesCount,
+            message_count: this.messageCount,
             status_string: this.statusString,
         }
     }

@@ -44,8 +44,7 @@ function getOAuth(): OAuth {
             secret: config.twitter.api_key_secret,
         },
         signature_method: "HMAC-SHA1",
-        hash_function: (baseString, key) =>
-            crypto.createHmac("sha1", key).update(baseString).digest("base64"),
+        hash_function: (baseString, key) => crypto.createHmac("sha1", key).update(baseString).digest("base64"),
     })
 }
 
@@ -158,10 +157,7 @@ export class TwitterAuthenticationApplication {
     private userQueryRepository: IUserQueryRepository
     private userCommandRepository: IUserCommandRepository
     private userNameAvailabilityService: CheckUserNameAvailabilityService
-    constructor(
-        userQueryRepository: IUserQueryRepository,
-        userCommandRepository: IUserCommandRepository
-    ) {
+    constructor(userQueryRepository: IUserQueryRepository, userCommandRepository: IUserCommandRepository) {
         this.userQueryRepository = userQueryRepository
         this.userCommandRepository = userCommandRepository
         this.userNameAvailabilityService = new CheckUserNameAvailabilityService(userQueryRepository)
@@ -200,10 +196,7 @@ export class TwitterAuthenticationApplication {
         } catch (error) {
             if (error instanceof Error) {
                 if (error instanceof ResponseError) {
-                    throw new ApplicationError(
-                        ErrorCodes.ApiAuthError,
-                        `Parameter '${error.paramName}' is invalid.`
-                    )
+                    throw new ApplicationError(ErrorCodes.ApiAuthError, `Parameter '${error.paramName}' is invalid.`)
                 } else {
                     throw new ApplicationError(ErrorCodes.ApiAuthError, error.message)
                 }
@@ -212,10 +205,7 @@ export class TwitterAuthenticationApplication {
             }
         }
     }
-    async getAccessToken(
-        requestToken: string,
-        verifier: string
-    ): Promise<AccessTokenResponse | null> {
+    async getAccessToken(requestToken: string, verifier: string): Promise<AccessTokenResponse | null> {
         const url = "https://api.twitter.com/oauth/access_token"
         const oauth = getOAuth()
         const authHeader = oauth.toHeader(
@@ -246,10 +236,7 @@ export class TwitterAuthenticationApplication {
         } catch (error) {
             if (error instanceof Error) {
                 if (error instanceof ResponseError) {
-                    throw new ApplicationError(
-                        ErrorCodes.ApiAuthError,
-                        `Parameter '${error.paramName}' is invalid.`
-                    )
+                    throw new ApplicationError(ErrorCodes.ApiAuthError, `Parameter '${error.paramName}' is invalid.`)
                 } else {
                     throw new ApplicationError(ErrorCodes.ApiAuthError, error.message)
                 }
@@ -303,10 +290,7 @@ export class TwitterAuthenticationApplication {
             console.log(error)
             if (error instanceof Error) {
                 if (error instanceof ResponseError) {
-                    throw new ApplicationError(
-                        ErrorCodes.ApiAuthError,
-                        `Parameter '${error.paramName}' is invalid.`
-                    )
+                    throw new ApplicationError(ErrorCodes.ApiAuthError, `Parameter '${error.paramName}' is invalid.`)
                 } else {
                     throw new ApplicationError(ErrorCodes.ApiAuthError, error.message)
                 }
@@ -318,17 +302,13 @@ export class TwitterAuthenticationApplication {
     async generateUserName(screenName: string) {
         const existingUser = await this.userQueryRepository.findByName(screenName)
         if (existingUser) {
-            const name = generateRandomName(
-                (config.user.name.max_length - config.user.name.min_length) / 2
-            )
+            const name = generateRandomName((config.user.name.max_length - config.user.name.min_length) / 2)
             try {
-                await this.userNameAvailabilityService.tryCheckIfNameIsTaken(name)
+                await this.userNameAvailabilityService.hasThrow(name)
                 return name
             } catch (error) {
                 // 2回やれば被ることはたぶんないはず
-                return generateRandomName(
-                    (config.user.name.max_length - config.user.name.min_length) / 2
-                )
+                return generateRandomName((config.user.name.max_length - config.user.name.min_length) / 2)
             }
         }
         return screenName

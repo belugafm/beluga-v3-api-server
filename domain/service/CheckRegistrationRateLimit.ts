@@ -29,7 +29,7 @@ export class CheckRegistrationRateLimitService {
         }
         return false
     }
-    async tryCheckIfRateIsLimited(ipAddress: string) {
+    async hasThrow(ipAddress: string) {
         if (await this.isRateLimited(ipAddress)) {
             throw new DomainError(ErrorCodes.TooManyRequests)
         }

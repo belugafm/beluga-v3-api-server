@@ -1,12 +1,9 @@
-import {
-    ChannelGroupEntity,
-    ErrorCodes as DomainErrorCodes,
-} from "../../domain/entity/ChannelGroup"
+import { ChannelGroupEntity, ErrorCodes as DomainErrorCodes } from "../../domain/entity/ChannelGroup"
 import { ChannelGroupdId, UserId } from "../../domain/types"
 import {
-    CheckPermissionToCreateChannelGroupService,
+    CreateChannelGroupPermission,
     ErrorCodes as ServiceErrorCodes,
-} from "../../domain/service/CheckPermissionToCreateChannelGroup"
+} from "../../domain/permission/CreateChannelGroup"
 
 import { ApplicationError } from "../ApplicationError"
 import { DomainError } from "../../domain/DomainError"
@@ -24,7 +21,7 @@ export const ErrorCodes = {
 export class CreateChannelGroupApplication {
     private channelGroupCommandRepository: IChannelGroupCommandRepository
     private channelGroupQueryRepository: IChannelGroupQueryRepository
-    private checkPermissionToCreateChannelGroupService: CheckPermissionToCreateChannelGroupService
+    private checkPermissionToCreateChannelGroupService: CreateChannelGroupPermission
     constructor(
         userQueryRepository: IUserQueryRepository,
         channelGroupQueryRepository: IChannelGroupQueryRepository,
@@ -32,26 +29,15 @@ export class CreateChannelGroupApplication {
     ) {
         this.channelGroupCommandRepository = channelGroupCommandRepository
         this.channelGroupQueryRepository = channelGroupQueryRepository
-        this.checkPermissionToCreateChannelGroupService =
-            new CheckPermissionToCreateChannelGroupService(userQueryRepository)
+        this.checkPermissionToCreateChannelGroupService = new CreateChannelGroupPermission(userQueryRepository)
     }
-    async create({
-        createdBy,
-        name,
-        parentId,
-    }: {
-        createdBy: UserId
-        name: string
-        parentId: ChannelGroupdId
-    }) {
+    async create({ createdBy, name, parentId }: { createdBy: UserId; name: string; parentId: ChannelGroupdId }) {
         const parentChannelGroup = await this.channelGroupQueryRepository.findById(parentId)
         if (parentChannelGroup == null) {
             throw new ApplicationError(ErrorCodes.ParentNotFound)
         }
         try {
-            await this.checkPermissionToCreateChannelGroupService.tryCheckIfUserHasPermission(
-                createdBy
-            )
+            await this.checkPermissionToCreateChannelGroupService.hasThrow(createdBy)
             const channelGroup = new ChannelGroupEntity({
                 id: -1,
                 name: name,

@@ -1,8 +1,8 @@
 import { ChannelId, MessageId, UserId } from "../../domain/types"
 import {
-    CheckPermissionToPostMessageService,
     ErrorCodes as CheckPermissionToPostMessageServiceErrorCodes,
-} from "../../domain/service/CheckPermissionToPostMessage"
+    PostMessagePermission,
+} from "../../domain/permission/PostMessage"
 import {
     CheckRateLimitForPostingMessageService,
     ErrorCodes as CheckRateLimitForPostingMessageServiceErrorCodes,
@@ -37,7 +37,7 @@ export class PostMessageApplication {
     private channelCommandRepository: IChannelCommandRepository
     private userQueryRepository: IUserQueryRepository
     private userCommandRepository: IUserCommandRepository
-    private checkPermissionToPostMessageService: CheckPermissionToPostMessageService
+    private permissionToPostMessageService: PostMessagePermission
     private checkRateLimitForPostingMessageService: CheckRateLimitForPostingMessageService
     constructor(
         userQueryRepository: IUserQueryRepository,
@@ -53,10 +53,7 @@ export class PostMessageApplication {
         this.userQueryRepository = userQueryRepository
         this.userCommandRepository = userCommandRepository
         this.channelCommandRepository = channelCommandRepository
-        this.checkPermissionToPostMessageService = new CheckPermissionToPostMessageService(
-            userQueryRepository,
-            channelQueryRepository
-        )
+        this.permissionToPostMessageService = new PostMessagePermission(userQueryRepository, channelQueryRepository)
         this.checkRateLimitForPostingMessageService = new CheckRateLimitForPostingMessageService(
             userQueryRepository,
             messageQueryRepository
@@ -93,8 +90,8 @@ export class PostMessageApplication {
                 throw new ApplicationError(ErrorCodes.ChannelNotFound)
             }
             try {
-                await this.checkPermissionToPostMessageService.tryCheckIfUserHasPermission(userId, channel.id)
-                await this.checkRateLimitForPostingMessageService.tryCheckIfUserExceedsRateLimit(userId)
+                await this.permissionToPostMessageService.hasThrow(userId, channel.id)
+                await this.checkRateLimitForPostingMessageService.hasThrow(userId)
                 const message = new MessageEntity({
                     id: -1,
                     text: text,
@@ -108,7 +105,7 @@ export class PostMessageApplication {
                 })
                 message.id = await this.messageCommandRepository.add(message)
 
-                channel.statusesCount += 1
+                channel.messageCount += 1
                 await this.channelCommandRepository.update(channel)
 
                 user.statusesCount += 1
@@ -141,8 +138,8 @@ export class PostMessageApplication {
                 throw new ApplicationError(ErrorCodes.ChannelNotFound)
             }
             try {
-                await this.checkPermissionToPostMessageService.tryCheckIfUserHasPermission(userId, channelId)
-                await this.checkRateLimitForPostingMessageService.tryCheckIfUserExceedsRateLimit(userId)
+                await this.permissionToPostMessageService.hasThrow(userId, channelId)
+                await this.checkRateLimitForPostingMessageService.hasThrow(userId)
                 const message = new MessageEntity({
                     id: -1,
                     text: text,
@@ -156,7 +153,7 @@ export class PostMessageApplication {
                 })
                 message.id = await this.messageCommandRepository.add(message)
 
-                channel.statusesCount += 1
+                channel.messageCount += 1
                 await this.channelCommandRepository.update(channel)
 
                 user.statusesCount += 1
