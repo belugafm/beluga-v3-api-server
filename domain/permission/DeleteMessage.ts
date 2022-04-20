@@ -29,7 +29,7 @@ export class DeleteMessagePermission {
         if (message == null) {
             return false
         }
-        if (entityIdEquals(message.id, user.id) == false) {
+        if (entityIdEquals(message.userId, user.id) == false) {
             return false
         }
         return true

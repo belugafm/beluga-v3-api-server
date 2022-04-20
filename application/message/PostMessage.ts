@@ -79,7 +79,7 @@ export class PostMessageApplication {
         }
         if (channelId == null) {
             if (threadId == null) {
-                throw new ApplicationError(ErrorCodes.ThreadNotFound)
+                throw new ApplicationError(ErrorCodes.ArgumentMissing)
             }
             const thread = await this.messageQueryRepository.findById(threadId)
             if (thread == null) {
@@ -131,7 +131,7 @@ export class PostMessageApplication {
             }
         } else if (threadId == null) {
             if (channelId == null) {
-                throw new ApplicationError(ErrorCodes.ChannelNotFound)
+                throw new ApplicationError(ErrorCodes.ArgumentMissing)
             }
             const channel = await this.channelQueryRepository.findById(channelId)
             if (channel == null) {
