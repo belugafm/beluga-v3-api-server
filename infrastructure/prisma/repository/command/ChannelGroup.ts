@@ -15,7 +15,7 @@ export function has_changed(a: ChannelGroup, b: ChannelGroup) {
         a.level === b.level &&
         a.createdAt?.getTime() === b.createdAt?.getTime() &&
         a.createdBy === b.createdBy &&
-        a.statusesCount === b.statusesCount
+        a.messageCount === b.messageCount
     )
 }
 
@@ -42,7 +42,7 @@ export class ChannelGroupCommandRepository extends ChangeEventHandler implements
                     level: channelGroup.level,
                     createdAt: channelGroup.createdAt,
                     createdBy: channelGroup.createdBy,
-                    statusesCount: channelGroup.messageCount,
+                    messageCount: channelGroup.messageCount,
                 },
             })
             return result.id
@@ -79,7 +79,7 @@ export class ChannelGroupCommandRepository extends ChangeEventHandler implements
                     level: channelGroup.level,
                     createdAt: channelGroup.createdAt,
                     createdBy: channelGroup.createdBy,
-                    statusesCount: channelGroup.messageCount,
+                    messageCount: channelGroup.messageCount,
                 },
             })
             if (has_changed(origChannelGroup, updatedChannelGroup)) {

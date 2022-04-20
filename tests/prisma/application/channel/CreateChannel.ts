@@ -1,19 +1,19 @@
-import { CreateChannelApplication, ErrorCodes } from "../../../application/channel/CreateChannel"
+import { CreateChannelApplication, ErrorCodes } from "../../../../application/channel/CreateChannel"
 
-import { ApplicationError } from "../../../application/ApplicationError"
-import { ChannelEntity } from "../../../domain/entity/Channel"
-import { ChannelGroupEntity } from "../../../domain/entity/ChannelGroup"
-import { IChannelCommandRepository } from "../../../domain/repository/command/Channel"
-import { IChannelGroupCommandRepository } from "../../../domain/repository/command/ChannelGroup"
-import { IChannelGroupQueryRepository } from "../../../domain/repository/query/ChannelGroup"
-import { IChannelQueryRepository } from "../../../domain/repository/query/Channel"
-import { IUserCommandRepository } from "../../../domain/repository/command/User"
-import { IUserQueryRepository } from "../../../domain/repository/query/User"
+import { ApplicationError } from "../../../../application/ApplicationError"
+import { ChannelEntity } from "../../../../domain/entity/Channel"
+import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
+import { IChannelCommandRepository } from "../../../../domain/repository/command/Channel"
+import { IChannelGroupCommandRepository } from "../../../../domain/repository/command/ChannelGroup"
+import { IChannelGroupQueryRepository } from "../../../../domain/repository/query/ChannelGroup"
+import { IChannelQueryRepository } from "../../../../domain/repository/query/Channel"
+import { IUserCommandRepository } from "../../../../domain/repository/command/User"
+import { IUserQueryRepository } from "../../../../domain/repository/query/User"
 import { PrismaClient } from "@prisma/client"
-import { TransactionRepository } from "../../../infrastructure/prisma/repository/Transaction"
-import { UserEntity } from "../../../domain/entity/User"
-import config from "../../../config/app"
-import { generateRandomName } from "../functions"
+import { TransactionRepository } from "../../../../infrastructure/prisma/repository/Transaction"
+import { UserEntity } from "../../../../domain/entity/User"
+import config from "../../../../config/app"
+import { generateRandomName } from "../../functions"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -177,9 +177,9 @@ export class CreateChannelApplicationTests {
                     createdBy: user.id,
                     createdAt: new Date(),
                 })
-                parentChannelGroup.id = await new ChannelGroupCommandRepository(
-                    transactionSession
-                ).add(parentChannelGroup)
+                parentChannelGroup.id = await new ChannelGroupCommandRepository(transactionSession).add(
+                    parentChannelGroup
+                )
 
                 const channel = await new CreateChannelApplication(
                     new UserQueryRepository(transactionSession),
@@ -196,9 +196,7 @@ export class CreateChannelApplicationTests {
         } catch (error) {}
         const user = await new UserQueryRepository().findByName(userName)
         expect(user).toBeNull()
-        const channelGroup = await new ChannelGroupQueryRepository().findByUniqueName(
-            parentUniqueName
-        )
+        const channelGroup = await new ChannelGroupQueryRepository().findByUniqueName(parentUniqueName)
         expect(channelGroup).toBeNull()
         const channel = await new ChannelQueryRepository().findByUniqueName(uniqueName)
         expect(channel).toBeNull()

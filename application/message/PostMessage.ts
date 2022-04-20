@@ -108,7 +108,7 @@ export class PostMessageApplication {
                 channel.messageCount += 1
                 await this.channelCommandRepository.update(channel)
 
-                user.statusesCount += 1
+                user.messageCount += 1
                 await this.userCommandRepository.update(user)
 
                 thread.replyCount += 1
@@ -156,7 +156,7 @@ export class PostMessageApplication {
                 channel.messageCount += 1
                 await this.channelCommandRepository.update(channel)
 
-                user.statusesCount += 1
+                user.messageCount += 1
                 await this.userCommandRepository.update(user)
 
                 return message

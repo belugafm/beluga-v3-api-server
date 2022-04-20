@@ -1,19 +1,19 @@
-import { ErrorCodes, PostMessageApplication } from "../../../application/message/PostMessage"
-import { generateRandomName, sleep } from "../functions"
+import { ErrorCodes, PostMessageApplication } from "../../../../application/message/PostMessage"
+import { generateRandomName, sleep } from "../../functions"
 
-import { ApplicationError } from "../../../application/ApplicationError"
-import { ChannelEntity } from "../../../domain/entity/Channel"
-import { IChannelCommandRepository } from "../../../domain/repository/command/Channel"
-import { IChannelQueryRepository } from "../../../domain/repository/query/Channel"
-import { IMessageCommandRepository } from "../../../domain/repository/command/Message"
-import { IMessageQueryRepository } from "../../../domain/repository/query/Message"
-import { IUserCommandRepository } from "../../../domain/repository/command/User"
-import { IUserQueryRepository } from "../../../domain/repository/query/User"
-import { MessageEntity } from "../../../domain/entity/Message"
+import { ApplicationError } from "../../../../application/ApplicationError"
+import { ChannelEntity } from "../../../../domain/entity/Channel"
+import { IChannelCommandRepository } from "../../../../domain/repository/command/Channel"
+import { IChannelQueryRepository } from "../../../../domain/repository/query/Channel"
+import { IMessageCommandRepository } from "../../../../domain/repository/command/Message"
+import { IMessageQueryRepository } from "../../../../domain/repository/query/Message"
+import { IUserCommandRepository } from "../../../../domain/repository/command/User"
+import { IUserQueryRepository } from "../../../../domain/repository/query/User"
+import { MessageEntity } from "../../../../domain/entity/Message"
 import { PrismaClient } from "@prisma/client"
-import { TransactionRepository } from "../../../infrastructure/prisma/repository/Transaction"
-import { UserEntity } from "../../../domain/entity/User"
-import config from "../../../config/app"
+import { TransactionRepository } from "../../../../infrastructure/prisma/repository/Transaction"
+import { UserEntity } from "../../../../domain/entity/User"
+import config from "../../../../config/app"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -100,7 +100,7 @@ export class PostMessageApplicationTests {
 
         const updatedUser = await new UserQueryRepository().findById(user.id)
         expect(updatedUser).toBeInstanceOf(UserEntity)
-        expect(updatedUser?.statusesCount).toEqual(2)
+        expect(updatedUser?.messageCount).toEqual(2)
 
         await new UserCommandRepository().delete(user)
         await new ChannelCommandRepository().delete(channel)
@@ -184,7 +184,7 @@ export class PostMessageApplicationTests {
         }
         const updatedUser = await new UserQueryRepository().findById(user.id)
         expect(updatedUser).toBeInstanceOf(UserEntity)
-        expect(updatedUser?.statusesCount).toEqual(0)
+        expect(updatedUser?.messageCount).toEqual(0)
 
         await new UserCommandRepository().delete(user)
         await new ChannelCommandRepository().delete(channel)
@@ -259,7 +259,7 @@ export class PostMessageApplicationTests {
         })
         const updatedUser = await new UserQueryRepository().findById(user.id)
         expect(updatedUser).toBeInstanceOf(UserEntity)
-        expect(updatedUser?.statusesCount).toEqual(2)
+        expect(updatedUser?.messageCount).toEqual(2)
 
         const updatedThread = await new MessageQueryRepository().findById(thread.id)
         expect(updatedThread).toBeInstanceOf(MessageEntity)

@@ -1,18 +1,18 @@
 import {
     ErrorCodes,
     RegisterPasswordBasedUserApplication,
-} from "../../../application/registration/RegisterPasswordBasedUser"
-import { generateRandomName, sleep } from "../functions"
+} from "../../../../application/registration/RegisterPasswordBasedUser"
+import { generateRandomName, sleep } from "../../functions"
 
-import { ApplicationError } from "../../../application/ApplicationError"
-import { ILoginCredentialCommandRepository } from "../../../domain/repository/command/LoginCredential"
-import { IUserCommandRepository } from "../../../domain/repository/command/User"
-import { IUserQueryRepository } from "../../../domain/repository/query/User"
-import { LoginCredentialEntity } from "../../../domain/entity/LoginCredential"
+import { ApplicationError } from "../../../../application/ApplicationError"
+import { ILoginCredentialCommandRepository } from "../../../../domain/repository/command/LoginCredential"
+import { IUserCommandRepository } from "../../../../domain/repository/command/User"
+import { IUserQueryRepository } from "../../../../domain/repository/query/User"
+import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
 import { PrismaClient } from "@prisma/client"
-import { TransactionRepository } from "../../../infrastructure/prisma/repository/Transaction"
-import { UserEntity } from "../../../domain/entity/User"
-import config from "../../../config/app"
+import { TransactionRepository } from "../../../../infrastructure/prisma/repository/Transaction"
+import { UserEntity } from "../../../../domain/entity/User"
+import config from "../../../../config/app"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -42,19 +42,17 @@ export class RegisterPasswordBasedUserApplicationTests {
         for (let k = 0; k < repeat; k++) {
             const transaction = await TransactionRepository.new()
             const name = generateRandomName(config.user.name.max_length)
-            const [user, loginCredential] = await transaction.$transaction(
-                async (transactionSession) => {
-                    return await new RegisterPasswordBasedUserApplication(
-                        new UserQueryRepository(transactionSession),
-                        new UserCommandRepository(transactionSession),
-                        new LoginCredentialCommandRepository(transactionSession)
-                    ).register({
-                        name: name,
-                        password: "password",
-                        ipAddress: `192.168.1.${k}`,
-                    })
-                }
-            )
+            const [user, loginCredential] = await transaction.$transaction(async (transactionSession) => {
+                return await new RegisterPasswordBasedUserApplication(
+                    new UserQueryRepository(transactionSession),
+                    new UserCommandRepository(transactionSession),
+                    new LoginCredentialCommandRepository(transactionSession)
+                ).register({
+                    name: name,
+                    password: "password",
+                    ipAddress: `192.168.1.${k}`,
+                })
+            })
             expect(user).toBeInstanceOf(UserEntity)
             expect(loginCredential).toBeInstanceOf(LoginCredentialEntity)
             userNames.push(name)

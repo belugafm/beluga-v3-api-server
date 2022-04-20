@@ -15,7 +15,7 @@ export function has_changed(a: Channel, b: Channel) {
         a.createdAt?.getTime() === b.createdAt?.getTime() &&
         a.createdBy === b.createdBy &&
         a.statusString === b.statusString &&
-        a.statusesCount === b.statusesCount
+        a.messageCount === b.messageCount
     )
 }
 
@@ -41,7 +41,7 @@ export class ChannelCommandRepository extends ChangeEventHandler implements ICha
                     parentChannelGroupId: channel.parentChannelGroupId,
                     createdAt: channel.createdAt,
                     createdBy: channel.createdBy,
-                    statusesCount: channel.messageCount,
+                    messageCount: channel.messageCount,
                     statusString: channel.statusString,
                 },
             })
@@ -76,7 +76,7 @@ export class ChannelCommandRepository extends ChangeEventHandler implements ICha
                     parentChannelGroupId: channel.parentChannelGroupId,
                     createdAt: channel.createdAt,
                     createdBy: channel.createdBy,
-                    statusesCount: channel.messageCount,
+                    messageCount: channel.messageCount,
                     statusString: channel.statusString,
                 },
             })

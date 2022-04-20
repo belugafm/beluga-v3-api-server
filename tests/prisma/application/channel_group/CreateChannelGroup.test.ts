@@ -1,16 +1,15 @@
-import * as repo from "../../../infrastructure/prisma/repository"
+import * as repo from "../../../../infrastructure/prisma/repository"
 
-import { CreateChannelApplicationTests } from "./CreateChannel"
+import { CreateChannelGroupApplicationTests } from "./CreateChannelGroup"
 
 jest.setTimeout(60000)
 
-describe("CreateChannelApplication", () => {
-    const testing = new CreateChannelApplicationTests()
+describe("CreateChannelGroupApplication", () => {
+    const testing = new CreateChannelGroupApplicationTests()
     test("Normal", async () => {
         await testing.testNormal(
             repo.UserQueryRepository,
             repo.UserCommandRepository,
-            repo.ChannelCommandRepository,
             repo.ChannelGroupQueryRepository,
             repo.ChannelGroupCommandRepository
         )
@@ -19,7 +18,6 @@ describe("CreateChannelApplication", () => {
         await testing.testVisitor(
             repo.UserQueryRepository,
             repo.UserCommandRepository,
-            repo.ChannelCommandRepository,
             repo.ChannelGroupQueryRepository,
             repo.ChannelGroupCommandRepository
         )
@@ -28,8 +26,6 @@ describe("CreateChannelApplication", () => {
         await testing.testTransaction(
             repo.UserQueryRepository,
             repo.UserCommandRepository,
-            repo.ChannelQueryRepository,
-            repo.ChannelCommandRepository,
             repo.ChannelGroupQueryRepository,
             repo.ChannelGroupCommandRepository,
             repo.TransactionRepository

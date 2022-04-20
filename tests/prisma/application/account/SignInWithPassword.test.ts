@@ -1,4 +1,4 @@
-import * as repo from "../../../infrastructure/prisma/repository"
+import * as repo from "../../../../infrastructure/prisma/repository"
 
 import { SignInWithPasswordAplicationTests } from "./SignInWithPassword"
 

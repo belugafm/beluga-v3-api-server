@@ -1,10 +1,8 @@
-import { EntityId } from "../domain/types"
-
 export class ChangeEventHandler {
     static subscribe(func: (changedId: any) => void) {}
     static deleteAllEventHandlers() {}
     protected static _eventListeners: ((changedId: any) => void)[] = []
-    protected async emitChanges(changedEntityId: EntityId) {}
+    protected async emitChanges(changedId: number | string) {}
     constructor(cls: any) {
         if (cls.hasOwnProperty("_eventListeners")) {
             return

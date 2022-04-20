@@ -18,7 +18,7 @@ function toEntity(channelGroup: ChannelGroup) {
         createdAt: channelGroup.createdAt,
         parentId: channelGroup.parentId,
         level: channelGroup.level,
-        messageCount: channelGroup.statusesCount,
+        messageCount: channelGroup.messageCount,
     })
 }
 

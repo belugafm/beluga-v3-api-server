@@ -1,24 +1,21 @@
-import {
-    ErrorCodes,
-    SignInWithPasswordApplication,
-} from "../../../application/signin/SignInWithPassword"
+import { ErrorCodes, SignInWithPasswordApplication } from "../../../../application/signin/SignInWithPassword"
 
-import { ApplicationError } from "../../../application/ApplicationError"
-import { AuthenticityTokenEntity } from "../../../domain/entity/AuthenticityToken"
-import { IAuthenticityTokenCommandRepository } from "../../../domain/repository/command/AuthenticityToken"
-import { ILoginCredentialCommandRepository } from "../../../domain/repository/command/LoginCredential"
-import { ILoginCredentialQueryRepository } from "../../../domain/repository/query/LoginCredential"
-import { ILoginSessionCommandRepository } from "../../../domain/repository/command/LoginSession"
-import { IUserCommandRepository } from "../../../domain/repository/command/User"
-import { IUserQueryRepository } from "../../../domain/repository/query/User"
-import { LoginCredentialEntity } from "../../../domain/entity/LoginCredential"
-import { LoginSessionEntity } from "../../../domain/entity/LoginSession"
+import { ApplicationError } from "../../../../application/ApplicationError"
+import { AuthenticityTokenEntity } from "../../../../domain/entity/AuthenticityToken"
+import { IAuthenticityTokenCommandRepository } from "../../../../domain/repository/command/AuthenticityToken"
+import { ILoginCredentialCommandRepository } from "../../../../domain/repository/command/LoginCredential"
+import { ILoginCredentialQueryRepository } from "../../../../domain/repository/query/LoginCredential"
+import { ILoginSessionCommandRepository } from "../../../../domain/repository/command/LoginSession"
+import { IUserCommandRepository } from "../../../../domain/repository/command/User"
+import { IUserQueryRepository } from "../../../../domain/repository/query/User"
+import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
+import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { PrismaClient } from "@prisma/client"
-import { RegisterPasswordBasedUserApplication } from "../../../application/registration/RegisterPasswordBasedUser"
-import { TransactionRepository } from "../../../infrastructure/prisma/repository/Transaction"
-import { UserEntity } from "../../../domain/entity/User"
-import config from "../../../config/app"
-import { generateRandomName } from "../functions"
+import { RegisterPasswordBasedUserApplication } from "../../../../application/registration/RegisterPasswordBasedUser"
+import { TransactionRepository } from "../../../../infrastructure/prisma/repository/Transaction"
+import { UserEntity } from "../../../../domain/entity/User"
+import config from "../../../../config/app"
+import { generateRandomName } from "../../functions"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -53,16 +50,15 @@ export class SignInWithPasswordAplicationTests {
         const lastLocation = "Tokyo"
         const device = "Desktop Chrome"
 
-        const [registeredUser, registeredLoginCredential] =
-            await new RegisterPasswordBasedUserApplication(
-                new UserQueryRepository(),
-                new UserCommandRepository(),
-                new LoginCredentialCommandRepository()
-            ).register({
-                name: name,
-                password: password,
-                ipAddress: "192.168.1.1",
-            })
+        const [registeredUser, registeredLoginCredential] = await new RegisterPasswordBasedUserApplication(
+            new UserQueryRepository(),
+            new UserCommandRepository(),
+            new LoginCredentialCommandRepository()
+        ).register({
+            name: name,
+            password: password,
+            ipAddress: "192.168.1.1",
+        })
         expect(registeredUser).toBeInstanceOf(UserEntity)
         expect(registeredLoginCredential).toBeInstanceOf(LoginCredentialEntity)
         const [user, loginCredential, loginSessionEntity, authenticityTokenEntity] =
@@ -116,16 +112,15 @@ export class SignInWithPasswordAplicationTests {
         const lastLocation = "Tokyo"
         const device = "Desktop Chrome"
 
-        const [registeredUser, registeredLoginCredential] =
-            await new RegisterPasswordBasedUserApplication(
-                new UserQueryRepository(),
-                new UserCommandRepository(),
-                new LoginCredentialCommandRepository()
-            ).register({
-                name: name,
-                password: generateRandomName(config.user_login_credential.password.max_length),
-                ipAddress: "192.168.1.1",
-            })
+        const [registeredUser, registeredLoginCredential] = await new RegisterPasswordBasedUserApplication(
+            new UserQueryRepository(),
+            new UserCommandRepository(),
+            new LoginCredentialCommandRepository()
+        ).register({
+            name: name,
+            password: generateRandomName(config.user_login_credential.password.max_length),
+            ipAddress: "192.168.1.1",
+        })
         expect(registeredUser).toBeInstanceOf(UserEntity)
         expect(registeredLoginCredential).toBeInstanceOf(LoginCredentialEntity)
         try {

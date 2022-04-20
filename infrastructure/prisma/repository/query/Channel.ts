@@ -15,7 +15,7 @@ export function toEntity(channel: Channel) {
         createdBy: channel.createdBy,
         createdAt: channel.createdAt,
         parentChannelGroupId: channel.parentChannelGroupId,
-        messageCount: channel.statusesCount,
+        messageCount: channel.messageCount,
         statusString: channel.statusString,
     })
 }

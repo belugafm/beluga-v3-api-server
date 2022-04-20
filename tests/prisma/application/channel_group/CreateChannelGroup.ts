@@ -1,20 +1,17 @@
-import {
-    CreateChannelGroupApplication,
-    ErrorCodes,
-} from "../../../application/channel_group/CreateChannelGroup"
+import { CreateChannelGroupApplication, ErrorCodes } from "../../../../application/channel_group/CreateChannelGroup"
 
-import { ApplicationError } from "../../../application/ApplicationError"
-import { ChannelGroupEntity } from "../../../domain/entity/ChannelGroup"
-import { ChannelQueryRepository } from "../../../web/repositories"
-import { IChannelGroupCommandRepository } from "../../../domain/repository/command/ChannelGroup"
-import { IChannelGroupQueryRepository } from "../../../domain/repository/query/ChannelGroup"
-import { IUserCommandRepository } from "../../../domain/repository/command/User"
-import { IUserQueryRepository } from "../../../domain/repository/query/User"
+import { ApplicationError } from "../../../../application/ApplicationError"
+import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
+import { ChannelQueryRepository } from "../../../../web/repositories"
+import { IChannelGroupCommandRepository } from "../../../../domain/repository/command/ChannelGroup"
+import { IChannelGroupQueryRepository } from "../../../../domain/repository/query/ChannelGroup"
+import { IUserCommandRepository } from "../../../../domain/repository/command/User"
+import { IUserQueryRepository } from "../../../../domain/repository/query/User"
 import { PrismaClient } from "@prisma/client"
-import { TransactionRepository } from "../../../infrastructure/prisma/repository/Transaction"
-import { UserEntity } from "../../../domain/entity/User"
-import config from "../../../config/app"
-import { generateRandomName } from "../functions"
+import { TransactionRepository } from "../../../../infrastructure/prisma/repository/Transaction"
+import { UserEntity } from "../../../../domain/entity/User"
+import config from "../../../../config/app"
+import { generateRandomName } from "../../functions"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -170,9 +167,9 @@ export class CreateChannelGroupApplicationTests {
                     createdBy: user.id,
                     createdAt: new Date(),
                 })
-                parentChannelGroup.id = await new ChannelGroupCommandRepository(
-                    transactionSession
-                ).add(parentChannelGroup)
+                parentChannelGroup.id = await new ChannelGroupCommandRepository(transactionSession).add(
+                    parentChannelGroup
+                )
 
                 const channelGroup = await new CreateChannelGroupApplication(
                     new UserQueryRepository(transactionSession),

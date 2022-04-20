@@ -1,8 +1,5 @@
 import { PrismaClient, User } from "@prisma/client"
-import {
-    RepositoryError,
-    UnknownRepositoryError,
-} from "../../../../domain/repository/RepositoryError"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
 import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { IUserCommandRepository } from "../../../../domain/repository/command/User"
@@ -19,14 +16,9 @@ export function has_changed(a: User, b: User) {
         a.location === b.location &&
         a.url === b.url &&
         a.description === b.description &&
-        a.themeColor === b.themeColor &&
-        a.backgroundImageUrl === b.backgroundImageUrl &&
-        a.defaultProfile === b.defaultProfile &&
-        a.statusesCount === b.statusesCount &&
+        a.messageCount === b.messageCount &&
         a.favoritesCount === b.favoritesCount &&
         a.favoritedCount === b.favoritedCount &&
-        a.likesCount === b.likesCount &&
-        a.likedCount === b.likedCount &&
         a.createdAt?.getTime() === b.createdAt?.getTime() &&
         a.bot === b.bot &&
         a.active === b.active &&
@@ -64,14 +56,9 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
                     location: user.location,
                     url: user.url,
                     description: user.description,
-                    themeColor: user.themeColor,
-                    backgroundImageUrl: user.backgroundImageUrl,
-                    defaultProfile: user.defaultProfile,
-                    statusesCount: user.statusesCount,
+                    messageCount: user.messageCount,
                     favoritesCount: user.favoritesCount,
                     favoritedCount: user.favoritedCount,
-                    likesCount: user.likesCount,
-                    likedCount: user.likedCount,
                     createdAt: user.createdAt,
                     bot: user.bot,
                     active: user.active,
@@ -119,14 +106,9 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
                     location: user.location,
                     url: user.url,
                     description: user.description,
-                    themeColor: user.themeColor,
-                    backgroundImageUrl: user.backgroundImageUrl,
-                    defaultProfile: user.defaultProfile,
-                    statusesCount: user.statusesCount,
+                    messageCount: user.messageCount,
                     favoritesCount: user.favoritesCount,
                     favoritedCount: user.favoritedCount,
-                    likesCount: user.likesCount,
-                    likedCount: user.likedCount,
                     createdAt: user.createdAt,
                     bot: user.bot,
                     active: user.active,
@@ -146,11 +128,7 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
             return false
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(
-                    error.message,
-                    error.stack,
-                    "UserCommandRepository::update"
-                )
+                throw new RepositoryError(error.message, error.stack, "UserCommandRepository::update")
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -170,11 +148,7 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
             return true
         } catch (error) {
             if (error instanceof Error) {
-                throw new RepositoryError(
-                    error.message,
-                    error.stack,
-                    "UserCommandRepository::delete"
-                )
+                throw new RepositoryError(error.message, error.stack, "UserCommandRepository::delete")
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -193,11 +167,7 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
         } catch (error) {
             user.active = false
             if (error instanceof Error) {
-                throw new RepositoryError(
-                    error.message,
-                    error.stack,
-                    "UserCommandRepository::activate"
-                )
+                throw new RepositoryError(error.message, error.stack, "UserCommandRepository::activate")
             } else {
                 throw new UnknownRepositoryError()
             }
@@ -214,11 +184,7 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
         } catch (error) {
             user.lastActivityDate = origValue
             if (error instanceof Error) {
-                throw new RepositoryError(
-                    error.message,
-                    error.stack,
-                    "UserCommandRepository::updateLastActivityDate"
-                )
+                throw new RepositoryError(error.message, error.stack, "UserCommandRepository::updateLastActivityDate")
             } else {
                 throw new UnknownRepositoryError()
             }
