@@ -1,4 +1,5 @@
 import { ErrorCodes, SignInWithPasswordApplication } from "../../../../application/signin/SignInWithPassword"
+import { generateRandomIpAddress, generateRandomName } from "../../functions"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { AuthenticityTokenEntity } from "../../../../domain/entity/AuthenticityToken"
@@ -15,7 +16,6 @@ import { RegisterPasswordBasedUserApplication } from "../../../../application/re
 import { TransactionRepository } from "../../../../infrastructure/prisma/repository/Transaction"
 import { UserEntity } from "../../../../domain/entity/User"
 import config from "../../../../config/app"
-import { generateRandomName } from "../../functions"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -46,7 +46,6 @@ export class SignInWithPasswordAplicationTests {
     ) {
         const name = generateRandomName(config.user.name.max_length)
         const password = generateRandomName(config.user_login_credential.password.max_length)
-        const ipAddress = "192.168.1.1"
         const lastLocation = "Tokyo"
         const device = "Desktop Chrome"
 
@@ -57,7 +56,7 @@ export class SignInWithPasswordAplicationTests {
         ).register({
             name: name,
             password: password,
-            ipAddress: "192.168.1.1",
+            ipAddress: generateRandomIpAddress(),
         })
         expect(registeredUser).toBeInstanceOf(UserEntity)
         expect(registeredLoginCredential).toBeInstanceOf(LoginCredentialEntity)
@@ -70,7 +69,7 @@ export class SignInWithPasswordAplicationTests {
             ).signin({
                 name,
                 password,
-                ipAddress,
+                ipAddress: generateRandomIpAddress(),
                 lastLocation,
                 device,
             })
@@ -108,7 +107,6 @@ export class SignInWithPasswordAplicationTests {
     ) {
         expect.assertions(5)
         const name = generateRandomName(config.user.name.max_length)
-        const ipAddress = "192.168.1.1"
         const lastLocation = "Tokyo"
         const device = "Desktop Chrome"
 
@@ -119,7 +117,7 @@ export class SignInWithPasswordAplicationTests {
         ).register({
             name: name,
             password: generateRandomName(config.user_login_credential.password.max_length),
-            ipAddress: "192.168.1.1",
+            ipAddress: generateRandomIpAddress(),
         })
         expect(registeredUser).toBeInstanceOf(UserEntity)
         expect(registeredLoginCredential).toBeInstanceOf(LoginCredentialEntity)
@@ -132,7 +130,7 @@ export class SignInWithPasswordAplicationTests {
             ).signin({
                 name,
                 password: generateRandomName(config.user_login_credential.password.max_length),
-                ipAddress,
+                ipAddress: generateRandomIpAddress(),
                 lastLocation,
                 device,
             })
@@ -169,7 +167,7 @@ export class SignInWithPasswordAplicationTests {
         const transaction = await TransactionRepository.new()
         const name = generateRandomName(config.user.name.max_length)
         const password = generateRandomName(config.user_login_credential.password.max_length)
-        const ipAddress = "192.168.1.1"
+        const ipAddress = generateRandomIpAddress()
         const lastLocation = "Tokyo"
         const device = "Desktop Chrome"
 
@@ -180,9 +178,9 @@ export class SignInWithPasswordAplicationTests {
                     new UserCommandRepository(transactionSession),
                     new LoginCredentialCommandRepository(transactionSession)
                 ).register({
-                    name: name,
-                    password: password,
-                    ipAddress: "192.168.1.1",
+                    name,
+                    password,
+                    ipAddress,
                 })
                 const [user, loginCredential, loginSessionEntity, authenticityTokenEntity] =
                     await new SignInWithPasswordApplication(

@@ -1,4 +1,5 @@
 import { DeleteMessageApplication, ErrorCodes } from "../../../../application/message/DeleteMessage"
+import { generateRandomIpAddress, generateRandomName } from "../../functions"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { ChannelEntity } from "../../../../domain/entity/Channel"
@@ -14,7 +15,6 @@ import { PrismaClient } from "@prisma/client"
 import { TransactionRepository } from "../../../../web/repositories"
 import { UserEntity } from "../../../../domain/entity/User"
 import config from "../../../../config/app"
-import { generateRandomName } from "../../functions"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -53,7 +53,7 @@ export class DeleteMessageApplicationTests {
             const user = new UserEntity({
                 id: -1,
                 name: generateRandomName(config.user.name.max_length),
-                registrationIpAddress: "192.168.1.1",
+                registrationIpAddress: generateRandomIpAddress(),
                 trustLevel: trustLevel,
             })
             user.id = await new UserCommandRepository(transactionSession).add(user)
@@ -133,7 +133,7 @@ export class DeleteMessageApplicationTests {
             const user = new UserEntity({
                 id: -1,
                 name: generateRandomName(config.user.name.max_length),
-                registrationIpAddress: "192.168.1.1",
+                registrationIpAddress: generateRandomIpAddress(),
                 trustLevel: trustLevel,
             })
             user.id = await new UserCommandRepository(transactionSession).add(user)
@@ -218,14 +218,14 @@ export class DeleteMessageApplicationTests {
             const author = new UserEntity({
                 id: -1,
                 name: generateRandomName(config.user.name.max_length),
-                registrationIpAddress: "192.168.1.1",
+                registrationIpAddress: generateRandomIpAddress(),
                 trustLevel: trustLevel,
             })
             author.id = await new UserCommandRepository(transactionSession).add(author)
             const other = new UserEntity({
                 id: -1,
                 name: generateRandomName(config.user.name.max_length),
-                registrationIpAddress: "192.168.1.1",
+                registrationIpAddress: generateRandomIpAddress(),
                 trustLevel: trustLevel,
             })
             other.id = await new UserCommandRepository(transactionSession).add(other)

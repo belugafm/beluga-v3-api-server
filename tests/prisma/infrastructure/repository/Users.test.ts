@@ -1,8 +1,9 @@
+import { generateRandomIpAddress, generateRandomName } from "../../functions"
+
 import { UserCommandRepository } from "../../../../infrastructure/prisma/repository/command/User"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
 import config from "../../../../config/app"
-import { generateRandomName } from "../../functions"
 
 jest.setTimeout(30000)
 
@@ -15,7 +16,7 @@ describe("UsersRepository", () => {
         const user = new UserEntity({
             id: -1,
             name: generateRandomName(config.user.name.max_length),
-            registrationIpAddress: "192.168.1.1",
+            registrationIpAddress: generateRandomIpAddress(),
         })
         user.id = await repo1.add(user)
         UserCommandRepository.subscribe((userId: UserId) => {
@@ -37,7 +38,7 @@ describe("UsersRepository", () => {
         const user = new UserEntity({
             id: -1,
             name: generateRandomName(config.user.name.max_length),
-            registrationIpAddress: "192.168.1.1",
+            registrationIpAddress: generateRandomIpAddress(),
         })
         user.id = await repo1.add(user)
         UserCommandRepository.subscribe((userId: UserId) => {

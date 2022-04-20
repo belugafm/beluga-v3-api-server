@@ -3,6 +3,7 @@ import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential
 import { LoginCredentialQueryRepository } from "../../../../infrastructure/prisma/repository/query/LoginCredential"
 import { UserCommandRepository } from "../../../../infrastructure/prisma/repository/command/User"
 import { UserEntity } from "../../../../domain/entity/User"
+import { generateRandomIpAddress } from "../../functions"
 
 jest.setTimeout(30000)
 
@@ -12,7 +13,7 @@ describe("LoginCredentialsRepository", () => {
         const loginCredentialQueryRepository = new LoginCredentialQueryRepository()
         const loginCredentialsCommandRepository = new LoginCredentialCommandRepository()
 
-        const user = new UserEntity({ id: -1, name: "hoge", registrationIpAddress: "192.168.1.1" })
+        const user = new UserEntity({ id: -1, name: "hoge", registrationIpAddress: generateRandomIpAddress() })
         user.id = await userCommandRepository.add(user)
         const loginCredential = await LoginCredentialEntity.new(user.id, "password")
         await loginCredentialsCommandRepository.add(loginCredential)

@@ -14,3 +14,11 @@ export const generateRandomName = (length: number): string => {
         .map((n) => S[n % S.length])
         .join("")
 }
+
+export const generateRandomIpAddress = (): string => {
+    const a = Math.floor(Math.random() * 256)
+    const b = Math.floor(Math.random() * 256)
+    const c = Math.floor(Math.random() * 256)
+    const d = Math.floor(Math.random() * 256)
+    return `${a}.${b}.${c}.${d}`
+}

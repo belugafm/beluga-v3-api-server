@@ -1,4 +1,5 @@
 import { CreateChannelApplication, ErrorCodes } from "../../../../application/channel/CreateChannel"
+import { generateRandomIpAddress, generateRandomName } from "../../functions"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { ChannelEntity } from "../../../../domain/entity/Channel"
@@ -13,7 +14,6 @@ import { PrismaClient } from "@prisma/client"
 import { TransactionRepository } from "../../../../infrastructure/prisma/repository/Transaction"
 import { UserEntity } from "../../../../domain/entity/User"
 import config from "../../../../config/app"
-import { generateRandomName } from "../../functions"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -46,7 +46,7 @@ export class CreateChannelApplicationTests {
         const user = new UserEntity({
             id: -1,
             name: generateRandomName(config.user.name.max_length),
-            registrationIpAddress: "192.168.1.1",
+            registrationIpAddress: generateRandomIpAddress(),
             trustLevel: trustLevel,
         })
         user.id = await new UserCommandRepository().add(user)
@@ -99,7 +99,7 @@ export class CreateChannelApplicationTests {
         const user = new UserEntity({
             id: -1,
             name: generateRandomName(config.user.name.max_length),
-            registrationIpAddress: "192.168.1.1",
+            registrationIpAddress: generateRandomIpAddress(),
             trustLevel: trustLevel,
         })
         user.id = await new UserCommandRepository().add(user)
@@ -164,7 +164,7 @@ export class CreateChannelApplicationTests {
                 const user = new UserEntity({
                     id: -1,
                     name: userName,
-                    registrationIpAddress: "192.168.1.1",
+                    registrationIpAddress: generateRandomIpAddress(),
                     trustLevel: trustLevel,
                 })
                 user.id = await new UserCommandRepository(transactionSession).add(user)

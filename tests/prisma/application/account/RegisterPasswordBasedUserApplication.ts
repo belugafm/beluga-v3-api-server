@@ -2,7 +2,7 @@ import {
     ErrorCodes,
     RegisterPasswordBasedUserApplication,
 } from "../../../../application/registration/RegisterPasswordBasedUser"
-import { generateRandomName, sleep } from "../../functions"
+import { generateRandomIpAddress, generateRandomName, sleep } from "../../functions"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { ILoginCredentialCommandRepository } from "../../../../domain/repository/command/LoginCredential"
@@ -50,7 +50,7 @@ export class RegisterPasswordBasedUserApplicationTests {
                 ).register({
                     name: name,
                     password: "password",
-                    ipAddress: `192.168.1.${k}`,
+                    ipAddress: generateRandomIpAddress(),
                 })
             })
             expect(user).toBeInstanceOf(UserEntity)
@@ -88,7 +88,7 @@ export class RegisterPasswordBasedUserApplicationTests {
             ).register({
                 name: name,
                 password: "password",
-                ipAddress: "192.168.1.1",
+                ipAddress: generateRandomIpAddress(),
             })
         })
         try {
@@ -100,7 +100,7 @@ export class RegisterPasswordBasedUserApplicationTests {
                 ).register({
                     name: name,
                     password: "password",
-                    ipAddress: "192.168.1.2",
+                    ipAddress: generateRandomIpAddress(),
                 })
             })
         } catch (error) {
@@ -130,6 +130,7 @@ export class RegisterPasswordBasedUserApplicationTests {
         const origValue = config.user_registration.limit
         config.user_registration.limit = 5
         const name = generateRandomName(config.user.name.max_length)
+        const ipAddress = generateRandomIpAddress()
         await transaction.$transaction(async (transactionSession) => {
             return await new RegisterPasswordBasedUserApplication(
                 new UserQueryRepository(transactionSession),
@@ -138,7 +139,7 @@ export class RegisterPasswordBasedUserApplicationTests {
             ).register({
                 name: name,
                 password: "password",
-                ipAddress: "192.168.1.1",
+                ipAddress: ipAddress,
             })
         })
         const name2 = generateRandomName(config.user.name.max_length)
@@ -151,7 +152,7 @@ export class RegisterPasswordBasedUserApplicationTests {
                 ).register({
                     name: name2,
                     password: "password",
-                    ipAddress: "192.168.1.1",
+                    ipAddress: ipAddress,
                 })
             })
         } catch (error) {
@@ -169,7 +170,7 @@ export class RegisterPasswordBasedUserApplicationTests {
             ).register({
                 name: name2,
                 password: "password",
-                ipAddress: "192.168.1.1",
+                ipAddress: generateRandomIpAddress(),
             })
         })
         config.user_registration.limit = origValue
@@ -237,7 +238,7 @@ export class RegisterPasswordBasedUserApplicationTests {
                     ).register({
                         name: name,
                         password: "password",
-                        ipAddress: "192.168.1.1",
+                        ipAddress: generateRandomIpAddress(),
                     })
                 })
             } catch (error) {
@@ -270,7 +271,7 @@ export class RegisterPasswordBasedUserApplicationTests {
                 ).register({
                     name: name,
                     password: "",
-                    ipAddress: "192.168.1.1",
+                    ipAddress: generateRandomIpAddress(),
                 })
             })
         } catch (error) {
@@ -293,6 +294,7 @@ export class RegisterPasswordBasedUserApplicationTests {
         expect.assertions(2)
         const transaction = await TransactionRepository.new()
         const name = generateRandomName(config.user.name.max_length)
+        const ipAddress = generateRandomIpAddress()
         try {
             await transaction.$transaction(async (transactionSession) => {
                 const ret = await new RegisterPasswordBasedUserApplication(
@@ -302,7 +304,7 @@ export class RegisterPasswordBasedUserApplicationTests {
                 ).register({
                     name: name,
                     password: "password",
-                    ipAddress: "192.168.1.1",
+                    ipAddress: ipAddress,
                 })
                 // will throw an error
                 await new RegisterPasswordBasedUserApplication(
@@ -312,7 +314,7 @@ export class RegisterPasswordBasedUserApplicationTests {
                 ).register({
                     name: name,
                     password: "password",
-                    ipAddress: "192.168.1.1",
+                    ipAddress: ipAddress,
                 })
                 return ret
             })

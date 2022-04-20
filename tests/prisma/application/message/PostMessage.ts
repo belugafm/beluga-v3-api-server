@@ -1,5 +1,5 @@
 import { ErrorCodes, PostMessageApplication } from "../../../../application/message/PostMessage"
-import { generateRandomName, sleep } from "../../functions"
+import { generateRandomIpAddress, generateRandomName, sleep } from "../../functions"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { ChannelEntity } from "../../../../domain/entity/Channel"
@@ -49,7 +49,7 @@ export class PostMessageApplicationTests {
         const user = new UserEntity({
             id: -1,
             name: generateRandomName(config.user.name.max_length),
-            registrationIpAddress: "192.168.1.1",
+            registrationIpAddress: generateRandomIpAddress(),
             trustLevel: trustLevel,
         })
         user.id = await new UserCommandRepository().add(user)
@@ -132,7 +132,7 @@ export class PostMessageApplicationTests {
         const user = new UserEntity({
             id: -1,
             name: generateRandomName(config.user.name.max_length),
-            registrationIpAddress: "192.168.1.1",
+            registrationIpAddress: generateRandomIpAddress(),
             trustLevel: trustLevel,
         })
         user.id = await new UserCommandRepository().add(user)
@@ -213,7 +213,7 @@ export class PostMessageApplicationTests {
         const user = new UserEntity({
             id: -1,
             name: generateRandomName(config.user.name.max_length),
-            registrationIpAddress: "192.168.1.1",
+            registrationIpAddress: generateRandomIpAddress(),
             trustLevel: trustLevel,
         })
         user.id = await new UserCommandRepository().add(user)

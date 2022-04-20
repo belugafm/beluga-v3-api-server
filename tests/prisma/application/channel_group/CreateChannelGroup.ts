@@ -1,4 +1,5 @@
 import { CreateChannelGroupApplication, ErrorCodes } from "../../../../application/channel_group/CreateChannelGroup"
+import { generateRandomIpAddress, generateRandomName } from "../../functions"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
@@ -11,7 +12,6 @@ import { PrismaClient } from "@prisma/client"
 import { TransactionRepository } from "../../../../infrastructure/prisma/repository/Transaction"
 import { UserEntity } from "../../../../domain/entity/User"
 import config from "../../../../config/app"
-import { generateRandomName } from "../../functions"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T
@@ -42,7 +42,7 @@ export class CreateChannelGroupApplicationTests {
         const user = new UserEntity({
             id: -1,
             name: generateRandomName(config.user.name.max_length),
-            registrationIpAddress: "192.168.1.1",
+            registrationIpAddress: generateRandomIpAddress(),
             trustLevel: trustLevel,
         })
         user.id = await new UserCommandRepository().add(user)
@@ -93,7 +93,7 @@ export class CreateChannelGroupApplicationTests {
         const user = new UserEntity({
             id: -1,
             name: generateRandomName(config.user.name.max_length),
-            registrationIpAddress: "192.168.1.1",
+            registrationIpAddress: generateRandomIpAddress(),
             trustLevel: trustLevel,
         })
         user.id = await new UserCommandRepository().add(user)
@@ -154,7 +154,7 @@ export class CreateChannelGroupApplicationTests {
                 const user = new UserEntity({
                     id: -1,
                     name: userName,
-                    registrationIpAddress: "192.168.1.1",
+                    registrationIpAddress: generateRandomIpAddress(),
                     trustLevel: trustLevel,
                 })
                 user.id = await new UserCommandRepository(transactionSession).add(user)
