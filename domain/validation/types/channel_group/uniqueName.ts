@@ -12,10 +12,5 @@ export function uniqueName() {
         maxLength: config.channel_group.unique_name.max_length,
         regexp: config.channel_group.unique_name.regexp,
     }
-    return new Validator<string>(options, [
-        checkIsString,
-        checkMinLength,
-        checkMaxLength,
-        checkRegexPattern,
-    ])
+    return new Validator<string>(options, [checkIsString, checkMinLength, checkMaxLength, checkRegexPattern])
 }

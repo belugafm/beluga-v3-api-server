@@ -89,6 +89,6 @@ export class ChannelGroupEntity extends Entity {
         }
     }
     static generateUniqueName(): string {
-        return generateRandomName(config.channel.unique_name.max_length)
+        return generateRandomName(config.channel.unique_name.default_length)
     }
 }

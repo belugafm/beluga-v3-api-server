@@ -7,7 +7,7 @@ import {
     UserQueryRepository,
 } from "../../../repositories"
 import { CreateChannelApplication, ErrorCodes } from "../../../../application/channel/CreateChannel"
-import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
+import { InternalErrorSpec, InvalidAuth, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
@@ -33,7 +33,13 @@ export const argumentSpecs = defineArguments(["name", "parent_channel_group_id"]
 })
 
 export const expectedErrorSpecs = defineErrors(
-    [ErrorCodes.DoNotHavePermission, ErrorCodes.NameNotMeetPolicy, "internal_error", "unexpected_error"] as const,
+    [
+        ErrorCodes.DoNotHavePermission,
+        ErrorCodes.NameNotMeetPolicy,
+        "invalid_auth",
+        "internal_error",
+        "unexpected_error",
+    ] as const,
     argumentSpecs,
     {
         do_not_have_permission: {
@@ -47,6 +53,7 @@ export const expectedErrorSpecs = defineErrors(
             argument: "name",
             code: "name_not_meet_policy",
         },
+        invalid_auth: new InvalidAuth(),
         internal_error: new InternalErrorSpec(),
         unexpected_error: new UnexpectedErrorSpec(),
     }
@@ -73,7 +80,7 @@ type ReturnType = Promise<ChannelEntity>
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
     const transaction = await TransactionRepository.new<ReturnType>()
     if (authUser == null) {
-        raise(errors["internal_error"])
+        raise(errors["invalid_auth"])
     }
     try {
         return await transaction.$transaction(async (transactionSession) => {

@@ -80,11 +80,11 @@ type ReturnType = Promise<ChannelGroupEntity>
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
     const transaction = await TransactionRepository.new<ReturnType>()
     if (authUser == null) {
-        raise(errors["internal_error"])
+        raise(errors["invalid_auth"])
     }
     try {
         return await transaction.$transaction(async (transactionSession) => {
-            const channel = await new CreateChannelGroupApplication(
+            const channelGroup = await new CreateChannelGroupApplication(
                 new UserQueryRepository(transactionSession),
                 new ChannelGroupQueryRepository(transactionSession),
                 new ChannelGroupCommandRepository(transactionSession)
@@ -93,7 +93,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 parentId: args.parent_id,
                 createdBy: authUser.id,
             })
-            return channel
+            return channelGroup
         })
     } catch (error) {
         if (error instanceof ApplicationError) {

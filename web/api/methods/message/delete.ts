@@ -9,17 +9,15 @@ import {
     UserCommandRepository,
     UserQueryRepository,
 } from "../../../repositories"
-import { ErrorCodes, PostMessageApplication } from "../../../../application/message/PostMessage"
-import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
+import { DeleteMessageApplication, ErrorCodes } from "../../../../application/message/DeleteMessage"
+import { InternalErrorSpec, InvalidAuth, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
-import { MessageEntity } from "../../../../domain/entity/Message"
 import { MethodIdentifiers } from "../../identifier"
-import config from "../../../../config/app"
 
 export const argumentSpecs = defineArguments(["id"] as const, {
     id: {
@@ -31,14 +29,15 @@ export const argumentSpecs = defineArguments(["id"] as const, {
 })
 
 export const expectedErrorSpecs = defineErrors(
-    [ErrorCodes.DoNotHavePermission, "internal_error", "unexpected_error"] as const,
+    [ErrorCodes.DoNotHavePermission, "invalid_auth", "internal_error", "unexpected_error"] as const,
     argumentSpecs,
     {
         do_not_have_permission: {
-            description: ["このチャンネルに投稿する権限がありません"],
-            hint: ["信用レベルを上げると作れるようになります"],
+            description: ["メッセージを削除する権限がありません"],
+            hint: ["信用レベルを上げると削除できるようになります"],
             code: "do_not_have_permission",
         },
+        invalid_auth: new InvalidAuth(),
         internal_error: new InternalErrorSpec(),
         unexpected_error: new UnexpectedErrorSpec(),
     }
@@ -60,36 +59,32 @@ export const facts: MethodFacts = {
     description: ["チャンネルまたはスレッドに投稿します"],
 }
 
-type ReturnType = Promise<MessageEntity>
+type ReturnType = Promise<boolean>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
     const transaction = await TransactionRepository.new<ReturnType>()
     if (authUser == null) {
-        raise(errors["internal_error"])
+        raise(errors["invalid_auth"])
     }
     try {
         return await transaction.$transaction(async (transactionSession) => {
-            const message = await new PostMessageApplication(
+            const succeeded = await new DeleteMessageApplication(
                 new UserQueryRepository(transactionSession),
                 new UserCommandRepository(transactionSession),
                 new ChannelQueryRepository(transactionSession),
                 new ChannelCommandRepository(transactionSession),
                 new MessageQueryRepository(transactionSession),
                 new MessageCommandRepository(transactionSession)
-            ).post({
-                text: args.text,
-                channelId: args.channel_id,
-                threadId: args.thread_id,
-                userId: authUser.id,
+            ).delete({
+                messageId: args.id,
+                requestUserId: authUser.id,
             })
-            return message
+            return succeeded
         })
     } catch (error) {
         if (error instanceof ApplicationError) {
             if (error.code === ErrorCodes.DoNotHavePermission) {
                 raise(errors["do_not_have_permission"], error)
-            } else if (error.code === ErrorCodes.TextLengthNotMeetPolicy) {
-                raise(errors["text_length_not_meet_policy"], error)
             } else {
                 raise(errors["internal_error"], error)
             }

@@ -63,6 +63,7 @@ const config: {
         unique_name: {
             min_length: number
             max_length: number
+            default_length: number
             regexp: object
         }
         description: {
@@ -81,6 +82,7 @@ const config: {
         unique_name: {
             min_length: number
             max_length: number
+            default_length: number
             regexp: object
         }
         description: {
@@ -194,7 +196,8 @@ const config: {
         unique_name: {
             min_length: 1,
             max_length: 32,
-            regexp: new RegExp(/^[a-zA-Z0-9_]+$/),
+            default_length: 12,
+            regexp: new RegExp(/^[a-zA-Z0-9]+$/),
         },
         description: {
             min_length: 0,
@@ -215,7 +218,8 @@ const config: {
         unique_name: {
             min_length: 1,
             max_length: 32,
-            regexp: new RegExp(/^[a-zA-Z0-9_]+$/),
+            default_length: 12,
+            regexp: new RegExp(/^[a-zA-Z0-9]+$/),
         },
         description: {
             min_length: 0,

@@ -5,7 +5,7 @@ import { TurboServer } from "../../turbo"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = req.headers["x-real-ip"]
-        const channel = await createChannelGroup(
+        const channelGroup = await createChannelGroup(
             {
                 name: req.body.name,
                 parent_id: req.body.parent_id,
@@ -15,7 +15,7 @@ export default (server: TurboServer) => {
         )
         return {
             ok: true,
-            channel_group: channel.toResponseObject(),
+            channel_group: channelGroup.toResponseObject(),
         }
     })
 }

@@ -1,11 +1,11 @@
 import { ChannelGroup, PrismaClient } from "@prisma/client"
-import { ChannelGroupdId, UserId } from "../../../../domain/types"
 import { IChannelGroupQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/ChannelGroup"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 import { isInteger, isString } from "../../../../domain/validation"
 
 import { ChannelEntity } from "../../../../domain/entity/Channel"
 import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
+import { ChannelGroupdId } from "../../../../domain/types"
 import { toEntity as channelToEntity } from "./Channel"
 import { prisma } from "../client"
 
@@ -31,7 +31,7 @@ export class ChannelGroupQueryRepository implements IChannelGroupQueryRepository
             this._prisma = prisma
         }
     }
-    async findById(id: UserId): Promise<ChannelGroupEntity | null> {
+    async findById(id: ChannelGroupdId): Promise<ChannelGroupEntity | null> {
         try {
             if (isInteger(id) !== true) {
                 throw new RepositoryError("`id` must be a number")

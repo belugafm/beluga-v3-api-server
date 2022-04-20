@@ -10,7 +10,7 @@ import {
     UserQueryRepository,
 } from "../../../repositories"
 import { ErrorCodes, PostMessageApplication } from "../../../../application/message/PostMessage"
-import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
+import { InternalErrorSpec, InvalidAuth, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
@@ -51,6 +51,7 @@ export const expectedErrorSpecs = defineErrors(
         "invalid_channel_id",
         "invalid_thread_id",
         "argument_missing",
+        "invalid_auth",
         "internal_error",
         "unexpected_error",
     ] as const,
@@ -96,6 +97,7 @@ export const expectedErrorSpecs = defineErrors(
             hint: [],
             code: "argument_missing",
         },
+        invalid_auth: new InvalidAuth(),
         internal_error: new InternalErrorSpec(),
         unexpected_error: new UnexpectedErrorSpec(),
     }
@@ -122,7 +124,7 @@ type ReturnType = Promise<MessageEntity>
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
     const transaction = await TransactionRepository.new<ReturnType>()
     if (authUser == null) {
-        raise(errors["internal_error"])
+        raise(errors["invalid_auth"])
     }
     if (args.channel_id == null && args.thread_id == null) {
         raise(errors["argument_missing"])
