@@ -5,6 +5,7 @@ export { AuthenticityTokenQueryRepository } from "./query/AuthenticityToken"
 export { ChannelGroupQueryRepository } from "./query/ChannelGroup"
 export { ChannelQueryRepository } from "./query/Channel"
 export { MessageQueryRepository } from "./query/Message"
+export { ChannelGroupTimelineQueryRepository } from "./query/ChannelGroupTimeline"
 
 export { LoginCredentialCommandRepository } from "./command/LoginCredential"
 export { LoginSessionCommandRepository } from "./command/LoginSession"

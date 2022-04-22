@@ -1,7 +1,5 @@
 import { ChannelGroupdId, MessageId } from "../../types"
 
-import { MessageEntity } from "../../entity/Message"
-
 export const SortBy = {
     CreatedAt: "CreatedAt",
 } as const
@@ -20,5 +18,5 @@ export type Parameters = {
 }
 
 export interface IChannelGroupTimelineQueryRepository {
-    listMessage(params: { channelGroupId: ChannelGroupdId } & Parameters): Promise<MessageEntity[]>
+    listMessageId(params: { channelGroupId: ChannelGroupdId } & Parameters): Promise<MessageId[]>
 }

@@ -12,7 +12,7 @@ export class TransactionRepository<T> implements ITransactionRepository<T> {
     static async new<T>(): Promise<TransactionRepository<T>> {
         return new TransactionRepository()
     }
-    async $transaction(func: (session: any) => T) {
+    async $transaction(func: (session: any) => T): Promise<T> {
         // @ts-ignore
         return (await prisma.$transaction(func)) as T
     }
