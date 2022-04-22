@@ -2,6 +2,7 @@ import * as vs from "../../../../domain/validation"
 
 import {
     ChannelCommandRepository,
+    ChannelGroupQueryRepository,
     ChannelQueryRepository,
     MessageCommandRepository,
     MessageQueryRepository,
@@ -15,6 +16,7 @@ import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../
 
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { AuthenticationMethods } from "../../facts/authentication_method"
+import { ChannelGroupTimelineCommandRepository } from "../../../../infrastructure/prisma/repository"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MessageEntity } from "../../../../domain/entity/Message"
@@ -136,8 +138,10 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 new UserCommandRepository(transactionSession),
                 new ChannelQueryRepository(transactionSession),
                 new ChannelCommandRepository(transactionSession),
+                new ChannelGroupQueryRepository(transactionSession),
                 new MessageQueryRepository(transactionSession),
-                new MessageCommandRepository(transactionSession)
+                new MessageCommandRepository(transactionSession),
+                new ChannelGroupTimelineCommandRepository(transactionSession)
             ).post({
                 text: args.text,
                 channelId: args.channel_id,

@@ -1,6 +1,6 @@
-import { ChannelId, MessageId } from "../../../types"
+import { ChannelId, MessageId } from "../../types"
 
-import { MessageEntity } from "../../../entity/Message"
+import { MessageEntity } from "../../entity/Message"
 
 export const SortOrder = {
     Ascending: "Ascending",

@@ -76,13 +76,14 @@ export class MessageEntity extends Entity {
         this.deleted = params.deleted != null ? params.deleted : false
     }
     toResponseObject() {
+        const text = this.deleted ? null : this.text
         return {
             id: this.id,
             channel_id: this.channelId,
             channel: {},
             user_id: this.userId,
             user: {},
-            text: this.text,
+            text: text,
             created_at: this.createdAt,
             favorite_count: this.favoriteCount,
             like_count: this.likeCount,

@@ -9,7 +9,7 @@ import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MessageEntity } from "../../../../domain/entity/Message"
 import { MethodIdentifiers } from "../../identifier"
-import { SortOrder } from "../../../../domain/repository/query/timeline/ChannelTimeline"
+import { SortOrder } from "../../../../domain/repository/query/ChannelTimeline"
 
 export const argumentSpecs = defineArguments(["channel_id", "since_id", "max_id", "limit", "sort_order"] as const, {
     channel_id: {
