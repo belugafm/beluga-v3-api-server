@@ -15,6 +15,7 @@ export function has_changed(a: Channel, b: Channel) {
         a.createdAt?.getTime() === b.createdAt?.getTime() &&
         a.createdBy === b.createdBy &&
         a.statusString === b.statusString &&
+        a.description === b.description &&
         a.messageCount === b.messageCount
     )
 }
@@ -43,6 +44,7 @@ export class ChannelCommandRepository extends ChangeEventHandler implements ICha
                     createdBy: channel.createdBy,
                     messageCount: channel.messageCount,
                     statusString: channel.statusString,
+                    description: channel.description,
                 },
             })
             return result.id
@@ -78,6 +80,7 @@ export class ChannelCommandRepository extends ChangeEventHandler implements ICha
                     createdBy: channel.createdBy,
                     messageCount: channel.messageCount,
                     statusString: channel.statusString,
+                    description: channel.description,
                 },
             })
             if (has_changed(origChannel, updatedChannel)) {

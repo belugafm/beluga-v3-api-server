@@ -23,6 +23,7 @@ export const ErrorCodes = {
     InvalidCreatedAt: "invalid_created_at",
     InvalidMessageCount: "invalid_message_count",
     InvalidStatusString: "invalid_status_string",
+    InvalidDescription: "invalid_description",
 } as const
 
 export class ChannelEntity extends Entity {
@@ -57,6 +58,17 @@ export class ChannelEntity extends Entity {
     })
     statusString: string
 
+    @validateBy(
+        vn.string({
+            minLength: config.channel.description.min_length,
+            maxLength: config.channel.description.max_length,
+        }),
+        {
+            errorCode: ErrorCodes.InvalidDescription,
+        }
+    )
+    description: string
+
     constructor(
         params: {
             id: ChannelEntity["id"]
@@ -76,6 +88,7 @@ export class ChannelEntity extends Entity {
         this.createdAt = params.createdAt
         this.messageCount = params.messageCount != null ? params.messageCount : 0
         this.statusString = params.statusString != null ? params.statusString : "#"
+        this.description = params.description != null ? params.description : ""
     }
     toResponseObject() {
         return {
@@ -86,6 +99,7 @@ export class ChannelEntity extends Entity {
             created_by: this.createdBy,
             created_at: this.createdAt,
             message_count: this.messageCount,
+            description: this.description,
             status_string: this.statusString,
         }
     }

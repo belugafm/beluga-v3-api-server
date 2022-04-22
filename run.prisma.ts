@@ -48,6 +48,7 @@ async function startServer() {
     server.register(require("./web/endpoint/channel/create"))
     server.register(require("./web/endpoint/channel/show"))
     server.register(require("./web/endpoint/message/post"))
+    server.register(require("./web/endpoint/message/delete"))
     server.register(require("./web/endpoint/timeline/channel"))
     // server.register(require("./web/endpoint/debug"))
 
