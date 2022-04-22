@@ -4,6 +4,8 @@ import { generateRandomIpAddress, generateRandomName, sleep } from "../../functi
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { ChannelEntity } from "../../../../domain/entity/Channel"
 import { IChannelCommandRepository } from "../../../../domain/repository/command/Channel"
+import { IChannelGroupQueryRepository } from "../../../../domain/repository/query/ChannelGroup"
+import { IChannelGroupTimelineCommandRepository } from "../../../../domain/repository/command/ChannelGroupTimeline"
 import { IChannelQueryRepository } from "../../../../domain/repository/query/Channel"
 import { IMessageCommandRepository } from "../../../../domain/repository/command/Message"
 import { IMessageQueryRepository } from "../../../../domain/repository/query/Message"
@@ -26,19 +28,23 @@ type NewableTransaction = {
 export class PostMessageApplicationTests {
     constructor() {}
     async testNormal<
-        S extends IUserQueryRepository,
-        T extends IUserCommandRepository,
-        U extends IChannelQueryRepository,
-        V extends IChannelCommandRepository,
-        W extends IMessageQueryRepository,
-        X extends IMessageCommandRepository
+        A extends IUserQueryRepository,
+        B extends IUserCommandRepository,
+        C extends IChannelQueryRepository,
+        D extends IChannelCommandRepository,
+        E extends IChannelGroupQueryRepository,
+        F extends IMessageQueryRepository,
+        G extends IMessageCommandRepository,
+        H extends IChannelGroupTimelineCommandRepository
     >(
-        UserQueryRepository: NewableRepository<S>,
-        UserCommandRepository: NewableRepository<T>,
-        ChannelQueryRepository: NewableRepository<U>,
-        ChannelCommandRepository: NewableRepository<V>,
-        MessageQueryRepository: NewableRepository<W>,
-        MessageCommandRepository: NewableRepository<X>,
+        UserQueryRepository: NewableRepository<A>,
+        UserCommandRepository: NewableRepository<B>,
+        ChannelQueryRepository: NewableRepository<C>,
+        ChannelCommandRepository: NewableRepository<D>,
+        ChannelGroupQueryRepository: NewableRepository<E>,
+        MessageQueryRepository: NewableRepository<F>,
+        MessageCommandRepository: NewableRepository<G>,
+        ChannelGroupTimelineCommandRepository: NewableRepository<H>,
         TransactionRepository: NewableTransaction
     ) {
         const trustLevel = UserEntity.getInitialTrustLevel({
@@ -70,8 +76,10 @@ export class PostMessageApplicationTests {
                 new UserCommandRepository(transactionSession),
                 new ChannelQueryRepository(transactionSession),
                 new ChannelCommandRepository(transactionSession),
+                new ChannelGroupQueryRepository(transactionSession),
                 new MessageQueryRepository(transactionSession),
-                new MessageCommandRepository(transactionSession)
+                new MessageCommandRepository(transactionSession),
+                new ChannelGroupTimelineCommandRepository(transactionSession)
             ).post({
                 text: "hogehoge",
                 channelId: channel.id,
@@ -82,8 +90,10 @@ export class PostMessageApplicationTests {
                 new UserCommandRepository(transactionSession),
                 new ChannelQueryRepository(transactionSession),
                 new ChannelCommandRepository(transactionSession),
+                new ChannelGroupQueryRepository(transactionSession),
                 new MessageQueryRepository(transactionSession),
-                new MessageCommandRepository(transactionSession)
+                new MessageCommandRepository(transactionSession),
+                new ChannelGroupTimelineCommandRepository(transactionSession)
             ).post({
                 text: "hogehoge",
                 userId: user.id,
@@ -108,19 +118,23 @@ export class PostMessageApplicationTests {
         await new MessageCommandRepository().delete(thread)
     }
     async testVisitorRateLimittingFailureCase<
-        S extends IUserQueryRepository,
-        T extends IUserCommandRepository,
-        U extends IChannelQueryRepository,
-        V extends IChannelCommandRepository,
-        W extends IMessageQueryRepository,
-        X extends IMessageCommandRepository
+        A extends IUserQueryRepository,
+        B extends IUserCommandRepository,
+        C extends IChannelQueryRepository,
+        D extends IChannelCommandRepository,
+        E extends IChannelGroupQueryRepository,
+        F extends IMessageQueryRepository,
+        G extends IMessageCommandRepository,
+        H extends IChannelGroupTimelineCommandRepository
     >(
-        UserQueryRepository: NewableRepository<S>,
-        UserCommandRepository: NewableRepository<T>,
-        ChannelQueryRepository: NewableRepository<U>,
-        ChannelCommandRepository: NewableRepository<V>,
-        MessageQueryRepository: NewableRepository<W>,
-        MessageCommandRepository: NewableRepository<X>,
+        UserQueryRepository: NewableRepository<A>,
+        UserCommandRepository: NewableRepository<B>,
+        ChannelQueryRepository: NewableRepository<C>,
+        ChannelCommandRepository: NewableRepository<D>,
+        ChannelGroupQueryRepository: NewableRepository<E>,
+        MessageQueryRepository: NewableRepository<F>,
+        MessageCommandRepository: NewableRepository<G>,
+        ChannelGroupTimelineCommandRepository: NewableRepository<H>,
         TransactionRepository: NewableTransaction
     ) {
         expect.assertions(4)
@@ -155,8 +169,10 @@ export class PostMessageApplicationTests {
                     new UserCommandRepository(transactionSession),
                     new ChannelQueryRepository(transactionSession),
                     new ChannelCommandRepository(transactionSession),
+                    new ChannelGroupQueryRepository(transactionSession),
                     new MessageQueryRepository(transactionSession),
-                    new MessageCommandRepository(transactionSession)
+                    new MessageCommandRepository(transactionSession),
+                    new ChannelGroupTimelineCommandRepository(transactionSession)
                 ).post({
                     text: "hogehoge",
                     channelId: channel.id,
@@ -167,8 +183,10 @@ export class PostMessageApplicationTests {
                     new UserCommandRepository(transactionSession),
                     new ChannelQueryRepository(transactionSession),
                     new ChannelCommandRepository(transactionSession),
+                    new ChannelGroupQueryRepository(transactionSession),
                     new MessageQueryRepository(transactionSession),
-                    new MessageCommandRepository(transactionSession)
+                    new MessageCommandRepository(transactionSession),
+                    new ChannelGroupTimelineCommandRepository(transactionSession)
                 ).post({
                     text: "hogehoge",
                     userId: user.id,
@@ -190,19 +208,23 @@ export class PostMessageApplicationTests {
         await new ChannelCommandRepository().delete(channel)
     }
     async testVisitorRateLimittingSuccessfulCase<
-        S extends IUserQueryRepository,
-        T extends IUserCommandRepository,
-        U extends IChannelQueryRepository,
-        V extends IChannelCommandRepository,
-        W extends IMessageQueryRepository,
-        X extends IMessageCommandRepository
+        A extends IUserQueryRepository,
+        B extends IUserCommandRepository,
+        C extends IChannelQueryRepository,
+        D extends IChannelCommandRepository,
+        E extends IChannelGroupQueryRepository,
+        F extends IMessageQueryRepository,
+        G extends IMessageCommandRepository,
+        H extends IChannelGroupTimelineCommandRepository
     >(
-        UserQueryRepository: NewableRepository<S>,
-        UserCommandRepository: NewableRepository<T>,
-        ChannelQueryRepository: NewableRepository<U>,
-        ChannelCommandRepository: NewableRepository<V>,
-        MessageQueryRepository: NewableRepository<W>,
-        MessageCommandRepository: NewableRepository<X>,
+        UserQueryRepository: NewableRepository<A>,
+        UserCommandRepository: NewableRepository<B>,
+        ChannelQueryRepository: NewableRepository<C>,
+        ChannelCommandRepository: NewableRepository<D>,
+        ChannelGroupQueryRepository: NewableRepository<E>,
+        MessageQueryRepository: NewableRepository<F>,
+        MessageCommandRepository: NewableRepository<G>,
+        ChannelGroupTimelineCommandRepository: NewableRepository<H>,
         TransactionRepository: NewableTransaction
     ) {
         const trustLevel = UserEntity.getInitialTrustLevel({
@@ -235,8 +257,10 @@ export class PostMessageApplicationTests {
                 new UserCommandRepository(transactionSession),
                 new ChannelQueryRepository(transactionSession),
                 new ChannelCommandRepository(transactionSession),
+                new ChannelGroupQueryRepository(transactionSession),
                 new MessageQueryRepository(transactionSession),
-                new MessageCommandRepository(transactionSession)
+                new MessageCommandRepository(transactionSession),
+                new ChannelGroupTimelineCommandRepository(transactionSession)
             ).post({
                 text: "hogehoge",
                 channelId: channel.id,
@@ -248,8 +272,10 @@ export class PostMessageApplicationTests {
                 new UserCommandRepository(transactionSession),
                 new ChannelQueryRepository(transactionSession),
                 new ChannelCommandRepository(transactionSession),
+                new ChannelGroupQueryRepository(transactionSession),
                 new MessageQueryRepository(transactionSession),
-                new MessageCommandRepository(transactionSession)
+                new MessageCommandRepository(transactionSession),
+                new ChannelGroupTimelineCommandRepository(transactionSession)
             ).post({
                 text: "hogehoge",
                 userId: user.id,

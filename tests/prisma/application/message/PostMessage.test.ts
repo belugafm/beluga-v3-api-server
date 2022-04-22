@@ -12,8 +12,10 @@ describe("PostMessageApplication", () => {
             repo.UserCommandRepository,
             repo.ChannelQueryRepository,
             repo.ChannelCommandRepository,
+            repo.ChannelGroupQueryRepository,
             repo.MessageQueryRepository,
             repo.MessageCommandRepository,
+            repo.ChannelGroupTimelineCommandRepository,
             repo.TransactionRepository
         )
     })
@@ -23,8 +25,10 @@ describe("PostMessageApplication", () => {
             repo.UserCommandRepository,
             repo.ChannelQueryRepository,
             repo.ChannelCommandRepository,
+            repo.ChannelGroupQueryRepository,
             repo.MessageQueryRepository,
             repo.MessageCommandRepository,
+            repo.ChannelGroupTimelineCommandRepository,
             repo.TransactionRepository
         )
     })
@@ -34,8 +38,10 @@ describe("PostMessageApplication", () => {
             repo.UserCommandRepository,
             repo.ChannelQueryRepository,
             repo.ChannelCommandRepository,
+            repo.ChannelGroupQueryRepository,
             repo.MessageQueryRepository,
             repo.MessageCommandRepository,
+            repo.ChannelGroupTimelineCommandRepository,
             repo.TransactionRepository
         )
     })

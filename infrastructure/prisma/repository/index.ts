@@ -13,5 +13,6 @@ export { AuthenticityTokenCommandRepository } from "./command/AuthenticityToken"
 export { ChannelGroupCommandRepository } from "./command/ChannelGroup"
 export { ChannelCommandRepository } from "./command/Channel"
 export { MessageCommandRepository } from "./command/Message"
+export { ChannelGroupTimelineCommandRepository } from "./command/ChannelGroupTimeline"
 
 export { TransactionRepository } from "./Transaction"

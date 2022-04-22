@@ -1,6 +1,6 @@
-import { ChannelGroupdId, MessageId } from "../../../types"
+import { ChannelGroupdId, MessageId } from "../../types"
 
-import { MessageEntity } from "../../../entity/Message"
+import { MessageEntity } from "../../entity/Message"
 
 export const SortBy = {
     CreatedAt: "CreatedAt",

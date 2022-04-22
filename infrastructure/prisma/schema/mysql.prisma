@@ -97,3 +97,13 @@ model Message {
     @@index([channelId])
     @@index([deleted])
 }
+
+model ChannelGroupTimeline {
+    id             Int      @id @default(autoincrement())
+    channelGroupId Int
+    createdAt      DateTime @default(now())
+    messageId      Int
+
+    @@index([channelGroupId])
+    @@index([messageId])
+}

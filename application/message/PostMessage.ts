@@ -12,6 +12,8 @@ import { ErrorCodes as DomainErrorCodes, MessageEntity } from "../../domain/enti
 import { ApplicationError } from "../ApplicationError"
 import { DomainError } from "../../domain/DomainError"
 import { IChannelCommandRepository } from "../../domain/repository/command/Channel"
+import { IChannelGroupQueryRepository } from "../../domain/repository/query/ChannelGroup"
+import { IChannelGroupTimelineCommandRepository } from "../../domain/repository/command/ChannelGroupTimeline"
 import { IChannelQueryRepository } from "../../domain/repository/query/Channel"
 import { IMessageCommandRepository } from "../../domain/repository/command/Message"
 import { IMessageQueryRepository } from "../../domain/repository/query/Message"
@@ -35,8 +37,10 @@ export class PostMessageApplication {
     private messageQueryRepository: IMessageQueryRepository
     private channelQueryRepository: IChannelQueryRepository
     private channelCommandRepository: IChannelCommandRepository
+    private channelGroupQueryRepository: IChannelGroupQueryRepository
     private userQueryRepository: IUserQueryRepository
     private userCommandRepository: IUserCommandRepository
+    private channelGroupTimelineCommandRepository: IChannelGroupTimelineCommandRepository
     private permissionToPostMessageService: PostMessagePermission
     private checkRateLimitForPostingMessageService: CheckRateLimitForPostingMessageService
     constructor(
@@ -44,15 +48,19 @@ export class PostMessageApplication {
         userCommandRepository: IUserCommandRepository,
         channelQueryRepository: IChannelQueryRepository,
         channelCommandRepository: IChannelCommandRepository,
+        channelGroupQueryRepository: IChannelGroupQueryRepository,
         messageQueryRepository: IMessageQueryRepository,
-        messageCommandRepository: IMessageCommandRepository
+        messageCommandRepository: IMessageCommandRepository,
+        channelGroupTimelineCommandRepository: IChannelGroupTimelineCommandRepository
     ) {
         this.messageQueryRepository = messageQueryRepository
         this.messageCommandRepository = messageCommandRepository
         this.channelQueryRepository = channelQueryRepository
+        this.channelCommandRepository = channelCommandRepository
+        this.channelGroupQueryRepository = channelGroupQueryRepository
         this.userQueryRepository = userQueryRepository
         this.userCommandRepository = userCommandRepository
-        this.channelCommandRepository = channelCommandRepository
+        this.channelGroupTimelineCommandRepository = channelGroupTimelineCommandRepository
         this.permissionToPostMessageService = new PostMessagePermission(userQueryRepository, channelQueryRepository)
         this.checkRateLimitForPostingMessageService = new CheckRateLimitForPostingMessageService(
             userQueryRepository,
@@ -114,6 +122,14 @@ export class PostMessageApplication {
                 thread.replyCount += 1
                 await this.messageCommandRepository.update(thread)
 
+                let parentChannelGroupId = channel.parentChannelGroupId
+                let parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+                while (parentChannelGroup) {
+                    await this.channelGroupTimelineCommandRepository.add(message, parentChannelGroup)
+                    parentChannelGroupId = parentChannelGroup.parentId
+                    parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+                }
+
                 return message
             } catch (error) {
                 if (error instanceof DomainError) {
@@ -158,6 +174,14 @@ export class PostMessageApplication {
 
                 user.messageCount += 1
                 await this.userCommandRepository.update(user)
+
+                let parentChannelGroupId = channel.parentChannelGroupId
+                let parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+                while (parentChannelGroup) {
+                    await this.channelGroupTimelineCommandRepository.add(message, parentChannelGroup)
+                    parentChannelGroupId = parentChannelGroup.parentId
+                    parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+                }
 
                 return message
             } catch (error) {

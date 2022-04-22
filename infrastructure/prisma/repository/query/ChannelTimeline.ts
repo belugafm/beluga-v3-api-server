@@ -2,13 +2,13 @@ import {
     IChannelTimelineQueryRepository,
     Parameters,
     SortOrder,
-} from "../../../../../domain/repository/query/timeline/ChannelTimeline"
+} from "../../../../domain/repository/query/ChannelTimeline"
 import { Message, PrismaClient } from "@prisma/client"
-import { RepositoryError, UnknownRepositoryError } from "../../../../../domain/repository/RepositoryError"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { MessageEntity } from "../../../../../domain/entity/Message"
-import { isInteger } from "../../../../../domain/validation"
-import { prisma } from "../../client"
+import { MessageEntity } from "../../../../domain/entity/Message"
+import { isInteger } from "../../../../domain/validation"
+import { prisma } from "../client"
 
 function toEntity(message: Message) {
     return new MessageEntity({
