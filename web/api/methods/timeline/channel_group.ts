@@ -7,7 +7,6 @@ import {
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
-import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MessageEntity } from "../../../../domain/entity/Message"
@@ -70,13 +69,9 @@ export const facts: MethodFacts = {
     httpMethod: HttpMethods.GET,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    authenticationRequired: true,
+    authenticationRequired: false,
     private: false,
-    acceptedAuthenticationMethods: [
-        AuthenticationMethods.OAuth,
-        AuthenticationMethods.AccessToken,
-        AuthenticationMethods.Cookie,
-    ],
+    acceptedAuthenticationMethods: [],
     acceptedScopes: {},
     description: ["チャンネルグループのタイムラインを取得します"],
 }
@@ -94,10 +89,6 @@ function getSortOrder(sortOrderString?: string) {
 }
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
-    // トップページで使うので認証不要
-    // if (authUser == null) {
-    //     raise(errors["internal_error"])
-    // }
     try {
         const messageIds = await new ChannelGroupTimelineQueryRepository().listMessageId({
             channelGroupId: args.channel_group_id,

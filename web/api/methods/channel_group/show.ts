@@ -3,7 +3,6 @@ import * as vs from "../../../../domain/validation"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
-import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
 import { ChannelGroupQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
@@ -51,11 +50,7 @@ export const facts: MethodFacts = {
     acceptedContentTypes: [ContentTypes.ApplicationJson],
     authenticationRequired: false,
     private: false,
-    acceptedAuthenticationMethods: [
-        AuthenticationMethods.OAuth,
-        AuthenticationMethods.AccessToken,
-        AuthenticationMethods.Cookie,
-    ],
+    acceptedAuthenticationMethods: [],
     acceptedScopes: {},
     description: ["チャンネルグループの情報を取得します"],
 }

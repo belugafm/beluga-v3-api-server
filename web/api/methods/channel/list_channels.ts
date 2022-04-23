@@ -4,7 +4,6 @@ import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 import { SortBy, SortOrder } from "../../../../domain/repository/query/Channel"
 
-import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ChannelEntity } from "../../../../domain/entity/Channel"
 import { ChannelQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
@@ -36,13 +35,9 @@ export const facts: MethodFacts = {
     httpMethod: HttpMethods.GET,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    authenticationRequired: true,
+    authenticationRequired: false,
     private: false,
-    acceptedAuthenticationMethods: [
-        AuthenticationMethods.OAuth,
-        AuthenticationMethods.AccessToken,
-        AuthenticationMethods.Cookie,
-    ],
+    acceptedAuthenticationMethods: [],
     acceptedScopes: {},
     description: ["存在する全てのチャンネルの一覧を取得します"],
 }
