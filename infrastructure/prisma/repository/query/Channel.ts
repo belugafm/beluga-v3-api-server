@@ -20,6 +20,26 @@ export function toEntity(channel: Channel) {
     })
 }
 
+function getSortOrder(sortOrderString: typeof SortOrder[keyof typeof SortOrder]) {
+    if (sortOrderString == "descending") {
+        return "desc"
+    }
+    if (sortOrderString == "ascending") {
+        return "asc"
+    }
+    throw new RepositoryError("Invalid `sortOrder`")
+}
+
+function getSortBy(sortByString: typeof SortBy[keyof typeof SortBy]) {
+    if (sortByString == SortBy.CreatedAt) {
+        return "createdAt"
+    }
+    if (sortByString == SortBy.messageCount) {
+        return "messageCount"
+    }
+    throw new RepositoryError("Invalid `sortOrder`")
+}
+
 export class ChannelQueryRepository implements IChannelQueryRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
@@ -86,6 +106,9 @@ export class ChannelQueryRepository implements IChannelQueryRepository {
                 where: {
                     createdBy: userId,
                 },
+                orderBy: {
+                    [getSortBy(sortBy)]: getSortOrder(sortOrder),
+                },
             })
             return channels.map((channel) => toEntity(channel))
         } catch (error) {
@@ -108,6 +131,28 @@ export class ChannelQueryRepository implements IChannelQueryRepository {
             const channels = await this._prisma.channel.findMany({
                 where: {
                     parentChannelGroupId: channelGroupId,
+                },
+                orderBy: {
+                    [getSortBy(sortBy)]: getSortOrder(sortOrder),
+                },
+            })
+            return channels.map((channel) => toEntity(channel))
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
+    async list(
+        sortBy: typeof SortBy[keyof typeof SortBy],
+        sortOrder: typeof SortOrder[keyof typeof SortOrder]
+    ): Promise<ChannelEntity[]> {
+        try {
+            const channels = await this._prisma.channel.findMany({
+                orderBy: {
+                    [getSortBy(sortBy)]: getSortOrder(sortOrder),
                 },
             })
             return channels.map((channel) => toEntity(channel))

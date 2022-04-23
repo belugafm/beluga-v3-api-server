@@ -78,10 +78,10 @@ export const facts: MethodFacts = {
 type ReturnType = Promise<MessageEntity[]>
 
 function getSortOrder(sortOrderString?: string) {
-    if (sortOrderString == "descending") {
+    if (sortOrderString == SortOrder.Descending) {
         return SortOrder.Descending
     }
-    if (sortOrderString == "descending") {
+    if (sortOrderString == SortOrder.Ascending) {
         return SortOrder.Ascending
     }
     return SortOrder.Descending

@@ -24,11 +24,11 @@ function toEntity(message: Message) {
     })
 }
 
-function getSortOrder(sortOrderString: keyof typeof SortOrder) {
-    if (sortOrderString == "Descending") {
+function getSortOrder(sortOrderString: typeof SortOrder[keyof typeof SortOrder]) {
+    if (sortOrderString == SortOrder.Descending) {
         return "desc"
     }
-    if (sortOrderString == "Ascending") {
+    if (sortOrderString == SortOrder.Ascending) {
         return "asc"
     }
     throw new RepositoryError("invalid `sortOrder`")

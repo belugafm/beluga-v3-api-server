@@ -84,19 +84,20 @@ export const facts: MethodFacts = {
 type ReturnType = Promise<MessageEntity[]>
 
 function getSortOrder(sortOrderString?: string) {
-    if (sortOrderString == "descending") {
+    if (sortOrderString == SortOrder.Descending) {
         return SortOrder.Descending
     }
-    if (sortOrderString == "descending") {
+    if (sortOrderString == SortOrder.Ascending) {
         return SortOrder.Ascending
     }
     return SortOrder.Descending
 }
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
-    if (authUser == null) {
-        raise(errors["internal_error"])
-    }
+    // トップページで使うので認証不要
+    // if (authUser == null) {
+    //     raise(errors["internal_error"])
+    // }
     try {
         const messageIds = await new ChannelGroupTimelineQueryRepository().listMessageId({
             channelGroupId: args.channel_group_id,

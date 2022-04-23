@@ -7,11 +7,11 @@ import { PrismaClient } from "@prisma/client"
 import { isInteger } from "../../../../domain/validation"
 import { prisma } from "../client"
 
-function getSortOrder(sortOrderString: keyof typeof SortOrder) {
-    if (sortOrderString == "Descending") {
+function getSortOrder(sortOrderString: typeof SortOrder[keyof typeof SortOrder]) {
+    if (sortOrderString == SortOrder.Descending) {
         return "desc"
     }
-    if (sortOrderString == "Ascending") {
+    if (sortOrderString == SortOrder.Ascending) {
         return "asc"
     }
     throw new RepositoryError("invalid `sortOrder`")

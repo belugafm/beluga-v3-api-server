@@ -34,7 +34,7 @@ export const expectedErrorSpecs = defineErrors(
 )
 
 export const facts: MethodFacts = {
-    url: MethodIdentifiers.ListChannels,
+    url: MethodIdentifiers.ListChannelsInChannelGroup,
     httpMethod: HttpMethods.GET,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],

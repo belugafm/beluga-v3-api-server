@@ -1,12 +1,12 @@
 import { ChannelGroupdId, MessageId } from "../../types"
 
 export const SortOrder = {
-    Ascending: "Ascending",
-    Descending: "Descending",
+    Ascending: "ascending",
+    Descending: "descending",
 } as const
 
 export type Parameters = {
-    sortOrder: keyof typeof SortOrder
+    sortOrder: typeof SortOrder[keyof typeof SortOrder]
     limit: number
     sinceId?: MessageId
     maxId?: MessageId
