@@ -2,10 +2,11 @@ import signin, { facts } from "../../api/methods/account/signin"
 
 import { TurboServer } from "../../turbo"
 import config from "../../../config/app"
+import { getRemoteIpAddress } from "../../remoteIpAddress"
 
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
-        const remoteIpAddress = req.headers["x-real-ip"]
+        const remoteIpAddress = getRemoteIpAddress(req.headers)
         const [user, _, loginSession] = await signin(
             {
                 name: req.body.name,

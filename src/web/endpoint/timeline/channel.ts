@@ -2,10 +2,11 @@ import { ChannelQueryRepository, UserQueryRepository } from "../../repositories"
 import listMessage, { facts } from "../../api/methods/timeline/channel"
 
 import { TurboServer } from "../../turbo"
+import { getRemoteIpAddress } from "../../remoteIpAddress"
 
 export default (server: TurboServer) => {
     server.get(facts, async (req, res, params) => {
-        const remoteIpAddress = req.headers["x-real-ip"]
+        const remoteIpAddress = getRemoteIpAddress(req.headers)
         const messages = await listMessage(
             {
                 channel_id: Math.trunc(req.query.channel_id),

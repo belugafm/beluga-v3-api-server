@@ -3,10 +3,11 @@ import getRequestToken, { facts } from "../../../api/methods/auth/twitter/reques
 import { TurboServer } from "../../../turbo"
 import { authSessionExpireSeconds } from "../../../../application/authentication/Twitter"
 import config from "../../../../config/app"
+import { getRemoteIpAddress } from "../../../remoteIpAddress"
 
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
-        const remoteIpAddress = req.headers["x-real-ip"]
+        const remoteIpAddress = getRemoteIpAddress(req.headers)
         const response = await getRequestToken({}, remoteIpAddress, null)
         if (response == null) {
             return {

@@ -1,10 +1,11 @@
 import postMessage, { facts } from "../../api/methods/message/post"
 
 import { TurboServer } from "../../turbo"
+import { getRemoteIpAddress } from "../../remoteIpAddress"
 
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
-        const remoteIpAddress = req.headers["x-real-ip"]
+        const remoteIpAddress = getRemoteIpAddress(req.headers)
         const message = await postMessage(
             {
                 text: req.body.text,
