@@ -17,7 +17,7 @@ import { PostMessageApplication } from "../../../application/message/PostMessage
 import { PrismaClient } from "@prisma/client"
 import { TransactionRepository } from "../../../infrastructure/prisma/repository/Transaction"
 import { UserEntity } from "../../../domain/entity/User"
-import config from "../../../config/app"
+import config from "../../../src/config/app"
 
 interface NewableRepository<T> {
     new (transaction?: PrismaClient): T

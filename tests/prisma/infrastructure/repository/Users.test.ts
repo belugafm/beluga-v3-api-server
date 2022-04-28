@@ -3,7 +3,7 @@ import { generateRandomIpAddress, generateRandomName } from "../../functions"
 import { UserCommandRepository } from "../../../../infrastructure/prisma/repository/command/User"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
-import config from "../../../../config/app"
+import config from "../../../../src/config/app"
 
 jest.setTimeout(30000)
 

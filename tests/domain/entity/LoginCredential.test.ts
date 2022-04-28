@@ -1,7 +1,7 @@
 import { ErrorCodes, LoginCredentialEntity } from "../../../domain/entity/LoginCredential"
 
 import { DomainError } from "../../../domain/DomainError"
-import config from "../../../config/app"
+import config from "../../../src/config/app"
 
 function generateRandomPassword(length: number) {
     const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+!\"#$%&'()~=L+*?<"

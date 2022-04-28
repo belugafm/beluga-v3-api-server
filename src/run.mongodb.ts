@@ -6,7 +6,7 @@ import { MongoClient } from "mongodb"
 import { MongoMemoryReplSet } from "mongodb-memory-server"
 import { UserCommandRepository } from "./infrastructure/mongoose/repository/command/User"
 import { UserModel } from "./infrastructure/mongoose/schema/User"
-import config from "./config/app"
+import config from "./src/config/app"
 import mongoose from "mongoose"
 
 async function createCollections() {

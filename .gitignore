@@ -1,13 +1,11 @@
 node_modules/
-build/
 volumes/
 sandbox/
-www/
-config/app.ts
-infrastructure/ipqualityscore/config.ts
+migrations/
+src/config/app.ts
+src/infrastructure/ipqualityscore/config.ts
 .vscode/
 .DS_Store
 npm-debug.log
 docker_compose/mysql/docker/mysql/data
 docker_compose/mysql/docker/mysql/sql
-infrastructure/prisma/schema/migrations

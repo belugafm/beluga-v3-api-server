@@ -1,11 +1,9 @@
+.vscode/
 node_modules/
-build/
 volumes/
 sandbox/
-www/
-.vscode/
+migrations/
 .DS_Store
 npm-debug.log
 docker_compose/mysql/docker/mysql/data
 docker_compose/mysql/docker/mysql/sql
-infrastructure/prisma/schema/migrations

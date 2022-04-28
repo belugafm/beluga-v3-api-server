@@ -1,6 +1,4 @@
-import signup, {
-    expectedErrorSpecs,
-} from "../../../../../web/api/methods/account/signup_without_name"
+import signup, { expectedErrorSpecs } from "../../../../../web/api/methods/account/signup_without_name"
 
 import { DeleteUserApplication } from "../../../../../application/registration/DeleteUser"
 import { LoginCredentialCommandRepository } from "../../../../../infrastructure/prisma/repository/command/LoginCredential"
@@ -11,7 +9,7 @@ import { UserCommandRepository } from "../../../../../infrastructure/prisma/repo
 import { UserEntity } from "../../../../../domain/entity/User"
 import { UserQueryRepository } from "../../../../../infrastructure/prisma/repository/query/User"
 import { WebApiRuntimeError } from "../../../../../web/api/error"
-import config from "../../../../../config/app"
+import config from "../../../../../src/config/app"
 import { sleep } from "../../../functions"
 
 jest.setTimeout(60000)

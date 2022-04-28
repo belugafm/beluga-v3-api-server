@@ -2,7 +2,8 @@
     "compilerOptions": {
         "sourceMap": true,
         "noImplicitAny": true,
-        "types": ["reflect-metadata", "jest", "node"],
+        // "types": ["reflect-metadata", "jest", "node"],
+        "types": ["jest", "node"],
         "esModuleInterop": true,
         "moduleResolution": "node",
         "noUnusedLocals": true,
@@ -13,14 +14,14 @@
         "strictFunctionTypes": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "target": "ES2021",
+        "target": "esnext",
         "module": "commonjs",
         "lib": ["ESNext"],
         "allowJs": false,
         "declaration": false,
-        "outDir": "./www",
+        "outDir": "./build",
         "strict": true,
-        "baseUrl": "./",
+        "baseUrl": "./src",
         "paths": {
             "turbo-http": ["@types/turbo-http.d.ts"],
             "cookie": ["@types/cookie.d.ts"],
@@ -29,5 +30,7 @@
         },
         "forceConsistentCasingInFileNames": true,
         "removeComments": true
-    }
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules/**/*"]
 }
