@@ -41,7 +41,7 @@
         "start": "npx ts-node run.prisma.ts"
     },
     "engines": {
-        "node": "17.1.x"
+        "node": "v17.9.0"
     },
     "jest": {
         "testEnvironment": "node",
