@@ -15,6 +15,7 @@ import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../
 
 import { ApplicationError } from "../../../../application/ApplicationError"
 import { AuthenticationMethods } from "../../facts/authentication_method"
+import { ChannelGroupTimelineCommandRepository } from "../../../../infrastructure/prisma/repository"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
@@ -74,7 +75,8 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 new ChannelQueryRepository(transactionSession),
                 new ChannelCommandRepository(transactionSession),
                 new MessageQueryRepository(transactionSession),
-                new MessageCommandRepository(transactionSession)
+                new MessageCommandRepository(transactionSession),
+                new ChannelGroupTimelineCommandRepository(transactionSession)
             ).delete({
                 messageId: args.id,
                 requestUserId: authUser.id,

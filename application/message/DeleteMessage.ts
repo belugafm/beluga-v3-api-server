@@ -4,6 +4,7 @@ import { ApplicationError } from "../ApplicationError"
 import { DeleteMessagePermission } from "../../domain/permission/DeleteMessage"
 import { DomainError } from "../../domain/DomainError"
 import { IChannelCommandRepository } from "../../domain/repository/command/Channel"
+import { IChannelGroupTimelineCommandRepository } from "../../domain/repository/command/ChannelGroupTimeline"
 import { IChannelQueryRepository } from "../../domain/repository/query/Channel"
 import { IMessageCommandRepository } from "../../domain/repository/command/Message"
 import { IMessageQueryRepository } from "../../domain/repository/query/Message"
@@ -26,6 +27,7 @@ export class DeleteMessageApplication {
     private channelCommandRepository: IChannelCommandRepository
     private userQueryRepository: IUserQueryRepository
     private userCommandRepository: IUserCommandRepository
+    private channelGroupTimelineCommandRepository: IChannelGroupTimelineCommandRepository
     private permissionToDeleteMessage: DeleteMessagePermission
     constructor(
         userQueryRepository: IUserQueryRepository,
@@ -33,7 +35,8 @@ export class DeleteMessageApplication {
         channelQueryRepository: IChannelQueryRepository,
         channelCommandRepository: IChannelCommandRepository,
         messageQueryRepository: IMessageQueryRepository,
-        messageCommandRepository: IMessageCommandRepository
+        messageCommandRepository: IMessageCommandRepository,
+        channelGroupTimelineCommandRepository: IChannelGroupTimelineCommandRepository
     ) {
         this.messageQueryRepository = messageQueryRepository
         this.messageCommandRepository = messageCommandRepository
@@ -41,6 +44,7 @@ export class DeleteMessageApplication {
         this.channelCommandRepository = channelCommandRepository
         this.userQueryRepository = userQueryRepository
         this.userCommandRepository = userCommandRepository
+        this.channelGroupTimelineCommandRepository = channelGroupTimelineCommandRepository
         this.permissionToDeleteMessage = new DeleteMessagePermission(userQueryRepository, messageQueryRepository)
     }
     async delete({ messageId, requestUserId }: { messageId: MessageId; requestUserId: UserId }): Promise<boolean> {
@@ -66,6 +70,8 @@ export class DeleteMessageApplication {
 
             channel.messageCount -= 1
             await this.channelCommandRepository.update(channel)
+
+            await this.channelGroupTimelineCommandRepository.delete(message)
 
             return true
         } catch (error) {
