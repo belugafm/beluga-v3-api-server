@@ -3,6 +3,7 @@ import { IChannelTimelineQueryRepository, Parameters } from "../../domain/reposi
 
 import { ChannelReadStateEntity } from "../../domain/entity/ChannelReadState"
 import { IChannelReadStateCommandRepository } from "../../domain/repository/command/ChannelReadState"
+import { IChannelReadStateQueryRepository } from "../../domain/repository/query/ChannelReadState"
 import { MessageEntity } from "../../domain/entity/Message"
 import { ErrorCodes as ServiceErrorCodes } from "../../domain/permission/CreateChannel"
 
@@ -27,12 +28,15 @@ const getLatestMessage = (messageList: MessageEntity[]) => {
 
 export class ChannelTimelineApplication {
     private channelTimelineQueryRepository: IChannelTimelineQueryRepository
+    private channelReadStateQueryRepository: IChannelReadStateQueryRepository
     private channelReadStateCommandRepository: IChannelReadStateCommandRepository
     constructor(
         channelTimelineQueryRepository: IChannelTimelineQueryRepository,
+        channelReadStateQueryRepository: IChannelReadStateQueryRepository,
         channelReadStateCommandRepository: IChannelReadStateCommandRepository
     ) {
         this.channelTimelineQueryRepository = channelTimelineQueryRepository
+        this.channelReadStateQueryRepository = channelReadStateQueryRepository
         this.channelReadStateCommandRepository = channelReadStateCommandRepository
     }
     async listMessage({
@@ -52,13 +56,18 @@ export class ChannelTimelineApplication {
         })
         if (messageList.length > 0) {
             const latestMessage = getLatestMessage(messageList)
-            const readState = new ChannelReadStateEntity({
+            const oldReadState = await this.channelReadStateQueryRepository.find(channelId, userId)
+            const newReadState = new ChannelReadStateEntity({
                 id: -1,
                 channelId,
                 userId,
                 lastMessageId: latestMessage.id,
             })
-            await this.channelReadStateCommandRepository.upsert(readState)
+            if (oldReadState == null) {
+                await this.channelReadStateCommandRepository.upsert(newReadState)
+            } else {
+            }
+            a
         }
         return messageList
     }

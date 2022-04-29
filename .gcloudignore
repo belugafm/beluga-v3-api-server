@@ -2,7 +2,6 @@
 node_modules/
 volumes/
 sandbox/
-migrations/
 .DS_Store
 npm-debug.log
 docker_compose/mysql/docker/mysql/data

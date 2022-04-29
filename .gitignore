@@ -1,7 +1,6 @@
 node_modules/
 volumes/
 sandbox/
-migrations/
 src/config/app.ts
 src/infrastructure/ipqualityscore/config.ts
 .vscode/

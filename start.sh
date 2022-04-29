@@ -1,2 +1,2 @@
-# npx prisma migrate dev --schema mysql.prisma
+npx prisma migrate deploy --schema prisma/mysql/schema.prisma
 npm start
