@@ -1,4 +1,4 @@
-import { Validator } from "../Validator"
+import { PropertyValidator } from "../PropertyValidator"
 import { checkIsString } from "../validator/string/isString"
 import { checkMaxLength } from "../validator/string/maxLength"
 import { checkMinLength } from "../validator/string/minLength"
@@ -10,7 +10,7 @@ export type Options = {
     regexp?: object
 }
 export function string(options?: Options) {
-    return new Validator<string>(options || {}, [
+    return new PropertyValidator<string>(options || {}, [
         checkIsString,
         checkMinLength,
         checkMaxLength,

@@ -3,12 +3,12 @@ import { EndpointUnavailableErrorSpec, InternalErrorSpec, InvalidAuth, WebApiRun
 import { AuthenticationMethodsLiteralUnion } from "./facts/authentication_method"
 import { ContentTypesUnion } from "./facts/content_type"
 import { HttpMethodUnion } from "./facts/http_method"
+import { PropertyValidator } from "../../domain/validation/PropertyValidator"
 import { RateLimitUnion } from "./facts/rate_limit"
 import { ScopesLiteralUnion } from "./facts/scope"
 import { TokenTypesUnion } from "./facts/token_type"
 import { UserEntity } from "../../domain/entity/User"
 import { ValidationError } from "../../domain/validation/error"
-import { Validator } from "../../domain/validation/Validator"
 import config from "../../config/app"
 
 // Web APIの仕様を定義
@@ -63,7 +63,7 @@ type Argument = {
     examples: string[] | null
     required: boolean
     defaultValue?: any
-    validator: Validator<any>
+    validator: PropertyValidator<any>
 }
 
 export function defineArguments<

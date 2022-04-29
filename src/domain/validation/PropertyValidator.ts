@@ -1,4 +1,4 @@
-export class Validator<T> {
+export class PropertyValidator<T> {
     // validatorの対応する型を推論するためにダミーの関数を作って組み込み関数ReturnTypeで型を推論する
     type(value: T) {
         return value

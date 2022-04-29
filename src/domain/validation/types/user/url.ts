@@ -1,5 +1,5 @@
 import { Options } from "../string"
-import { Validator } from "../../Validator"
+import { PropertyValidator } from "../../PropertyValidator"
 import { checkIsString } from "../../validator/string/isString"
 import { checkMaxLength } from "../../validator/string/maxLength"
 import { checkMinLength } from "../../validator/string/minLength"
@@ -12,10 +12,5 @@ export function url() {
         maxLength: config.user.url.max_length,
         regexp: new RegExp(/^https?:\/\/.+\..+$/),
     }
-    return new Validator<string>(options, [
-        checkIsString,
-        checkMinLength,
-        checkMaxLength,
-        checkRegexPattern,
-    ])
+    return new PropertyValidator<string>(options, [checkIsString, checkMinLength, checkMaxLength, checkRegexPattern])
 }

@@ -1,4 +1,4 @@
-import { Validator } from "../Validator"
+import { PropertyValidator } from "../PropertyValidator"
 import { checkIsInteger } from "../validator/number/isNumber"
 import { checkMaxValue } from "../validator/number/maxValue"
 import { checkMinValue } from "../validator/number/minValue"
@@ -9,5 +9,5 @@ export type Options = {
     regexp?: object
 }
 export function integer(options?: Options) {
-    return new Validator<number>(options || {}, [checkIsInteger, checkMinValue, checkMaxValue])
+    return new PropertyValidator<number>(options || {}, [checkIsInteger, checkMinValue, checkMaxValue])
 }

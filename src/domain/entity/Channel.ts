@@ -1,11 +1,19 @@
-import * as vn from "../validation"
-
 import { ChannelGroupdId, ChannelId, UserId } from "../types"
+import {
+    IsChannelDescription,
+    IsChannelGroupId,
+    IsChannelId,
+    IsChannelName,
+    IsChannelUniqueName,
+    IsDate,
+    IsInteger,
+    IsString,
+    IsUserId,
+} from "../validation/decorators"
 
 import { Entity } from "./Entity"
 import config from "../../config/app"
 import crypto from "crypto"
-import { validateBy } from "../validation/validateBy"
 
 export const generateRandomName = (length: number): string => {
     const S = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -29,44 +37,34 @@ export const ErrorCodes = {
 export class ChannelEntity extends Entity {
     // 一意なid DBの実装に依存する
     // 変更不可
-    @validateBy(vn.channelId(), { errorCode: ErrorCodes.InvalidId })
+    @IsChannelId({ errorCode: ErrorCodes.InvalidId })
     id: ChannelId
 
-    @validateBy(vn.channel.name(), { errorCode: ErrorCodes.InvalidName })
+    @IsChannelName({ errorCode: ErrorCodes.InvalidName })
     name: string
 
     // チャンネルを識別する文字列
     // URLで使われる
     // https://beluga/channel/{uniqueName}
-    @validateBy(vn.channel.uniqueName(), { errorCode: ErrorCodes.InvalidUniqueName })
+    @IsChannelUniqueName({ errorCode: ErrorCodes.InvalidUniqueName })
     uniqueName: string
 
-    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidParentChanelGroupId })
+    @IsChannelGroupId({ errorCode: ErrorCodes.InvalidParentChanelGroupId })
     parentChannelGroupId: ChannelGroupdId
 
-    @validateBy(vn.entityId(), { errorCode: ErrorCodes.InvalidCreatedBy })
+    @IsUserId({ errorCode: ErrorCodes.InvalidCreatedBy })
     createdBy: UserId
 
-    @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
+    @IsDate({ errorCode: ErrorCodes.InvalidCreatedAt })
     createdAt: Date
 
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidMessageCount })
+    @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidMessageCount })
     messageCount: number
 
-    @validateBy(vn.string({ minLength: 1, maxLength: 1 }), {
-        errorCode: ErrorCodes.InvalidStatusString,
-    })
+    @IsString({ minLength: 1, maxLength: 1 }, { errorCode: ErrorCodes.InvalidStatusString })
     statusString: string
 
-    @validateBy(
-        vn.string({
-            minLength: config.channel.description.min_length,
-            maxLength: config.channel.description.max_length,
-        }),
-        {
-            errorCode: ErrorCodes.InvalidDescription,
-        }
-    )
+    @IsChannelDescription({ errorCode: ErrorCodes.InvalidDescription })
     description: string
 
     constructor(

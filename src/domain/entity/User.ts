@@ -1,10 +1,22 @@
-import * as vn from "../validation"
+import {
+    IsAnyString,
+    IsBoolean,
+    IsDate,
+    IsInteger,
+    IsIpAddress,
+    IsUrl,
+    IsUserDescription,
+    IsUserDisplayName,
+    IsUserId,
+    IsUserLocation,
+    IsUserName,
+    IsUserUrl,
+} from "../validation/decorators"
 
 import { Entity } from "./Entity"
 import { TrustLevel } from "../../config/trust_level"
 import { UserId } from "../types"
 import crypto from "crypto"
-import { validateBy } from "../validation/validateBy"
 
 export const generateRandomName = (length: number): string => {
     const S = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -34,71 +46,71 @@ export const ErrorCodes = {
 export class UserEntity extends Entity {
     // 一意なid DBの実装に依存する
     // 変更不可
-    @validateBy(vn.userId(), { errorCode: ErrorCodes.InvalidId })
+    @IsUserId({ errorCode: ErrorCodes.InvalidId })
     id: UserId
 
     // ログイン時に使う一意な英数字
     // idのエイリアス
     // 変更可
-    @validateBy(vn.user.name(), { errorCode: ErrorCodes.InvalidName })
+    @IsUserName({ errorCode: ErrorCodes.InvalidName })
     name: string
 
     // Twitterログイン時に保存したTwitterユーザーID
-    @validateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidTwitterId })
+    @IsAnyString({ nullable: true, errorCode: ErrorCodes.InvalidTwitterId })
     twitterUserId: string | null
 
-    @validateBy(vn.user.displayName(), { nullable: true, errorCode: ErrorCodes.InvalidDisplayName })
+    @IsUserDisplayName({ nullable: true, errorCode: ErrorCodes.InvalidDisplayName })
     displayName: string | null
 
-    @validateBy(vn.url(), { nullable: true, errorCode: ErrorCodes.InvalidProfileImageUrl })
+    @IsUrl({ nullable: true, errorCode: ErrorCodes.InvalidProfileImageUrl })
     profileImageUrl: string | null
 
-    @validateBy(vn.user.location(), { nullable: true, errorCode: ErrorCodes.InvalidLocation })
+    @IsUserLocation({ nullable: true, errorCode: ErrorCodes.InvalidLocation })
     location: string | null
 
-    @validateBy(vn.user.url(), { nullable: true, errorCode: ErrorCodes.InvalidUrl })
+    @IsUserUrl({ nullable: true, errorCode: ErrorCodes.InvalidUrl })
     url: string | null
 
-    @validateBy(vn.user.description(), { nullable: true, errorCode: ErrorCodes.InvalidDescription })
+    @IsUserDescription({ nullable: true, errorCode: ErrorCodes.InvalidDescription })
     description: string | null
 
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidNumber })
     messageCount: number // 全投稿数
 
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidNumber })
     favoritesCount: number // ふぁぼった投稿数
 
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidNumber })
     favoritedCount: number // ふぁぼられた投稿数
 
-    @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidDate })
+    @IsDate({ errorCode: ErrorCodes.InvalidDate })
     createdAt: Date
 
-    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
+    @IsBoolean({ errorCode: ErrorCodes.InvalidValue })
     bot: boolean
 
-    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
+    @IsBoolean({ errorCode: ErrorCodes.InvalidValue })
     active: boolean // 登録後サイトを利用したかどうか
 
-    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
+    @IsBoolean({ errorCode: ErrorCodes.InvalidValue })
     dormant: boolean // サイトを長期間利用しなかったかどうか
 
-    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidValue })
+    @IsBoolean({ errorCode: ErrorCodes.InvalidValue })
     suspended: boolean // 凍結されたかどうか
 
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidNumber })
+    @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidNumber })
     trustLevel: number // 信用レベル
 
-    @validateBy(vn.date(), { nullable: true, errorCode: ErrorCodes.InvalidDate })
+    @IsDate({ nullable: true, errorCode: ErrorCodes.InvalidDate })
     lastActivityDate: Date | null // 最後に活動した日
 
-    @validateBy(vn.date(), { nullable: true, errorCode: ErrorCodes.InvalidDate })
+    @IsDate({ nullable: true, errorCode: ErrorCodes.InvalidDate })
     termsOfServiceAgreementDate: Date | null // 利用規約に同意した日
 
-    @validateBy(vn.string(), { nullable: true, errorCode: ErrorCodes.InvalidValue })
+    @IsAnyString({ nullable: true, errorCode: ErrorCodes.InvalidValue })
     termsOfServiceAgreementVersion: string | null // 同意した利用規約のバージョン
 
-    @validateBy(vn.ipAddress(), { errorCode: ErrorCodes.InvalidValue })
+    @IsIpAddress({ errorCode: ErrorCodes.InvalidValue })
     registrationIpAddress: string // 登録時のIPアドレス
 
     constructor(

@@ -1,5 +1,5 @@
 import { Options } from "../string"
-import { Validator } from "../../Validator"
+import { PropertyValidator } from "../../PropertyValidator"
 import { checkIsString } from "../../validator/string/isString"
 import { checkMaxLength } from "../../validator/string/maxLength"
 import { checkMinLength } from "../../validator/string/minLength"
@@ -11,10 +11,5 @@ export function description() {
         minLength: config.channel_group.description.min_length,
         maxLength: config.channel_group.description.max_length,
     }
-    return new Validator<string>(options, [
-        checkIsString,
-        checkMinLength,
-        checkMaxLength,
-        checkRegexPattern,
-    ])
+    return new PropertyValidator<string>(options, [checkIsString, checkMinLength, checkMaxLength, checkRegexPattern])
 }

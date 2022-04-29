@@ -1,5 +1,5 @@
 import { Options } from "../string"
-import { Validator } from "../../Validator"
+import { PropertyValidator } from "../../PropertyValidator"
 import { checkIsString } from "../../validator/string/isString"
 import { checkMaxLength } from "../../validator/string/maxLength"
 import { checkMinLength } from "../../validator/string/minLength"
@@ -10,5 +10,5 @@ export function location() {
         minLength: config.user.location.min_length,
         maxLength: config.user.location.max_length,
     }
-    return new Validator<string>(options, [checkIsString, checkMinLength, checkMaxLength])
+    return new PropertyValidator<string>(options, [checkIsString, checkMinLength, checkMaxLength])
 }

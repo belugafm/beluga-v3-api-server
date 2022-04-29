@@ -1,8 +1,6 @@
-import * as vn from "../validation"
-
 import { Entity } from "./Entity"
+import { IsSessionId } from "../validation/decorators"
 import { v4 } from "uuid"
-import { validateBy } from "../validation/validateBy"
 
 export const ErrorCodes = {
     InvalidSessionId: "invalid_session_id",
@@ -10,10 +8,10 @@ export const ErrorCodes = {
 } as const
 
 export class AuthenticityTokenEntity extends Entity {
-    @validateBy(vn.sessionId(), { errorCode: ErrorCodes.InvalidSessionId })
+    @IsSessionId({ errorCode: ErrorCodes.InvalidSessionId })
     sessionId: string
 
-    @validateBy(vn.sessionId(), { errorCode: ErrorCodes.InvalidToken })
+    @IsSessionId({ errorCode: ErrorCodes.InvalidToken })
     token: string
 
     constructor(

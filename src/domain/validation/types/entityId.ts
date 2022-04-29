@@ -1,7 +1,7 @@
 import { ChannelGroupdId, ChannelId, EntityId, MessageId, UserId } from "../../types"
 import { CommonErrorMessages, ValidationError } from "../error"
 
-import { Validator } from "../Validator"
+import { PropertyValidator } from "../PropertyValidator"
 import { isInteger } from "../functions"
 
 export function checkIsEntityId(value: EntityId, options: {}): void {
@@ -15,21 +15,21 @@ export function checkIsEntityId(value: EntityId, options: {}): void {
 }
 
 export function entityId() {
-    return new Validator<EntityId>({}, [checkIsEntityId])
+    return new PropertyValidator<EntityId>({}, [checkIsEntityId])
 }
 
 export function channelId() {
-    return new Validator<ChannelId>({}, [checkIsEntityId])
+    return new PropertyValidator<ChannelId>({}, [checkIsEntityId])
 }
 
 export function channelGroupId() {
-    return new Validator<ChannelGroupdId>({}, [checkIsEntityId])
+    return new PropertyValidator<ChannelGroupdId>({}, [checkIsEntityId])
 }
 
 export function userId() {
-    return new Validator<UserId>({}, [checkIsEntityId])
+    return new PropertyValidator<UserId>({}, [checkIsEntityId])
 }
 
 export function messageId() {
-    return new Validator<MessageId>({}, [checkIsEntityId])
+    return new PropertyValidator<MessageId>({}, [checkIsEntityId])
 }

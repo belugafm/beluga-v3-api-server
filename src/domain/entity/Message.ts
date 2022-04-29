@@ -1,9 +1,15 @@
-import * as vn from "../validation"
-
 import { ChannelId, MessageId, UserId } from "../types"
+import {
+    IsBoolean,
+    IsChannelId,
+    IsDate,
+    IsInteger,
+    IsMessageId,
+    IsMessageText,
+    IsUserId,
+} from "../validation/decorators"
 
 import { Entity } from "./Entity"
-import { validateBy } from "../validation/validateBy"
 
 export const ErrorCodes = {
     InvalidId: "invalid_id",
@@ -21,34 +27,34 @@ export const ErrorCodes = {
 export class MessageEntity extends Entity {
     // 一意なid DBの実装に依存する
     // 変更不可
-    @validateBy(vn.messageId(), { errorCode: ErrorCodes.InvalidId })
+    @IsMessageId({ errorCode: ErrorCodes.InvalidId })
     id: MessageId
 
-    @validateBy(vn.channelId(), { errorCode: ErrorCodes.InvalidChannelId })
+    @IsChannelId({ errorCode: ErrorCodes.InvalidChannelId })
     channelId: ChannelId
 
-    @validateBy(vn.userId(), { errorCode: ErrorCodes.InvalidUserId })
+    @IsUserId({ errorCode: ErrorCodes.InvalidUserId })
     userId: UserId
 
-    @validateBy(vn.message.text(), { errorCode: ErrorCodes.InvalidText })
+    @IsMessageText({ errorCode: ErrorCodes.InvalidText })
     text: string
 
-    @validateBy(vn.date(), { errorCode: ErrorCodes.InvalidCreatedAt })
+    @IsDate({ errorCode: ErrorCodes.InvalidCreatedAt })
     createdAt: Date
 
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidFavoriteCount })
+    @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidFavoriteCount })
     favoriteCount: number
 
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidLikeCount })
+    @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidLikeCount })
     likeCount: number
 
-    @validateBy(vn.integer({ minValue: 0 }), { errorCode: ErrorCodes.InvalidReplyCount })
+    @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidReplyCount })
     replyCount: number
 
-    @validateBy(vn.messageId(), { nullable: true, errorCode: ErrorCodes.InvalidThreadId })
+    @IsMessageId({ nullable: true, errorCode: ErrorCodes.InvalidThreadId })
     threadId: MessageId | null
 
-    @validateBy(vn.boolean(), { errorCode: ErrorCodes.InvalidDeleted })
+    @IsBoolean({ errorCode: ErrorCodes.InvalidDeleted })
     deleted: boolean
 
     constructor(

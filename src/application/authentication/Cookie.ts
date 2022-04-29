@@ -30,9 +30,7 @@ export class CookieAuthenticationApplication {
         this.loginSessionQueryRepository = loginSessionQueryRepository
         this.authenticityTokenQueryRepository = authenticityTokenQueryRepository
     }
-    async authenticate({
-        sessionId,
-    }: Argument): Promise<[UserEntity, LoginSessionEntity, AuthenticityTokenEntity]> {
+    async authenticate({ sessionId }: Argument): Promise<[UserEntity, LoginSessionEntity, AuthenticityTokenEntity]> {
         try {
             const session = await this.loginSessionQueryRepository.findBySessionId(sessionId)
             if (session == null) {

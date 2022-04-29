@@ -2,7 +2,7 @@ import { CommonErrorMessages, ValidationError } from "../error"
 import { isInteger, isString } from "../functions"
 
 import { EntityId } from "../../types"
-import { Validator } from "../Validator"
+import { PropertyValidator } from "../PropertyValidator"
 
 function checkIsObjectId(value: any) {
     if (isInteger(value)) {
@@ -14,5 +14,5 @@ function checkIsObjectId(value: any) {
     throw new ValidationError(CommonErrorMessages.InvalidType)
 }
 export function objectId() {
-    return new Validator<EntityId>({}, [checkIsObjectId])
+    return new PropertyValidator<EntityId>({}, [checkIsObjectId])
 }
