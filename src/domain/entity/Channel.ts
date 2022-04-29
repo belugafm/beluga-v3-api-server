@@ -73,7 +73,7 @@ export class ChannelEntity extends Entity {
     @IsMessageId({ nullable: true, errorCode: ErrorCodes.InvalidLastMessageId })
     lastMessageId: MessageId | null
 
-    @IsMessageId({ nullable: true, errorCode: ErrorCodes.InvalidLastMessageCreatedAt })
+    @IsDate({ nullable: true, errorCode: ErrorCodes.InvalidLastMessageCreatedAt })
     lastMessageCreatedAt: Date | null
 
     constructor(
