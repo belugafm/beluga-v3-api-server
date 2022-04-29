@@ -17,7 +17,7 @@ export default (server: TurboServer) => {
         if (channelGroup) {
             return {
                 ok: true,
-                channel_group: channelGroup.toResponseObject(),
+                channel_group: channelGroup.toJsonObject(),
             }
         }
         return {

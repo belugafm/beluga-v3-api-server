@@ -1,4 +1,4 @@
-import { ChannelGroupdId, UserId } from "../types"
+import { ChannelGroupJsonObjectT, ChannelGroupdId, UserId } from "../types"
 import {
     IsChannelGroupId,
     IsChannelGroupName,
@@ -81,12 +81,13 @@ export class ChannelGroupEntity extends Entity {
         this.createdAt = params.createdAt
         this.messageCount = params.messageCount != null ? params.messageCount : 0
     }
-    toResponseObject() {
+    toJsonObject(): ChannelGroupJsonObjectT {
         return {
             id: this.id,
             name: this.name,
             unique_name: this.uniqueName,
             parent_id: this.parentId,
+            parent: null,
             level: this.level,
             created_by: this.createdBy,
             created_at: this.createdAt,

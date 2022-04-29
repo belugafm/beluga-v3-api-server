@@ -1,4 +1,4 @@
-import { ChannelId, MessageId, UserId } from "../types"
+import { ChannelId, MessageId, MessageJsonObjectT, UserId } from "../types"
 import {
     IsBoolean,
     IsChannelId,
@@ -81,14 +81,14 @@ export class MessageEntity extends Entity {
         this.threadId = params.threadId != null ? params.threadId : null
         this.deleted = params.deleted != null ? params.deleted : false
     }
-    toResponseObject() {
+    toJsonObject(): MessageJsonObjectT {
         const text = this.deleted ? null : this.text
         return {
             id: this.id,
             channel_id: this.channelId,
-            channel: {},
+            channel: null,
             user_id: this.userId,
-            user: {},
+            user: null,
             text: text,
             created_at: this.createdAt,
             favorite_count: this.favoriteCount,
@@ -97,6 +97,7 @@ export class MessageEntity extends Entity {
             thread_id: this.threadId,
             deleted: this.deleted,
             entities: {
+                channel_groups: [],
                 channels: [],
                 messages: [],
             },

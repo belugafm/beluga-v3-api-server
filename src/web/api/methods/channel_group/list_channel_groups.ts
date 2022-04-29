@@ -2,6 +2,7 @@ import * as vs from "../../../../domain/validation"
 
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
+import { SortBy, SortOrder } from "../../../../domain/repository/query/ChannelGroup"
 
 import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
@@ -56,7 +57,7 @@ type ReturnType = Promise<ChannelGroupEntity[]>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors): ReturnType => {
     try {
-        return await new ChannelGroupQueryRepository().listChannelGroups(args.id, "CreatedAt", "Ascending")
+        return await new ChannelGroupQueryRepository().listChannelGroups(args.id, SortBy.CreatedAt, SortOrder.Ascending)
     } catch (error) {
         if (error instanceof Error) {
             raise(errors["unexpected_error"], error)

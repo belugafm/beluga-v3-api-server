@@ -30,9 +30,9 @@ export default (server: TurboServer) => {
             if (channel == null) {
                 continue
             }
-            const messageObject = message.toResponseObject()
-            messageObject.user = user.toResponseObject()
-            messageObject.channel = channel.toResponseObject()
+            const messageObject = message.toJsonObject()
+            messageObject.user = user.toJsonObject()
+            messageObject.channel = channel.toJsonObject()
             objects.push(messageObject)
         }
         return {

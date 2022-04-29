@@ -19,7 +19,7 @@ export class Entity {
         }
         return ret
     }
-    toResponseObject() {
+    toJsonObject() {
         throw Error("not_implemented")
     }
 }

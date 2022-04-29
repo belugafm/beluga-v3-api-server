@@ -10,7 +10,7 @@ export default (server: TurboServer) => {
         const [user, authenticityToken] = await authenticate({ session_id: sessionId }, remoteIpAddress, null)
         return {
             ok: true,
-            user: user.toResponseObject(),
+            user: user.toJsonObject(),
             authenticity_token: authenticityToken.token,
         }
     })

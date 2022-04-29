@@ -12,10 +12,10 @@ import {
     IsUserName,
     IsUserUrl,
 } from "../validation/decorators"
+import { UserId, UserJsonObjectT } from "../types"
 
 import { Entity } from "./Entity"
 import { TrustLevel } from "../../config/trust_level"
-import { UserId } from "../types"
 import crypto from "crypto"
 
 export const generateRandomName = (length: number): string => {
@@ -145,7 +145,7 @@ export class UserEntity extends Entity {
             params.termsOfServiceAgreementVersion != null ? params.termsOfServiceAgreementVersion : null
         this.registrationIpAddress = params.registrationIpAddress
     }
-    toResponseObject() {
+    toJsonObject(): UserJsonObjectT {
         return {
             id: this.id,
             name: this.name,

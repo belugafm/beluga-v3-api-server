@@ -17,7 +17,7 @@ export default (server: TurboServer) => {
         if (channel) {
             return {
                 ok: true,
-                channel: channel.toResponseObject(),
+                channel,
             }
         }
         return {

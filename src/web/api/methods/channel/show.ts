@@ -1,11 +1,11 @@
 import * as vs from "../../../../domain/validation"
 
+import { ChannelGroupQueryRepository, ChannelQueryRepository } from "../../../repositories"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
 import { AuthenticationMethods } from "../../facts/authentication_method"
-import { ChannelEntity } from "../../../../domain/entity/Channel"
-import { ChannelQueryRepository } from "../../../repositories"
+import { ChannelJsonObjectT } from "../../../../domain/types"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
@@ -60,20 +60,31 @@ export const facts: MethodFacts = {
     description: ["チャンネルの情報を取得します"],
 }
 
-type ReturnType = Promise<ChannelEntity | null>
+type ReturnType = Promise<ChannelJsonObjectT | null>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors): ReturnType => {
     if (args.unique_name == null && args.id == null) {
-        raise(errors["internal_error"])
+        raise(errors["missing_argument"])
     }
     try {
-        if (args.unique_name) {
-            return await new ChannelQueryRepository().findByUniqueName(args.unique_name)
+        const channel = await (async () => {
+            if (args.unique_name) {
+                return await new ChannelQueryRepository().findByUniqueName(args.unique_name)
+            }
+            if (args.id) {
+                return await new ChannelQueryRepository().findById(args.id)
+            }
+            throw new Error()
+        })()
+        if (channel == null) {
+            return null
         }
-        if (args.id) {
-            return await new ChannelQueryRepository().findById(args.id)
+        const channelObj = channel.toJsonObject()
+        const parentChannelGroupId = await new ChannelGroupQueryRepository().findById(channel.parentChannelGroupId)
+        if (parentChannelGroupId) {
+            channelObj.parent_channel_group = parentChannelGroupId.toJsonObject()
         }
-        throw new Error()
+        return channelObj
     } catch (error) {
         if (error instanceof Error) {
             raise(errors["unexpected_error"], error)

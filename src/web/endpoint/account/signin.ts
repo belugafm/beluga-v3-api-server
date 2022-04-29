@@ -29,7 +29,7 @@ export default (server: TurboServer) => {
         }
         return {
             ok: true,
-            user: user.toResponseObject(),
+            user: user.toJsonObject(),
         }
     })
 }

@@ -16,7 +16,7 @@ export default (server: TurboServer) => {
         )
         return {
             ok: true,
-            channels: channels.map((channel) => channel.toResponseObject()),
+            channels: channels.map((channel) => channel.toJsonObject()),
         }
     })
 }

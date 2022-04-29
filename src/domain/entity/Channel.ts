@@ -1,4 +1,4 @@
-import { ChannelGroupdId, ChannelId, MessageId, UserId } from "../types"
+import { ChannelGroupdId, ChannelId, ChannelJsonObjectT, MessageId, UserId } from "../types"
 import {
     IsChannelDescription,
     IsChannelGroupId,
@@ -93,18 +93,21 @@ export class ChannelEntity extends Entity {
         this.description = params.description != null ? params.description : ""
         this.lastMessageId = params.lastMessageId != null ? params.lastMessageId : null
     }
-    toResponseObject() {
+    toJsonObject(): ChannelJsonObjectT {
         return {
             id: this.id,
             name: this.name,
             unique_name: this.uniqueName,
             parent_channel_group_id: this.parentChannelGroupId,
+            parent_channel_group: null,
             created_by: this.createdBy,
             created_at: this.createdAt,
             message_count: this.messageCount,
             description: this.description,
             status_string: this.statusString,
             last_message_id: this.lastMessageId,
+            last_message: null,
+            read_state: null,
         }
     }
     static generateUniqueName(): string {

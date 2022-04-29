@@ -1,4 +1,4 @@
-import { ChannelId, ChannelReadStateId, MessageId, UserId } from "../types"
+import { ChannelId, ChannelReadStateId, ChannelReadStateJsonObjectT, MessageId, UserId } from "../types"
 import { IsChannelId, IsMessageId, IsReadStateId, IsUserId } from "../validation/decorators"
 
 import { Entity } from "./Entity"
@@ -37,7 +37,7 @@ export class ChannelReadStateEntity extends Entity {
         this.userId = params.userId
         this.lastMessageId = params.lastMessageId
     }
-    toResponseObject() {
+    toJsonObject(): ChannelReadStateJsonObjectT {
         return {
             id: this.id,
             channel_id: this.channelId,
