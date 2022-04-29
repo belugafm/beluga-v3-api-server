@@ -64,6 +64,7 @@ export type ChannelReadStateJsonObjectT = {
     channel_id: ChannelId
     user_id: UserId
     last_message_id: MessageId | null
+    last_message_created_at: Date | null
     last_message: MessageJsonObjectT | null
 }
 
@@ -79,6 +80,7 @@ export type ChannelJsonObjectT = {
     description: string
     status_string: string
     last_message_id: MessageId | null
+    last_message_created_at: Date | null
     last_message: MessageJsonObjectT | null
     read_state: ChannelReadStateJsonObjectT | null
 }

@@ -71,6 +71,7 @@ export class DeleteMessageApplication {
             channel.messageCount -= 1
             const latestMessage = await this.messageQueryRepository.findLatestForChannel(channel.id)
             channel.lastMessageId = latestMessage ? latestMessage.id : null
+            channel.lastMessageCreatedAt = latestMessage ? latestMessage.createdAt : null
             await this.channelCommandRepository.update(channel)
 
             await this.channelGroupTimelineCommandRepository.delete(message)

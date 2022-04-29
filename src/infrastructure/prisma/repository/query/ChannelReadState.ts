@@ -12,6 +12,7 @@ export function toEntity(state: ChannelReadState) {
         channelId: state.channelId,
         userId: state.userId,
         lastMessageId: state.lastMessageId,
+        lastMessageCreatedAt: state.lastMessageCreatedAt,
     })
 }
 

@@ -44,6 +44,7 @@ export class ChannelReadStateCommandRepository
                     },
                     data: {
                         lastMessageId: state.lastMessageId,
+                        lastMessageCreatedAt: state.lastMessageCreatedAt,
                     },
                 })
                 if (has_changed(origState, updatedChannel)) {
@@ -56,6 +57,7 @@ export class ChannelReadStateCommandRepository
                         channelId: state.channelId,
                         userId: state.userId,
                         lastMessageId: state.lastMessageId,
+                        lastMessageCreatedAt: state.lastMessageCreatedAt,
                     },
                 })
                 return result.id
@@ -78,6 +80,7 @@ export class ChannelReadStateCommandRepository
                     channelId: state.channelId,
                     userId: state.userId,
                     lastMessageId: state.lastMessageId,
+                    lastMessageCreatedAt: state.lastMessageCreatedAt,
                 },
             })
             return result.id
@@ -108,6 +111,7 @@ export class ChannelReadStateCommandRepository
                 },
                 data: {
                     lastMessageId: state.lastMessageId,
+                    lastMessageCreatedAt: state.lastMessageCreatedAt,
                 },
             })
             if (has_changed(origState, updatedChannel)) {

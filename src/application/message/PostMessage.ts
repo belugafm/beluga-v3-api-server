@@ -99,6 +99,7 @@ export class PostMessageApplication {
 
         channel.messageCount += 1
         channel.lastMessageId = message.id
+        channel.lastMessageCreatedAt = message.createdAt
         await this.channelCommandRepository.update(channel)
 
         user.messageCount += 1

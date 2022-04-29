@@ -33,6 +33,8 @@ export const ErrorCodes = {
     InvalidMessageCount: "invalid_message_count",
     InvalidStatusString: "invalid_status_string",
     InvalidDescription: "invalid_description",
+    InvalidLastMessageId: "invalid_last_message_id",
+    InvalidLastMessageCreatedAt: "invalid_last_message_created_at",
 } as const
 
 export class ChannelEntity extends Entity {
@@ -68,8 +70,11 @@ export class ChannelEntity extends Entity {
     @IsChannelDescription({ errorCode: ErrorCodes.InvalidDescription })
     description: string
 
-    @IsMessageId({ nullable: true, errorCode: ErrorCodes.InvalidDescription })
+    @IsMessageId({ nullable: true, errorCode: ErrorCodes.InvalidLastMessageId })
     lastMessageId: MessageId | null
+
+    @IsMessageId({ nullable: true, errorCode: ErrorCodes.InvalidLastMessageCreatedAt })
+    lastMessageCreatedAt: Date | null
 
     constructor(
         params: {
@@ -92,6 +97,7 @@ export class ChannelEntity extends Entity {
         this.statusString = params.statusString != null ? params.statusString : "#"
         this.description = params.description != null ? params.description : ""
         this.lastMessageId = params.lastMessageId != null ? params.lastMessageId : null
+        this.lastMessageCreatedAt = params.lastMessageCreatedAt != null ? params.lastMessageCreatedAt : null
     }
     toJsonObject(): ChannelJsonObjectT {
         return {
@@ -106,6 +112,7 @@ export class ChannelEntity extends Entity {
             description: this.description,
             status_string: this.statusString,
             last_message_id: this.lastMessageId,
+            last_message_created_at: this.lastMessageCreatedAt,
             last_message: null,
             read_state: null,
         }

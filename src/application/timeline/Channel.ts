@@ -55,19 +55,22 @@ export class ChannelTimelineApplication {
             sortOrder,
         })
         if (messageList.length > 0) {
-            const latestMessage = getLatestMessage(messageList)
+            const lastMessage = getLatestMessage(messageList)
             const oldReadState = await this.channelReadStateQueryRepository.find(channelId, userId)
             const newReadState = new ChannelReadStateEntity({
-                id: -1,
+                id: oldReadState ? oldReadState.id : -1,
                 channelId,
                 userId,
-                lastMessageId: latestMessage.id,
+                lastMessageId: lastMessage.id,
+                lastMessageCreatedAt: lastMessage.createdAt,
             })
             if (oldReadState == null) {
-                await this.channelReadStateCommandRepository.upsert(newReadState)
+                await this.channelReadStateCommandRepository.add(newReadState)
             } else {
+                if (newReadState.lastMessageCreatedAt.getTime() > oldReadState.lastMessageCreatedAt.getTime()) {
+                    await this.channelReadStateCommandRepository.update(newReadState)
+                }
             }
-            a
         }
         return messageList
     }

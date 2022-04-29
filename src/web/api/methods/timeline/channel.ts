@@ -2,6 +2,7 @@ import * as vs from "../../../../domain/validation"
 
 import {
     ChannelReadStateCommandRepository,
+    ChannelReadStateQueryRepository,
     ChannelTimelineQueryRepository,
     TransactionRepository,
 } from "../../../repositories"
@@ -101,6 +102,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
         return await transaction.$transaction(async (transactionSession) => {
             return await new ChannelTimelineApplication(
                 new ChannelTimelineQueryRepository(transactionSession),
+                new ChannelReadStateQueryRepository(transactionSession),
                 new ChannelReadStateCommandRepository(transactionSession)
             ).listMessage({
                 userId: authUser.id,

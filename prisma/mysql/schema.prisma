@@ -69,16 +69,17 @@ model ChannelGroup {
 }
 
 model Channel {
-    id                   Int      @id @default(autoincrement())
-    name                 String   @db.VarChar(255)
-    uniqueName           String   @unique @db.VarChar(255)
+    id                   Int       @id @default(autoincrement())
+    name                 String    @db.VarChar(255)
+    uniqueName           String    @unique @db.VarChar(255)
     parentChannelGroupId Int
     createdBy            Int
-    createdAt            DateTime @default(now())
-    messageCount         Int      @default(0)
-    statusString         String   @default("#") @db.VarChar(1)
-    description          String   @db.Text
+    createdAt            DateTime  @default(now())
+    messageCount         Int       @default(0)
+    statusString         String    @default("#") @db.VarChar(1)
+    description          String    @db.Text
     lastMessageId        Int?
+    lastMessageCreatedAt DateTime?
 }
 
 model Message {
@@ -109,10 +110,11 @@ model ChannelGroupTimeline {
 }
 
 model ChannelReadState {
-    id            Int @id @default(autoincrement())
-    channelId     Int
-    userId        Int
-    lastMessageId Int
+    id                   Int      @id @default(autoincrement())
+    channelId            Int
+    userId               Int
+    lastMessageId        Int
+    lastMessageCreatedAt DateTime
 
     @@unique([channelId, userId])
 }

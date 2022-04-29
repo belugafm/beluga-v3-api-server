@@ -6,6 +6,7 @@ const id = 1
 const userId = 2
 const channelId = 3
 const lastMessageId = 4
+const lastMessageCreatedAt = new Date()
 
 describe("ChannelReadStateEntity", () => {
     test("Normal instantiation", async () => {
@@ -14,6 +15,7 @@ describe("ChannelReadStateEntity", () => {
             userId,
             channelId,
             lastMessageId,
+            lastMessageCreatedAt,
         })
         expect(state).toBeInstanceOf(ChannelReadStateEntity)
     })
@@ -25,6 +27,7 @@ describe("ChannelReadStateEntity", () => {
                 userId,
                 channelId,
                 lastMessageId,
+                lastMessageCreatedAt,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -41,6 +44,7 @@ describe("ChannelReadStateEntity", () => {
                 id,
                 channelId,
                 lastMessageId,
+                lastMessageCreatedAt,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -57,6 +61,7 @@ describe("ChannelReadStateEntity", () => {
                 id,
                 userId,
                 lastMessageId,
+                lastMessageCreatedAt,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -73,6 +78,7 @@ describe("ChannelReadStateEntity", () => {
                 id,
                 userId,
                 channelId,
+                lastMessageCreatedAt,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -90,6 +96,7 @@ describe("ChannelReadStateEntity", () => {
                 userId,
                 channelId,
                 lastMessageId,
+                lastMessageCreatedAt,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -107,6 +114,7 @@ describe("ChannelReadStateEntity", () => {
                 userId,
                 channelId,
                 lastMessageId,
+                lastMessageCreatedAt,
             })
         } catch (error) {
             expect(error).toBeInstanceOf(DomainError)
@@ -143,6 +151,7 @@ describe("ChannelReadStateEntity", () => {
                     channelId,
                     // @ts-ignore
                     lastMessageId,
+                    lastMessageCreatedAt,
                 })
             } catch (error) {
                 expect(error).toBeInstanceOf(DomainError)

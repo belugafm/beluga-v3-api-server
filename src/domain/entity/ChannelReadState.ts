@@ -1,5 +1,5 @@
 import { ChannelId, ChannelReadStateId, ChannelReadStateJsonObjectT, MessageId, UserId } from "../types"
-import { IsChannelId, IsMessageId, IsReadStateId, IsUserId } from "../validation/decorators"
+import { IsChannelId, IsDate, IsMessageId, IsReadStateId, IsUserId } from "../validation/decorators"
 
 import { Entity } from "./Entity"
 
@@ -8,6 +8,7 @@ export const ErrorCodes = {
     InvalidChannelId: "invalid_channel_id",
     InvalidUserId: "invalid_user_id",
     InvalidLastMessageId: "invalid_last_message_id",
+    InvalidLastMessageCreatedAt: "invalid_last_message_created_at",
 } as const
 
 export class ChannelReadStateEntity extends Entity {
@@ -25,17 +26,22 @@ export class ChannelReadStateEntity extends Entity {
     @IsMessageId({ errorCode: ErrorCodes.InvalidLastMessageId })
     lastMessageId: MessageId
 
+    @IsDate({ errorCode: ErrorCodes.InvalidLastMessageCreatedAt })
+    lastMessageCreatedAt: Date
+
     constructor(params: {
         id: ChannelReadStateEntity["id"]
         channelId: ChannelReadStateEntity["channelId"]
         userId: ChannelReadStateEntity["userId"]
         lastMessageId: ChannelReadStateEntity["lastMessageId"]
+        lastMessageCreatedAt: ChannelReadStateEntity["lastMessageCreatedAt"]
     }) {
         super()
         this.id = params.id
         this.channelId = params.channelId
         this.userId = params.userId
         this.lastMessageId = params.lastMessageId
+        this.lastMessageCreatedAt = params.lastMessageCreatedAt
     }
     toJsonObject(): ChannelReadStateJsonObjectT {
         return {
@@ -43,6 +49,7 @@ export class ChannelReadStateEntity extends Entity {
             channel_id: this.channelId,
             user_id: this.userId,
             last_message_id: this.lastMessageId,
+            last_message_created_at: this.lastMessageCreatedAt,
             last_message: null,
         }
     }
