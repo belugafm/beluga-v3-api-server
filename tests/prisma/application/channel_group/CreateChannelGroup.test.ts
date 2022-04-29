@@ -1,4 +1,4 @@
-import * as repo from "../../../../infrastructure/prisma/repository"
+import * as repo from "../../../../src/infrastructure/prisma/repository"
 
 import { CreateChannelGroupApplicationTests } from "./CreateChannelGroup"
 

@@ -2,7 +2,8 @@
     "compilerOptions": {
         "sourceMap": true,
         "noImplicitAny": true,
-        "types": ["reflect-metadata", "jest", "node"],
+        "types": ["jest", "node"],
+        // "types": ["reflect-metadata", "jest", "node"],
         "esModuleInterop": true,
         "moduleResolution": "node",
         "noUnusedLocals": true,
@@ -13,7 +14,7 @@
         "strictFunctionTypes": false,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
-        "target": "esnext",
+        "target": "es6",
         "module": "commonjs",
         "lib": ["ESNext"],
         "allowJs": false,

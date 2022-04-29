@@ -1,6 +1,6 @@
-import { ErrorCodes, UserEntity } from "../../../domain/entity/User"
+import { ErrorCodes, UserEntity } from "../../../src/domain/entity/User"
 
-import { DomainError } from "../../../domain/DomainError"
+import { DomainError } from "../../../src/domain/DomainError"
 import config from "../../../src/config/app"
 
 const CHARSET_USERNAME = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_"

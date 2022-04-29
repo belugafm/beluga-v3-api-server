@@ -1,21 +1,21 @@
-import { DeleteMessageApplication, ErrorCodes } from "../../../../application/message/DeleteMessage"
+import { DeleteMessageApplication, ErrorCodes } from "../../../../src/application/message/DeleteMessage"
 import { generateRandomIpAddress, generateRandomName } from "../../functions"
 
-import { ApplicationError } from "../../../../application/ApplicationError"
-import { ChannelEntity } from "../../../../domain/entity/Channel"
-import { IChannelCommandRepository } from "../../../../domain/repository/command/Channel"
-import { IChannelGroupQueryRepository } from "../../../../domain/repository/query/ChannelGroup"
-import { IChannelGroupTimelineCommandRepository } from "../../../../domain/repository/command/ChannelGroupTimeline"
-import { IChannelQueryRepository } from "../../../../domain/repository/query/Channel"
-import { IMessageCommandRepository } from "../../../../domain/repository/command/Message"
-import { IMessageQueryRepository } from "../../../../domain/repository/query/Message"
-import { IUserCommandRepository } from "../../../../domain/repository/command/User"
-import { IUserQueryRepository } from "../../../../domain/repository/query/User"
-import { MessageEntity } from "../../../../domain/entity/Message"
-import { PostMessageApplication } from "../../../../application/message/PostMessage"
+import { ApplicationError } from "../../../../src/application/ApplicationError"
+import { ChannelEntity } from "../../../../src/domain/entity/Channel"
+import { IChannelCommandRepository } from "../../../../src/domain/repository/command/Channel"
+import { IChannelGroupQueryRepository } from "../../../../src/domain/repository/query/ChannelGroup"
+import { IChannelGroupTimelineCommandRepository } from "../../../../src/domain/repository/command/ChannelGroupTimeline"
+import { IChannelQueryRepository } from "../../../../src/domain/repository/query/Channel"
+import { IMessageCommandRepository } from "../../../../src/domain/repository/command/Message"
+import { IMessageQueryRepository } from "../../../../src/domain/repository/query/Message"
+import { IUserCommandRepository } from "../../../../src/domain/repository/command/User"
+import { IUserQueryRepository } from "../../../../src/domain/repository/query/User"
+import { MessageEntity } from "../../../../src/domain/entity/Message"
+import { PostMessageApplication } from "../../../../src/application/message/PostMessage"
 import { PrismaClient } from "@prisma/client"
-import { TransactionRepository } from "../../../../web/repositories"
-import { UserEntity } from "../../../../domain/entity/User"
+import { TransactionRepository } from "../../../../src/web/repositories"
+import { UserEntity } from "../../../../src/domain/entity/User"
 import config from "../../../../src/config/app"
 
 interface NewableRepository<T> {
@@ -101,7 +101,8 @@ export class DeleteMessageApplicationTests {
             new ChannelQueryRepository(),
             new ChannelCommandRepository(),
             new MessageQueryRepository(),
-            new MessageCommandRepository()
+            new MessageCommandRepository(),
+            new ChannelGroupTimelineCommandRepository()
         ).delete({ messageId: message.id, requestUserId: user.id })
         expect(succeeded).toBe(true)
         {
@@ -187,7 +188,8 @@ export class DeleteMessageApplicationTests {
                 new ChannelQueryRepository(),
                 new ChannelCommandRepository(),
                 new MessageQueryRepository(),
-                new MessageCommandRepository()
+                new MessageCommandRepository(),
+                new ChannelGroupTimelineCommandRepository()
             ).delete({ messageId: message.id, requestUserId: user.id })
         } catch (error) {
             expect(error).toBeInstanceOf(ApplicationError)
@@ -290,7 +292,8 @@ export class DeleteMessageApplicationTests {
                 new ChannelQueryRepository(),
                 new ChannelCommandRepository(),
                 new MessageQueryRepository(),
-                new MessageCommandRepository()
+                new MessageCommandRepository(),
+                new ChannelGroupTimelineCommandRepository()
             ).delete({ messageId: message.id, requestUserId: other.id })
         } catch (error) {
             expect(error).toBeInstanceOf(ApplicationError)

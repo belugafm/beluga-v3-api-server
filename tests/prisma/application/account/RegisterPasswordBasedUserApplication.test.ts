@@ -1,6 +1,6 @@
-import * as repo from "../../../../infrastructure/prisma/repository"
+import * as repo from "../../../../src/infrastructure/prisma/repository"
 
-import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
+import { LoginCredentialEntity } from "../../../../src/domain/entity/LoginCredential"
 import { RegisterPasswordBasedUserApplicationTests } from "./RegisterPasswordBasedUserApplication"
 
 jest.setTimeout(60000)

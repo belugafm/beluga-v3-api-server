@@ -1,22 +1,22 @@
 import { generateRandomIpAddress, generateRandomName } from "../functions"
 
-import { ChannelEntity } from "../../../domain/entity/Channel"
-import { ChannelGroupEntity } from "../../../domain/entity/ChannelGroup"
-import { IChannelCommandRepository } from "../../../domain/repository/command/Channel"
-import { IChannelGroupCommandRepository } from "../../../domain/repository/command/ChannelGroup"
-import { IChannelGroupQueryRepository } from "../../../domain/repository/query/ChannelGroup"
-import { IChannelGroupTimelineCommandRepository } from "../../../domain/repository/command/ChannelGroupTimeline"
-import { IChannelGroupTimelineQueryRepository } from "../../../domain/repository/query/ChannelGroupTimeline"
-import { IChannelQueryRepository } from "../../../domain/repository/query/Channel"
-import { IMessageCommandRepository } from "../../../domain/repository/command/Message"
-import { IMessageQueryRepository } from "../../../domain/repository/query/Message"
-import { IUserCommandRepository } from "../../../domain/repository/command/User"
-import { IUserQueryRepository } from "../../../domain/repository/query/User"
-import { MessageEntity } from "../../../domain/entity/Message"
-import { PostMessageApplication } from "../../../application/message/PostMessage"
+import { ChannelEntity } from "../../../src/domain/entity/Channel"
+import { ChannelGroupEntity } from "../../../src/domain/entity/ChannelGroup"
+import { IChannelCommandRepository } from "../../../src/domain/repository/command/Channel"
+import { IChannelGroupCommandRepository } from "../../../src/domain/repository/command/ChannelGroup"
+import { IChannelGroupQueryRepository } from "../../../src/domain/repository/query/ChannelGroup"
+import { IChannelGroupTimelineCommandRepository } from "../../../src/domain/repository/command/ChannelGroupTimeline"
+import { IChannelGroupTimelineQueryRepository } from "../../../src/domain/repository/query/ChannelGroupTimeline"
+import { IChannelQueryRepository } from "../../../src/domain/repository/query/Channel"
+import { IMessageCommandRepository } from "../../../src/domain/repository/command/Message"
+import { IMessageQueryRepository } from "../../../src/domain/repository/query/Message"
+import { IUserCommandRepository } from "../../../src/domain/repository/command/User"
+import { IUserQueryRepository } from "../../../src/domain/repository/query/User"
+import { MessageEntity } from "../../../src/domain/entity/Message"
+import { PostMessageApplication } from "../../../src/application/message/PostMessage"
 import { PrismaClient } from "@prisma/client"
-import { TransactionRepository } from "../../../infrastructure/prisma/repository/Transaction"
-import { UserEntity } from "../../../domain/entity/User"
+import { TransactionRepository } from "../../../src/infrastructure/prisma/repository/Transaction"
+import { UserEntity } from "../../../src/domain/entity/User"
 import config from "../../../src/config/app"
 
 interface NewableRepository<T> {
@@ -126,8 +126,7 @@ export class PostMessageApplicationTests {
         {
             const messageIds = await new ChannelGroupTimelineQueryRepository().listMessageId({
                 channelGroupId: channelGroup.id,
-                sortBy: "CreatedAt",
-                sortOrder: "Ascending",
+                sortOrder: "ascending",
                 limit: 50,
             })
             expect(messageIds[0]).toBe(message1.id)
@@ -140,8 +139,7 @@ export class PostMessageApplicationTests {
         {
             const messageIds = await new ChannelGroupTimelineQueryRepository().listMessageId({
                 channelGroupId: channelGroup.id,
-                sortBy: "CreatedAt",
-                sortOrder: "Ascending",
+                sortOrder: "ascending",
                 limit: 50,
             })
             expect(messageIds).toHaveLength(0)

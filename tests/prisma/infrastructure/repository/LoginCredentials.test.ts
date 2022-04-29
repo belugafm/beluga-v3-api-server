@@ -1,8 +1,8 @@
-import { LoginCredentialCommandRepository } from "../../../../infrastructure/prisma/repository/command/LoginCredential"
-import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
-import { LoginCredentialQueryRepository } from "../../../../infrastructure/prisma/repository/query/LoginCredential"
-import { UserCommandRepository } from "../../../../infrastructure/prisma/repository/command/User"
-import { UserEntity } from "../../../../domain/entity/User"
+import { LoginCredentialCommandRepository } from "../../../../src/infrastructure/prisma/repository/command/LoginCredential"
+import { LoginCredentialEntity } from "../../../../src/domain/entity/LoginCredential"
+import { LoginCredentialQueryRepository } from "../../../../src/infrastructure/prisma/repository/query/LoginCredential"
+import { UserCommandRepository } from "../../../../src/infrastructure/prisma/repository/command/User"
+import { UserEntity } from "../../../../src/domain/entity/User"
 import { generateRandomIpAddress } from "../../functions"
 
 jest.setTimeout(30000)

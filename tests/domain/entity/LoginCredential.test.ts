@@ -1,6 +1,6 @@
-import { ErrorCodes, LoginCredentialEntity } from "../../../domain/entity/LoginCredential"
+import { ErrorCodes, LoginCredentialEntity } from "../../../src/domain/entity/LoginCredential"
 
-import { DomainError } from "../../../domain/DomainError"
+import { DomainError } from "../../../src/domain/DomainError"
 import config from "../../../src/config/app"
 
 function generateRandomPassword(length: number) {

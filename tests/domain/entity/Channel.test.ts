@@ -1,6 +1,6 @@
-import { ChannelEntity, ErrorCodes } from "../../../domain/entity/Channel"
+import { ChannelEntity, ErrorCodes } from "../../../src/domain/entity/Channel"
 
-import { DomainError } from "../../../domain/DomainError"
+import { DomainError } from "../../../src/domain/DomainError"
 
 const id = 1
 const name = "beluga"

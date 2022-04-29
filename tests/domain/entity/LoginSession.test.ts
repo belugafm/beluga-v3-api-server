@@ -1,6 +1,6 @@
-import { ErrorCodes, LoginSessionEntity } from "../../../domain/entity/LoginSession"
+import { ErrorCodes, LoginSessionEntity } from "../../../src/domain/entity/LoginSession"
 
-import { DomainError } from "../../../domain/DomainError"
+import { DomainError } from "../../../src/domain/DomainError"
 
 describe("LoginSessionEntity", () => {
     test("Normal", async () => {

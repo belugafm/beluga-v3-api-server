@@ -1,6 +1,6 @@
-import { ErrorCodes, MessageEntity } from "../../../domain/entity/Message"
+import { ErrorCodes, MessageEntity } from "../../../src/domain/entity/Message"
 
-import { DomainError } from "../../../domain/DomainError"
+import { DomainError } from "../../../src/domain/DomainError"
 
 const id = 1
 const text = "beluga"

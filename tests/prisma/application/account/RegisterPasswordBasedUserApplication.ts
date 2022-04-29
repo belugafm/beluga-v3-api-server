@@ -1,17 +1,17 @@
 import {
     ErrorCodes,
     RegisterPasswordBasedUserApplication,
-} from "../../../../application/registration/RegisterPasswordBasedUser"
+} from "../../../../src/application/registration/RegisterPasswordBasedUser"
 import { generateRandomIpAddress, generateRandomName, sleep } from "../../functions"
 
-import { ApplicationError } from "../../../../application/ApplicationError"
-import { ILoginCredentialCommandRepository } from "../../../../domain/repository/command/LoginCredential"
-import { IUserCommandRepository } from "../../../../domain/repository/command/User"
-import { IUserQueryRepository } from "../../../../domain/repository/query/User"
-import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
+import { ApplicationError } from "../../../../src/application/ApplicationError"
+import { ILoginCredentialCommandRepository } from "../../../../src/domain/repository/command/LoginCredential"
+import { IUserCommandRepository } from "../../../../src/domain/repository/command/User"
+import { IUserQueryRepository } from "../../../../src/domain/repository/query/User"
+import { LoginCredentialEntity } from "../../../../src/domain/entity/LoginCredential"
 import { PrismaClient } from "@prisma/client"
-import { TransactionRepository } from "../../../../infrastructure/prisma/repository/Transaction"
-import { UserEntity } from "../../../../domain/entity/User"
+import { TransactionRepository } from "../../../../src/infrastructure/prisma/repository/Transaction"
+import { UserEntity } from "../../../../src/domain/entity/User"
 import config from "../../../../src/config/app"
 
 interface NewableRepository<T> {

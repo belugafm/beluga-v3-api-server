@@ -1,5 +1,5 @@
-import { InMemoryCache } from "../../../../cache/data_store/memory"
-import { UserEntity } from "../../../../domain/entity/User"
+import { InMemoryCache } from "../../../../src/cache/data_store/memory"
+import { UserEntity } from "../../../../src/domain/entity/User"
 import { sleep } from "../../../mongoose/functions"
 
 jest.setTimeout(30000)

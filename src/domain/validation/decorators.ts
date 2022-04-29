@@ -26,25 +26,25 @@ const registry = new FinalizationRegistry((uuid: string) => {
     delete storage[uuid]
 })
 
-export function Validate<T>(validator: PropertyValidator<T>, options?: ValidationOptions) {
-    return (target: object, propertyKey: string) => {
+export function Validate<T>(validator: PropertyValidator<T>, options?: ValidationOptions): any {
+    return (target: object, propertyKey: string, desc: any) => {
         const getter = function (this: Entity) {
             if (this.uuid in storage) {
                 return storage[this.uuid][propertyKey]
             }
             return undefined
         }
-        const setter = function (this: Entity, newVal: T) {
+        const setter = function (this: Entity, newValue: T) {
             if (this.uuid in storage == false) {
                 storage[this.uuid] = {}
                 registry.register(this, this.uuid)
             }
-            if (options?.nullable && newVal === null) {
+            if (options?.nullable && newValue === null) {
                 storage[this.uuid][propertyKey] = null
                 return
             }
-            if (validator.ok(newVal)) {
-                storage[this.uuid][propertyKey] = newVal
+            if (validator.ok(newValue)) {
+                storage[this.uuid][propertyKey] = newValue
             } else {
                 throw new DomainError(options?.errorCode ? options.errorCode : "")
             }
