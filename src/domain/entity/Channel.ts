@@ -1,4 +1,4 @@
-import { ChannelGroupdId, ChannelId, UserId } from "../types"
+import { ChannelGroupdId, ChannelId, MessageId, UserId } from "../types"
 import {
     IsChannelDescription,
     IsChannelGroupId,
@@ -7,6 +7,7 @@ import {
     IsChannelUniqueName,
     IsDate,
     IsInteger,
+    IsMessageId,
     IsString,
     IsUserId,
 } from "../validation/decorators"
@@ -67,6 +68,9 @@ export class ChannelEntity extends Entity {
     @IsChannelDescription({ errorCode: ErrorCodes.InvalidDescription })
     description: string
 
+    @IsMessageId({ nullable: true, errorCode: ErrorCodes.InvalidDescription })
+    lastMessageId: MessageId | null
+
     constructor(
         params: {
             id: ChannelEntity["id"]
@@ -87,6 +91,7 @@ export class ChannelEntity extends Entity {
         this.messageCount = params.messageCount != null ? params.messageCount : 0
         this.statusString = params.statusString != null ? params.statusString : "#"
         this.description = params.description != null ? params.description : ""
+        this.lastMessageId = params.lastMessageId != null ? params.lastMessageId : null
     }
     toResponseObject() {
         return {
@@ -99,6 +104,7 @@ export class ChannelEntity extends Entity {
             message_count: this.messageCount,
             description: this.description,
             status_string: this.statusString,
+            last_message_id: this.lastMessageId,
         }
     }
     static generateUniqueName(): string {

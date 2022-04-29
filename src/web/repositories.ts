@@ -19,6 +19,8 @@ export { UserQueryRepository } from "../infrastructure/prisma/repository/query/U
 export { UserCommandRepository } from "../infrastructure/prisma/repository/command/User"
 export { ChannelCommandRepository } from "../infrastructure/prisma/repository/command/Channel"
 export { ChannelQueryRepository } from "../infrastructure/prisma/repository/query/Channel"
+export { ChannelReadStateCommandRepository } from "../infrastructure/prisma/repository/command/ChannelReadState"
+export { ChannelReadStateQueryRepository } from "../infrastructure/prisma/repository/query/ChannelReadState"
 export { ChannelGroupCommandRepository } from "../infrastructure/prisma/repository/command/ChannelGroup"
 export { ChannelGroupQueryRepository } from "../infrastructure/prisma/repository/query/ChannelGroup"
 export { MessageCommandRepository } from "../infrastructure/prisma/repository/command/Message"

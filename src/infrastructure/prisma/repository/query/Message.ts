@@ -52,7 +52,7 @@ export class MessageQueryRepository implements IMessageQueryRepository {
             }
         }
     }
-    async findLastForUser(userId: number): Promise<MessageEntity | null> {
+    async findLatestForUser(userId: number): Promise<MessageEntity | null> {
         try {
             if (isInteger(userId) !== true) {
                 throw new RepositoryError("`userId` must be a number")
@@ -60,6 +60,35 @@ export class MessageQueryRepository implements IMessageQueryRepository {
             const message = await this._prisma.message.findFirst({
                 where: {
                     userId,
+                    threadId: null,
+                    deleted: false,
+                },
+                orderBy: {
+                    createdAt: "desc",
+                },
+            })
+            if (message == null) {
+                return null
+            }
+            return toEntity(message)
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
+    async findLatestForChannel(channelId: number): Promise<MessageEntity | null> {
+        try {
+            if (isInteger(channelId) !== true) {
+                throw new RepositoryError("`channelId` must be a number")
+            }
+            const message = await this._prisma.message.findFirst({
+                where: {
+                    channelId,
+                    threadId: null,
+                    deleted: false,
                 },
                 orderBy: {
                     createdAt: "desc",

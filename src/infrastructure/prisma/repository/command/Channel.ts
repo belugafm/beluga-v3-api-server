@@ -16,6 +16,7 @@ export function has_changed(a: Channel, b: Channel) {
         a.createdBy === b.createdBy &&
         a.statusString === b.statusString &&
         a.description === b.description &&
+        a.lastMessageId === b.lastMessageId &&
         a.messageCount === b.messageCount
     )
 }
@@ -45,6 +46,7 @@ export class ChannelCommandRepository extends ChangeEventHandler implements ICha
                     messageCount: channel.messageCount,
                     statusString: channel.statusString,
                     description: channel.description,
+                    lastMessageId: channel.lastMessageId,
                 },
             })
             return result.id
@@ -81,6 +83,7 @@ export class ChannelCommandRepository extends ChangeEventHandler implements ICha
                     messageCount: channel.messageCount,
                     statusString: channel.statusString,
                     description: channel.description,
+                    lastMessageId: channel.lastMessageId,
                 },
             })
             if (has_changed(origChannel, updatedChannel)) {

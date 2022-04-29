@@ -1,10 +1,15 @@
 import * as vs from "../../../../domain/validation"
 
+import {
+    ChannelReadStateCommandRepository,
+    ChannelTimelineQueryRepository,
+    TransactionRepository,
+} from "../../../repositories"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
 import { AuthenticationMethods } from "../../facts/authentication_method"
-import { ChannelTimelineQueryRepository } from "../../../repositories"
+import { ChannelTimelineApplication } from "../../../../application/timeline/Channel"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MessageEntity } from "../../../../domain/entity/Message"
@@ -92,12 +97,19 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
         raise(errors["internal_error"])
     }
     try {
-        return await new ChannelTimelineQueryRepository().listMessage({
-            channelId: args.channel_id,
-            maxId: args.max_id,
-            sinceId: args.since_id,
-            limit: args.limit ? args.limit : 30,
-            sortOrder: getSortOrder(args.sort_order),
+        const transaction = await TransactionRepository.new<ReturnType>()
+        return await transaction.$transaction(async (transactionSession) => {
+            return await new ChannelTimelineApplication(
+                new ChannelTimelineQueryRepository(transactionSession),
+                new ChannelReadStateCommandRepository(transactionSession)
+            ).listMessage({
+                userId: authUser.id,
+                channelId: args.channel_id,
+                maxId: args.max_id,
+                sinceId: args.since_id,
+                limit: args.limit ? args.limit : 30,
+                sortOrder: getSortOrder(args.sort_order),
+            })
         })
     } catch (error) {
         if (error instanceof Error) {

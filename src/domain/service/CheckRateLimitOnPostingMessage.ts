@@ -24,7 +24,7 @@ export class CheckRateLimitForPostingMessageService {
         if (user.trustLevel >= TrustLevel.AuthorizedUser) {
             return false
         }
-        const lastMessage = await this.messageRepository.findLastForUser(userId)
+        const lastMessage = await this.messageRepository.findLatestForUser(userId)
         if (lastMessage == null) {
             return false
         }

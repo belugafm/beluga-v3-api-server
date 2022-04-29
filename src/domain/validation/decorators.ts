@@ -5,7 +5,7 @@ import * as user from "./types/user"
 
 import { Options as IntegerOptions, integer } from "./types/number"
 import { Options as StringOptions, string } from "./types/string"
-import { channelGroupId, channelId, messageId, userId } from "./types/entityId"
+import { channelGroupId, channelId, messageId, readStateId, userId } from "./types/entityId"
 
 import { DomainError } from "../DomainError"
 import { Entity } from "../entity/Entity"
@@ -111,6 +111,10 @@ export function IsUserLocation(options?: ValidationOptions) {
 }
 export function IsUserUrl(options?: ValidationOptions) {
     return Validate(user.url(), options)
+}
+
+export function IsReadStateId(options?: ValidationOptions) {
+    return Validate(readStateId(), options)
 }
 
 // Primitive

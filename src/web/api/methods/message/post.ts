@@ -124,7 +124,6 @@ export const facts: MethodFacts = {
 type ReturnType = Promise<MessageEntity>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
-    const transaction = await TransactionRepository.new<ReturnType>()
     if (authUser == null) {
         raise(errors["invalid_auth"])
     }
@@ -132,8 +131,9 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
         raise(errors["argument_missing"])
     }
     try {
+        const transaction = await TransactionRepository.new<ReturnType>()
         return await transaction.$transaction(async (transactionSession) => {
-            const message = await new PostMessageApplication(
+            return await new PostMessageApplication(
                 new UserQueryRepository(transactionSession),
                 new UserCommandRepository(transactionSession),
                 new ChannelQueryRepository(transactionSession),
@@ -148,7 +148,6 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 threadId: args.thread_id,
                 userId: authUser.id,
             })
-            return message
         })
     } catch (error) {
         if (error instanceof ApplicationError) {

@@ -112,6 +112,10 @@ export class PostMessageApplicationTests {
         expect(updatedUser).toBeInstanceOf(UserEntity)
         expect(updatedUser?.messageCount).toEqual(2)
 
+        const updatedChannel = await new ChannelQueryRepository().findById(channel.id)
+        expect(updatedChannel).toBeInstanceOf(ChannelEntity)
+        expect(updatedChannel?.lastMessageId).toEqual(message.id)
+
         await new UserCommandRepository().delete(user)
         await new ChannelCommandRepository().delete(channel)
         await new MessageCommandRepository().delete(message)

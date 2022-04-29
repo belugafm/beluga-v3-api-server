@@ -69,7 +69,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
     }
     try {
         return await transaction.$transaction(async (transactionSession) => {
-            const succeeded = await new DeleteMessageApplication(
+            return await new DeleteMessageApplication(
                 new UserQueryRepository(transactionSession),
                 new UserCommandRepository(transactionSession),
                 new ChannelQueryRepository(transactionSession),
@@ -81,7 +81,6 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 messageId: args.id,
                 requestUserId: authUser.id,
             })
-            return succeeded
         })
     } catch (error) {
         if (error instanceof ApplicationError) {

@@ -93,6 +93,10 @@ export class DeleteMessageApplicationTests {
             const updatedUser = await new UserQueryRepository().findById(user.id)
             expect(updatedUser).toBeInstanceOf(UserEntity)
             expect(updatedUser?.messageCount).toEqual(1)
+
+            const updatedChannel = await new ChannelQueryRepository().findById(channel.id)
+            expect(updatedChannel).toBeInstanceOf(ChannelEntity)
+            expect(updatedChannel?.lastMessageId).toEqual(message.id)
         }
 
         const succeeded = await new DeleteMessageApplication(
@@ -109,6 +113,10 @@ export class DeleteMessageApplicationTests {
             const updatedUser = await new UserQueryRepository().findById(user.id)
             expect(updatedUser).toBeInstanceOf(UserEntity)
             expect(updatedUser?.messageCount).toEqual(0)
+
+            const updatedChannel = await new ChannelQueryRepository().findById(channel.id)
+            expect(updatedChannel).toBeInstanceOf(ChannelEntity)
+            expect(updatedChannel?.lastMessageId).toBeNull()
         }
         await new UserCommandRepository().delete(user)
         await new ChannelCommandRepository().delete(channel)

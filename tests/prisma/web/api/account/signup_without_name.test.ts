@@ -1,3 +1,4 @@
+import { generateRandomIpAddress, sleep } from "../../../functions"
 import signup, { expectedErrorSpecs } from "../../../../../src/web/api/methods/account/signup_without_name"
 
 import { DeleteUserApplication } from "../../../../../src/application/registration/DeleteUser"
@@ -10,7 +11,6 @@ import { UserEntity } from "../../../../../src/domain/entity/User"
 import { UserQueryRepository } from "../../../../../src/infrastructure/prisma/repository/query/User"
 import { WebApiRuntimeError } from "../../../../../src/web/api/error"
 import config from "../../../../../src/config/app"
-import { sleep } from "../../../functions"
 
 jest.setTimeout(60000)
 
@@ -19,14 +19,15 @@ describe("account/signup_without_name", () => {
         const origValue = config.user_registration.limit
         config.user_registration.limit = 5
         expect.assertions(4)
+        const ipAddress = generateRandomIpAddress()
         try {
             await signup(
                 {
                     password: "password",
                     confirmation_password: "hoge",
-                    ip_address: "192.168.1.1",
+                    ip_address: ipAddress,
                 },
-                "192.168.1.1",
+                ipAddress,
                 null
             )
         } catch (error) {
@@ -39,9 +40,9 @@ describe("account/signup_without_name", () => {
             {
                 password: "password",
                 confirmation_password: "password",
-                ip_address: "192.168.1.1",
+                ip_address: ipAddress,
             },
-            "192.168.1.1",
+            ipAddress,
             null
         )
         expect(user1).toBeInstanceOf(UserEntity)
@@ -50,44 +51,41 @@ describe("account/signup_without_name", () => {
             {
                 password: "password",
                 confirmation_password: "password",
-                ip_address: "192.168.1.1",
+                ip_address: ipAddress,
             },
-            "192.168.1.1",
+            ipAddress,
             null
         )
         expect(user2).toBeInstanceOf(UserEntity)
-        if (user1) {
-            await new DeleteUserApplication(
-                new UserQueryRepository(),
-                new UserCommandRepository(),
-                new LoginCredentialQueryRepository(),
-                new LoginCredentialCommandRepository(),
-                new LoginSessionQueryRepository(),
-                new LoginSessionCommandRepository()
-            ).delete(user1.id)
-        }
-        if (user2) {
-            await new DeleteUserApplication(
-                new UserQueryRepository(),
-                new UserCommandRepository(),
-                new LoginCredentialQueryRepository(),
-                new LoginCredentialCommandRepository(),
-                new LoginSessionQueryRepository(),
-                new LoginSessionCommandRepository()
-            ).delete(user2.id)
-        }
+        await new DeleteUserApplication(
+            new UserQueryRepository(),
+            new UserCommandRepository(),
+            new LoginCredentialQueryRepository(),
+            new LoginCredentialCommandRepository(),
+            new LoginSessionQueryRepository(),
+            new LoginSessionCommandRepository()
+        ).delete(user1.id)
+        await new DeleteUserApplication(
+            new UserQueryRepository(),
+            new UserCommandRepository(),
+            new LoginCredentialQueryRepository(),
+            new LoginCredentialCommandRepository(),
+            new LoginSessionQueryRepository(),
+            new LoginSessionCommandRepository()
+        ).delete(user2.id)
         config.user_registration.limit = origValue
     })
     test("TooManyRequests", async () => {
         expect.assertions(5)
+        const ipAddress = generateRandomIpAddress()
         try {
             await signup(
                 {
                     password: "password",
                     confirmation_password: "hoge",
-                    ip_address: "192.168.1.1",
+                    ip_address: ipAddress,
                 },
-                "192.168.1.1",
+                ipAddress,
                 null
             )
         } catch (error) {
@@ -100,9 +98,9 @@ describe("account/signup_without_name", () => {
             {
                 password: "password",
                 confirmation_password: "password",
-                ip_address: "192.168.1.1",
+                ip_address: ipAddress,
             },
-            "192.168.1.1",
+            ipAddress,
             null
         )
         expect(user1).toBeInstanceOf(UserEntity)
@@ -111,9 +109,9 @@ describe("account/signup_without_name", () => {
                 {
                     password: "password",
                     confirmation_password: "password",
-                    ip_address: "192.168.1.1",
+                    ip_address: ipAddress,
                 },
-                "192.168.1.1",
+                ipAddress,
                 null
             )
         } catch (error) {
@@ -122,15 +120,13 @@ describe("account/signup_without_name", () => {
                 expect(error.code).toBe(expectedErrorSpecs["too_many_requests"].code)
             }
         }
-        if (user1) {
-            await new DeleteUserApplication(
-                new UserQueryRepository(),
-                new UserCommandRepository(),
-                new LoginCredentialQueryRepository(),
-                new LoginCredentialCommandRepository(),
-                new LoginSessionQueryRepository(),
-                new LoginSessionCommandRepository()
-            ).delete(user1.id)
-        }
+        await new DeleteUserApplication(
+            new UserQueryRepository(),
+            new UserCommandRepository(),
+            new LoginCredentialQueryRepository(),
+            new LoginCredentialCommandRepository(),
+            new LoginSessionQueryRepository(),
+            new LoginSessionCommandRepository()
+        ).delete(user1.id)
     })
 })

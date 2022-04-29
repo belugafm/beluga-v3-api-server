@@ -10,6 +10,7 @@ import {
 import { ErrorCodes as DomainErrorCodes, MessageEntity } from "../../domain/entity/Message"
 
 import { ApplicationError } from "../ApplicationError"
+import { ChannelEntity } from "../../domain/entity/Channel"
 import { DomainError } from "../../domain/DomainError"
 import { IChannelCommandRepository } from "../../domain/repository/command/Channel"
 import { IChannelGroupQueryRepository } from "../../domain/repository/query/ChannelGroup"
@@ -19,6 +20,7 @@ import { IMessageCommandRepository } from "../../domain/repository/command/Messa
 import { IMessageQueryRepository } from "../../domain/repository/query/Message"
 import { IUserCommandRepository } from "../../domain/repository/command/User"
 import { IUserQueryRepository } from "../../domain/repository/query/User"
+import { UserEntity } from "../../domain/entity/User"
 
 export const ErrorCodes = {
     InternalError: "internal_error",
@@ -67,6 +69,55 @@ export class PostMessageApplication {
             messageQueryRepository
         )
     }
+    async _postMessage({
+        text,
+        user,
+        channel,
+        thread,
+    }: {
+        text: string
+        user: UserEntity
+        channel: ChannelEntity
+        thread?: MessageEntity
+    }): Promise<MessageEntity> {
+        const message = new MessageEntity({
+            id: -1,
+            text: text,
+            channelId: channel.id,
+            userId: user.id,
+            createdAt: new Date(),
+            favoriteCount: 0,
+            likeCount: 0,
+            replyCount: 0,
+            threadId: thread ? thread.id : null,
+        })
+
+        await this.permissionToPostMessageService.hasThrow(user.id, channel.id)
+        await this.checkRateLimitForPostingMessageService.hasThrow(user.id)
+
+        message.id = await this.messageCommandRepository.add(message)
+
+        channel.messageCount += 1
+        channel.lastMessageId = message.id
+        await this.channelCommandRepository.update(channel)
+
+        user.messageCount += 1
+        await this.userCommandRepository.update(user)
+
+        if (thread) {
+            thread.replyCount += 1
+            await this.messageCommandRepository.update(thread)
+        }
+
+        let parentChannelGroupId = channel.parentChannelGroupId
+        let parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+        while (parentChannelGroup) {
+            await this.channelGroupTimelineCommandRepository.add(message, parentChannelGroup)
+            parentChannelGroupId = parentChannelGroup.parentId
+            parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+        }
+        return message
+    }
     async post({
         userId,
         text,
@@ -85,121 +136,57 @@ export class PostMessageApplication {
         if (channelId != null && threadId != null) {
             throw new ApplicationError(ErrorCodes.TooManyArguments)
         }
-        if (channelId == null) {
-            if (threadId == null) {
-                throw new ApplicationError(ErrorCodes.ArgumentMissing)
-            }
-            const thread = await this.messageQueryRepository.findById(threadId)
-            if (thread == null) {
-                throw new ApplicationError(ErrorCodes.ThreadNotFound)
-            }
-            const channel = await this.channelQueryRepository.findById(thread.channelId)
-            if (channel == null) {
-                throw new ApplicationError(ErrorCodes.ChannelNotFound)
-            }
-            try {
-                await this.permissionToPostMessageService.hasThrow(userId, channel.id)
-                await this.checkRateLimitForPostingMessageService.hasThrow(userId)
-                const message = new MessageEntity({
-                    id: -1,
-                    text: text,
-                    channelId: channel.id,
-                    userId: userId,
-                    createdAt: new Date(),
-                    favoriteCount: 0,
-                    likeCount: 0,
-                    replyCount: 0,
-                    threadId: threadId ? threadId : null,
-                })
-                message.id = await this.messageCommandRepository.add(message)
-
-                channel.messageCount += 1
-                await this.channelCommandRepository.update(channel)
-
-                user.messageCount += 1
-                await this.userCommandRepository.update(user)
-
-                thread.replyCount += 1
-                await this.messageCommandRepository.update(thread)
-
-                let parentChannelGroupId = channel.parentChannelGroupId
-                let parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
-                while (parentChannelGroup) {
-                    await this.channelGroupTimelineCommandRepository.add(message, parentChannelGroup)
-                    parentChannelGroupId = parentChannelGroup.parentId
-                    parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
-                }
-
-                return message
-            } catch (error) {
-                if (error instanceof DomainError) {
-                    if (error.code === DomainErrorCodes.InvalidText) {
-                        throw new ApplicationError(ErrorCodes.TextLengthNotMeetPolicy)
-                    }
-                    if (error.code === CheckPermissionToPostMessageServiceErrorCodes.DoNotHavePermission) {
-                        throw new ApplicationError(ErrorCodes.DoNotHavePermission)
-                    }
-                    if (error.code === CheckRateLimitForPostingMessageServiceErrorCodes.RateLimitExceeded) {
-                        throw new ApplicationError(ErrorCodes.RateLimitExceeded)
-                    }
-                }
-                throw new ApplicationError(ErrorCodes.InternalError)
-            }
-        } else if (threadId == null) {
+        try {
             if (channelId == null) {
+                if (threadId == null) {
+                    throw new ApplicationError(ErrorCodes.ArgumentMissing)
+                }
+                const thread = await this.messageQueryRepository.findById(threadId)
+                if (thread == null) {
+                    throw new ApplicationError(ErrorCodes.ThreadNotFound)
+                }
+                const channel = await this.channelQueryRepository.findById(thread.channelId)
+                if (channel == null) {
+                    throw new ApplicationError(ErrorCodes.ChannelNotFound)
+                }
+                return await this._postMessage({
+                    text,
+                    user,
+                    channel,
+                    thread,
+                })
+            } else if (threadId == null) {
+                if (channelId == null) {
+                    throw new ApplicationError(ErrorCodes.ArgumentMissing)
+                }
+                const channel = await this.channelQueryRepository.findById(channelId)
+                if (channel == null) {
+                    throw new ApplicationError(ErrorCodes.ChannelNotFound)
+                }
+                return await this._postMessage({
+                    text,
+                    user,
+                    channel,
+                })
+            } else {
                 throw new ApplicationError(ErrorCodes.ArgumentMissing)
             }
-            const channel = await this.channelQueryRepository.findById(channelId)
-            if (channel == null) {
-                throw new ApplicationError(ErrorCodes.ChannelNotFound)
-            }
-            try {
-                await this.permissionToPostMessageService.hasThrow(userId, channelId)
-                await this.checkRateLimitForPostingMessageService.hasThrow(userId)
-                const message = new MessageEntity({
-                    id: -1,
-                    text: text,
-                    channelId: channelId,
-                    userId: userId,
-                    createdAt: new Date(),
-                    favoriteCount: 0,
-                    likeCount: 0,
-                    replyCount: 0,
-                    threadId: threadId ? threadId : null,
-                })
-                message.id = await this.messageCommandRepository.add(message)
-
-                channel.messageCount += 1
-                await this.channelCommandRepository.update(channel)
-
-                user.messageCount += 1
-                await this.userCommandRepository.update(user)
-
-                let parentChannelGroupId = channel.parentChannelGroupId
-                let parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
-                while (parentChannelGroup) {
-                    await this.channelGroupTimelineCommandRepository.add(message, parentChannelGroup)
-                    parentChannelGroupId = parentChannelGroup.parentId
-                    parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+        } catch (error) {
+            if (error instanceof DomainError) {
+                if (error.code === DomainErrorCodes.InvalidText) {
+                    throw new ApplicationError(ErrorCodes.TextLengthNotMeetPolicy)
                 }
-
-                return message
-            } catch (error) {
-                if (error instanceof DomainError) {
-                    if (error.code === DomainErrorCodes.InvalidText) {
-                        throw new ApplicationError(ErrorCodes.TextLengthNotMeetPolicy)
-                    }
-                    if (error.code === CheckPermissionToPostMessageServiceErrorCodes.DoNotHavePermission) {
-                        throw new ApplicationError(ErrorCodes.DoNotHavePermission)
-                    }
-                    if (error.code === CheckRateLimitForPostingMessageServiceErrorCodes.RateLimitExceeded) {
-                        throw new ApplicationError(ErrorCodes.RateLimitExceeded)
-                    }
+                if (error.code === CheckPermissionToPostMessageServiceErrorCodes.DoNotHavePermission) {
+                    throw new ApplicationError(ErrorCodes.DoNotHavePermission)
                 }
-                throw new ApplicationError(ErrorCodes.InternalError)
+                if (error.code === CheckRateLimitForPostingMessageServiceErrorCodes.RateLimitExceeded) {
+                    throw new ApplicationError(ErrorCodes.RateLimitExceeded)
+                }
             }
-        } else {
-            throw new ApplicationError(ErrorCodes.ArgumentMissing)
+            if (error instanceof ApplicationError) {
+                throw error
+            }
+            throw new ApplicationError(ErrorCodes.InternalError)
         }
     }
 }

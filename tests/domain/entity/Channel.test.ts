@@ -168,6 +168,25 @@ describe("ChannelEntity", () => {
             createdAt,
         })
     })
+    it.each([1.5, "beluga", new Date(), {}, [], true, false, null, undefined])("Invalid 'id'", (id) => {
+        expect.assertions(2)
+        try {
+            new ChannelEntity({
+                // @ts-ignore
+                id,
+                name,
+                uniqueName,
+                parentChannelGroupId,
+                createdBy,
+                createdAt,
+            })
+        } catch (error) {
+            expect(error).toBeInstanceOf(DomainError)
+            if (error instanceof DomainError) {
+                expect(error.code).toBe(ErrorCodes.InvalidId)
+            }
+        }
+    })
     it.each([1.5, new Date(), {}, [], true, false, null, undefined])("Invalid 'name'", (name) => {
         expect.assertions(2)
         try {

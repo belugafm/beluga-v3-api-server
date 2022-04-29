@@ -1,4 +1,4 @@
-import { MessageId, UserId } from "../../types"
+import { ChannelId, MessageId, UserId } from "../../types"
 
 import { MessageEntity } from "../../entity/Message"
 
@@ -13,5 +13,6 @@ export const SortOrder = {
 
 export interface IMessageQueryRepository {
     findById(id: MessageId): Promise<MessageEntity | null>
-    findLastForUser(userId: UserId): Promise<MessageEntity | null>
+    findLatestForUser(userId: UserId): Promise<MessageEntity | null>
+    findLatestForChannel(channelId: ChannelId): Promise<MessageEntity | null>
 }
