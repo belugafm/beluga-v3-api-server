@@ -6,6 +6,7 @@ import {
     IsInteger,
     IsMessageId,
     IsMessageText,
+    IsMessageTextStyle,
     IsUserId,
 } from "../validation/decorators"
 
@@ -20,6 +21,7 @@ export const ErrorCodes = {
     InvalidLikeCount: "invalid_like_count",
     InvalidReplyCount: "invalid_reply_count",
     InvalidText: "invalid_text",
+    InvalidTextStyle: "invalid_text_style",
     InvalidThreadId: "invalid_thread_id",
     InvalidDeleted: "invalid_deleted",
 } as const
@@ -38,6 +40,9 @@ export class MessageEntity extends Entity {
 
     @IsMessageText({ errorCode: ErrorCodes.InvalidText })
     text: string
+
+    @IsMessageTextStyle({ nullable: true, errorCode: ErrorCodes.InvalidTextStyle })
+    textStyle: string | null
 
     @IsDate({ errorCode: ErrorCodes.InvalidCreatedAt })
     createdAt: Date
@@ -80,16 +85,16 @@ export class MessageEntity extends Entity {
         this.replyCount = params.replyCount
         this.threadId = params.threadId != null ? params.threadId : null
         this.deleted = params.deleted != null ? params.deleted : false
+        this.textStyle = params.textStyle != null ? params.textStyle : null
     }
     toJsonObject(): MessageJsonObjectT {
-        const text = this.deleted ? null : this.text
         return {
             id: this.id,
             channel_id: this.channelId,
             channel: null,
             user_id: this.userId,
             user: null,
-            text: text,
+            text: this.deleted ? null : this.text,
             created_at: this.createdAt,
             favorite_count: this.favoriteCount,
             like_count: this.likeCount,
@@ -97,9 +102,10 @@ export class MessageEntity extends Entity {
             thread_id: this.threadId,
             deleted: this.deleted,
             entities: {
-                channel_groups: [],
-                channels: [],
-                messages: [],
+                channel_groups: this.deleted ? [] : [],
+                channels: this.deleted ? [] : [],
+                messages: this.deleted ? [] : [],
+                style: this.deleted || this.textStyle == null ? [] : JSON.parse(this.textStyle),
             },
         }
     }

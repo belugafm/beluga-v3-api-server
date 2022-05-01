@@ -3,26 +3,13 @@ import {
     Parameters,
     SortOrder,
 } from "../../../../domain/repository/query/ChannelTimeline"
-import { Message, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
 import { MessageEntity } from "../../../../domain/entity/Message"
+import { PrismaClient } from "@prisma/client"
 import { isInteger } from "../../../../domain/validation"
 import { prisma } from "../client"
-
-function toEntity(message: Message) {
-    return new MessageEntity({
-        id: message.id,
-        channelId: message.channelId,
-        userId: message.userId,
-        text: message.text,
-        createdAt: message.createdAt,
-        favoriteCount: message.favoriteCount,
-        likeCount: message.likeCount,
-        replyCount: message.replyCount,
-        threadId: message.threadId,
-    })
-}
+import { toEntity } from "./Message"
 
 function getSortOrder(sortOrderString: typeof SortOrder[keyof typeof SortOrder]) {
     if (sortOrderString == SortOrder.Descending) {

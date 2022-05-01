@@ -27,6 +27,17 @@ export type UserJsonObjectT = {
     last_activity_date: Date | null
 }
 
+export type MessageEntityStyleNode = {
+    children: MessageEntityStyleNode[]
+    type: string
+    style: {
+        format: number
+        color: string | null
+    } | null
+    text: string | null
+    indices: number[]
+}
+
 export type MessageJsonObjectT = {
     id: MessageId
     channel_id: ChannelId
@@ -56,6 +67,7 @@ export type MessageJsonObjectT = {
             message: MessageJsonObjectT | null
             indices: [number, number]
         }[]
+        style: MessageEntityStyleNode[]
     }
 }
 

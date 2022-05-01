@@ -23,12 +23,18 @@ import { MessageEntity } from "../../../../domain/entity/Message"
 import { MethodIdentifiers } from "../../identifier"
 import config from "../../../../config/app"
 
-export const argumentSpecs = defineArguments(["text", "channel_id", "thread_id"] as const, {
+export const argumentSpecs = defineArguments(["text", "text_style", "channel_id", "thread_id"] as const, {
     text: {
         description: ["投稿内容"],
         examples: ["おはよう"],
         required: true,
         validator: vs.message.text(),
+    },
+    text_style: {
+        description: ["文字装飾"],
+        examples: [],
+        required: false,
+        validator: vs.message.textStyle(),
     },
     channel_id: {
         description: ["チャンネルID"],
@@ -144,6 +150,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 new ChannelGroupTimelineCommandRepository(transactionSession)
             ).post({
                 text: args.text,
+                textStyle: args.text_style,
                 channelId: args.channel_id,
                 threadId: args.thread_id,
                 userId: authUser.id,

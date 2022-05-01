@@ -99,6 +99,17 @@ const config: {
             min_length: number
             max_length: number
         }
+        text_style: {
+            format: {
+                is_bold: number
+                is_italic: number
+                is_strikethrough: number
+                is_underline: number
+                is_code: number
+                is_subscript: number
+                is_superscript: number
+            }
+        }
         like: {
             max_count: number
         }
@@ -239,6 +250,17 @@ const config: {
         text: {
             min_length: 1,
             max_length: 3000,
+        },
+        text_style: {
+            format: {
+                is_bold: 1,
+                is_italic: 1 << 1,
+                is_strikethrough: 1 << 2,
+                is_underline: 1 << 3,
+                is_code: 1 << 4,
+                is_subscript: 1 << 5,
+                is_superscript: 1 << 6,
+            },
         },
         like: {
             max_count: 10,

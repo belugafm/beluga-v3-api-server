@@ -88,6 +88,7 @@ model Message {
     userId        Int
     createdAt     DateTime @default(now())
     text          String   @db.Text
+    textStyle     String?  @db.Text
     favoriteCount Int      @default(0)
     likeCount     Int      @default(0)
     replyCount    Int      @default(0)

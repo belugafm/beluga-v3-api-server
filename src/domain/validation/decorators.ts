@@ -64,6 +64,9 @@ export function IsMessageId(options?: ValidationOptions) {
 export function IsMessageText(options?: ValidationOptions) {
     return Validate(message.text(), options)
 }
+export function IsMessageTextStyle(options?: ValidationOptions) {
+    return Validate(message.textStyle(), options)
+}
 
 // Channel
 export function IsChannelId(options?: ValidationOptions) {

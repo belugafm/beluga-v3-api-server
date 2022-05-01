@@ -13,6 +13,7 @@ export function toEntity(message: Message) {
         channelId: message.channelId,
         userId: message.userId,
         text: message.text,
+        textStyle: message.textStyle,
         createdAt: message.createdAt,
         favoriteCount: message.favoriteCount,
         likeCount: message.likeCount,

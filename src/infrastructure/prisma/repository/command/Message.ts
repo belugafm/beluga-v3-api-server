@@ -12,6 +12,7 @@ export function has_changed(a: Message, b: Message) {
         a.channelId === b.channelId &&
         a.userId === b.userId &&
         a.text === b.text &&
+        a.textStyle === b.textStyle &&
         a.createdAt?.getTime() === b.createdAt?.getTime() &&
         a.favoriteCount === b.favoriteCount &&
         a.likeCount === b.likeCount &&
@@ -39,6 +40,7 @@ export class MessageCommandRepository extends ChangeEventHandler implements IMes
             const result = await this._prisma.message.create({
                 data: {
                     text: message.text,
+                    textStyle: message.textStyle,
                     channelId: message.channelId,
                     userId: message.userId,
                     favoriteCount: message.favoriteCount,
@@ -75,6 +77,7 @@ export class MessageCommandRepository extends ChangeEventHandler implements IMes
                 },
                 data: {
                     text: message.text,
+                    textStyle: message.textStyle,
                     channelId: message.channelId,
                     userId: message.userId,
                     favoriteCount: message.favoriteCount,

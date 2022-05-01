@@ -71,11 +71,13 @@ export class PostMessageApplication {
     }
     async _postMessage({
         text,
+        textStyle,
         user,
         channel,
         thread,
     }: {
         text: string
+        textStyle?: string
         user: UserEntity
         channel: ChannelEntity
         thread?: MessageEntity
@@ -83,6 +85,7 @@ export class PostMessageApplication {
         const message = new MessageEntity({
             id: -1,
             text: text,
+            textStyle: textStyle,
             channelId: channel.id,
             userId: user.id,
             createdAt: new Date(),
@@ -122,11 +125,13 @@ export class PostMessageApplication {
     async post({
         userId,
         text,
+        textStyle,
         channelId,
         threadId,
     }: {
         userId: UserId
         text: string
+        textStyle?: string
         channelId?: ChannelId
         threadId?: MessageId
     }) {
@@ -152,6 +157,7 @@ export class PostMessageApplication {
                 }
                 return await this._postMessage({
                     text,
+                    textStyle,
                     user,
                     channel,
                     thread,
@@ -166,6 +172,7 @@ export class PostMessageApplication {
                 }
                 return await this._postMessage({
                     text,
+                    textStyle,
                     user,
                     channel,
                 })
