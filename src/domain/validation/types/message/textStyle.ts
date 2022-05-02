@@ -1,10 +1,27 @@
 import { isInteger, isString } from "../../functions"
 
 import { Options } from "../string"
+import Prism from "prismjs"
 import { PropertyValidator } from "../../PropertyValidator"
 import { checkIsString } from "../../validator/string/isString"
 
+require("prismjs/components/prism-clike")
+require("prismjs/components/prism-javascript")
+require("prismjs/components/prism-markup")
+require("prismjs/components/prism-markdown")
+require("prismjs/components/prism-c")
+require("prismjs/components/prism-css")
+require("prismjs/components/prism-objectivec")
+require("prismjs/components/prism-sql")
+require("prismjs/components/prism-python")
+require("prismjs/components/prism-rust")
+require("prismjs/components/prism-swift")
+
 // import config from "../../../../config/app"
+const getCodeLanguages = () =>
+    Object.keys(Prism.languages)
+        .filter((language) => typeof Prism.languages[language] !== "function")
+        .sort()
 
 type NodeStyle = {
     format: number
@@ -14,12 +31,14 @@ type NodeStyle = {
 type Node = {
     children: Node[]
     type: string
+    language?: string
     style: NodeStyle | null
     indices: number[]
 }
 
-const NodeKeys = ["children", "type", "style", "indices"]
+const NodeKeys = ["children", "type", "style", "indices", "language"]
 const NodeStyleKeys = ["format", "color"]
+const SupportedLanguages = getCodeLanguages()
 
 function checkIsValidNode(node: Node) {
     Object.keys(node).forEach((key) => {
@@ -51,6 +70,11 @@ function checkIsValidNode(node: Node) {
                 if (isString(node.style.color) == false) {
                     throw new SyntaxError()
                 }
+            }
+        }
+        if (node.language) {
+            if (SupportedLanguages.includes(node.language) == false) {
+                throw new SyntaxError()
             }
         }
         node.children.forEach((child) => {
