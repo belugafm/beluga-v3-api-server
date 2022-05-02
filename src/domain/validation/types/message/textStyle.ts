@@ -37,6 +37,7 @@ type Node = {
 }
 
 const NodeKeys = ["children", "type", "style", "indices", "language"]
+const AllowedTypes = ["code", "list", "listitem", "linebreak", "text", "heading_1", "heading_2", "paragraph", "quote"]
 const NodeStyleKeys = ["format", "color"]
 const SupportedLanguages = getCodeLanguages()
 
@@ -55,6 +56,9 @@ function checkIsValidNode(node: Node) {
             throw new SyntaxError()
         }
         if (isString(node.type) == false) {
+            throw new SyntaxError()
+        }
+        if (AllowedTypes.includes(node.type) == false) {
             throw new SyntaxError()
         }
         if (node.style) {
