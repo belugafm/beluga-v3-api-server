@@ -62,30 +62,31 @@ export function read_body(req: Request) {
         const headers = req.headers ? req.headers : {}
         const chunks: Buffer[] = []
         req.onData((buffer, start, length) => {
-            const body_chunk = buffer.slice(start, start + length)
+            const bodyChunk = buffer.slice(start, start + length)
             const data = Buffer.alloc(length)
-            body_chunk.copy(data, 0, 0, length)
+            bodyChunk.copy(data, 0, 0, length)
             chunks.push(data)
         })
         req.onEnd(() => {
             try {
                 const buffer = Buffer.concat(chunks)
-                const content_type = headers["content-type"].split(";")[0]
-                if (content_type === "application/json") {
+                const parts = headers["content-type"].split(";")
+                const contentType = parts[0]
+                if (contentType === "application/json") {
                     return resolve(JSON.parse(buffer.toString()))
                 }
                 // multipart/form-dataの場合ヘッダは
                 // Content-Type: multipart/form-data; boundary=----XXXXXXXXXXXXX
                 // のようになるため前方一致で判別する
                 // XXXXXXXXXXXXXの部分がboundary
-                if (content_type.indexOf("multipart/form-data;") === 0) {
-                    const boundary = content_type.split("boundary=")[1]
+                if (contentType.indexOf("multipart/form-data") === 0) {
+                    const boundary = parts[1].split("boundary=")[1]
                     const items = multipart.parse(buffer, boundary)
                     const data: { [key: string]: Buffer[] | string } = {}
                     items.forEach((item) => {
                         if (item.filename) {
-                            const list = data[item.name]
                             // ファイルアップロードの場合バイナリデータを直接格納
+                            const list = data[item.name]
                             if (Array.isArray(list)) {
                                 list.push(item.data)
                             } else {
@@ -97,7 +98,7 @@ export function read_body(req: Request) {
                     })
                     return resolve(data)
                 }
-                if (content_type === "application/x-www-form-urlencoded") {
+                if (contentType === "application/x-www-form-urlencoded") {
                     const parts = buffer.toString().split("&")
                     const data: { [key: string]: string } = {}
                     parts.forEach((part) => {

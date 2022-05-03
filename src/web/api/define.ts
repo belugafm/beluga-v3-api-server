@@ -145,7 +145,7 @@ export function defineMethod<
         authUser: UserEntity | null
     ) => Promise<CallbackReturnType>
 ): (args: Args, remoteIpAddress: string, authUser: UserEntity | null) => Promise<CallbackReturnType> {
-    return (args: Args, remoteIpAddress: string, authUser: UserEntity | null) => {
+    return async (args: Args, remoteIpAddress: string, authUser: UserEntity | null) => {
         if (facts.authenticationRequired) {
             if (authUser === null) {
                 throw new WebApiRuntimeError(new InvalidAuth())
@@ -186,7 +186,10 @@ export function defineMethod<
                 try {
                     const { validator } = methodArgumentSpecs[argumentName]
                     // @ts-ignore
-                    validator.check(value)
+                    const succeeded = await validator.check(value)
+                    if (succeeded !== true) {
+                        throw new ValidationError("")
+                    }
                 } catch (validationError) {
                     if (validationError instanceof ValidationError) {
                         const error = errorsAssociatedWithArgs[argumentName]

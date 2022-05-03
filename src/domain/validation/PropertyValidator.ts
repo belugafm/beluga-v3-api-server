@@ -9,10 +9,11 @@ export class PropertyValidator<T> {
         this.options = options
         this.validationFuncs = validationFuncs
     }
-    check(value: T): void {
-        this.validationFuncs.forEach((check) => {
-            check(value, this.options)
-        })
+    async check(value: T): Promise<boolean> {
+        for (const check of this.validationFuncs) {
+            await check(value, this.options)
+        }
+        return true
     }
     ok(value: T): boolean {
         try {

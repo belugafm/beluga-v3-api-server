@@ -122,6 +122,15 @@ const config: {
     blocks: {
         enabled: boolean
     }
+    file: {
+        minNumByte: number
+        maxNumByte: number
+    }
+    storage: {
+        nfs: {
+            base_dir: string
+        }
+    }
     twitter: {
         api_key: string
         api_key_secret: string
@@ -278,6 +287,15 @@ const config: {
         api_key: "YOUR_API_KEY",
         api_key_secret: "YOUR_API_KEY_SCRET",
         callback_url: "CALLBACK_URL",
+    },
+    file: {
+        minNumByte: 1,
+        maxNumByte: 1024 * 1024 * 100,
+    },
+    storage: {
+        nfs: {
+            base_dir: "/path/to/storage/root",
+        },
     },
 }
 

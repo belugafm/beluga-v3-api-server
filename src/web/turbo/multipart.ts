@@ -15,8 +15,7 @@ function parse(body_buffer: Buffer, boundary: string): FormData[] {
     for (let k = 0; k < body_buffer.length; k++) {
         const byte = body_buffer[k]
         const prev_byte = k > 0 ? body_buffer[k - 1] : null
-        const newline_detected =
-            byte === 0x0a && prev_byte === 0x0d ? true : false
+        const newline_detected = byte === 0x0a && prev_byte === 0x0d ? true : false
         const is_newline_char = byte === 0x0a || byte === 0x0d ? true : false
         if (is_newline_char === false) {
             last_line += String.fromCharCode(byte)
@@ -76,11 +75,7 @@ function parse(body_buffer: Buffer, boundary: string): FormData[] {
     return ret
 }
 
-function process(part: {
-    content_disposition: string
-    conent_type: string | undefined
-    bytes: number[]
-}): FormData {
+function process(part: { content_disposition: string; conent_type: string | undefined; bytes: number[] }): FormData {
     const content_disposition = part.content_disposition.split(";")
     // content_dispositionは以下のようになっている
     // [
@@ -89,10 +84,8 @@ function process(part: {
     //   ' filename="beluga.jpg"'
     // ]
     const name = content_disposition[1].split("=")[1].replace(/"/g, "") // 送信時のformのinputタグのname属性
-    const data = new Buffer(part.bytes)
-    const type = part.conent_type
-        ? part.conent_type.split(":")[1].trim()
-        : undefined
+    const data = Buffer.from(part.bytes)
+    const type = part.conent_type ? part.conent_type.split(":")[1].trim() : undefined
     const filename_field = content_disposition[2]
     if (filename_field) {
         const raw_filename = filename_field.split("=")[1]

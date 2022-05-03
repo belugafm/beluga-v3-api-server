@@ -28,3 +28,4 @@ export { MessageQueryRepository } from "../infrastructure/prisma/repository/quer
 export { ChannelTimelineQueryRepository } from "../infrastructure/prisma/repository/query/ChannelTimeline"
 export { TransactionRepository } from "../infrastructure/prisma/repository/Transaction"
 export { IPGeolocationQueryRepository } from "../infrastructure/ipqualityscore/IPGeolocation"
+export { StorageCommandRepository } from "../infrastructure/storage/CloudStorage"
