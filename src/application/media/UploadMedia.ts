@@ -1,4 +1,5 @@
 import { ApplicationError } from "../ApplicationError"
+import { ConvertHeicToJpegService } from "../../domain/service/ConvertHeicToJpeg"
 import { CreateImageThumbnailService } from "../../domain/service/CreateImageThumbnail"
 import { DomainError } from "../../domain/DomainError"
 import { ExtractFrameFromVideoService } from "../../domain/service/ExtractFrameFromVideo"
@@ -39,12 +40,67 @@ export class UploadMediaApplication {
         this.storageCommandRepository = storageCommandRepository
         this.permission = permission
     }
-    async mayRemoveExif(buffer: Buffer, type: string): Promise<[Buffer, sharp.WriteableMetadata | null]> {
+    async mayRemoveExifExceptOrientation(
+        buffer: Buffer,
+        type: string
+    ): Promise<[Buffer, sharp.WriteableMetadata | null]> {
         if (type == "gif") {
             // https://github.com/libvips/libvips/issues/2576
             return [buffer, null]
         }
         return await new RemoveImageExifService().process(buffer)
+    }
+    async uploadHeicImage(userId: UserId, inputBuffer: Buffer, type: string): Promise<FileEntity[]> {
+        const ret = []
+        const group = FileEntity.generateGroup()
+        const origPath = FileEntity.getPath(type, group)
+        const createdAt = new Date()
+        const size = probe.sync(inputBuffer)
+        if (size == null) {
+            throw new ApplicationError(ErrorCodes.InvalidImageSize)
+        }
+        const [heicBuffer, metadata] = await this.mayRemoveExifExceptOrientation(inputBuffer, type)
+        const origBuffer = await new ConvertHeicToJpegService(heicBuffer).process(metadata)
+        const { width, height } = size
+        const origFile = new FileEntity({
+            id: -1,
+            userId: userId,
+            type: type,
+            group: group,
+            path: origPath,
+            original: true,
+            width: width,
+            height: height,
+            bytes: inputBuffer.length,
+            createdAt: createdAt,
+        })
+        origFile.id = await this.fileCommandRepository.add(origFile)
+        await this.storageCommandRepository.put(origBuffer, origFile.path)
+        ret.push(origFile)
+
+        const service = new CreateImageThumbnailService(origBuffer)
+        // @ts-ignore
+        const thumbnails = await service.process(metadata, type)
+        for (const thumbnail of thumbnails) {
+            const path = FileEntity.getTaggedPath(type, group, thumbnail.tag)
+            const thumbnailFile = new FileEntity({
+                id: -1,
+                userId: userId,
+                type: type,
+                group: group,
+                path: path,
+                original: false,
+                width: thumbnail.metadata.width,
+                height: thumbnail.metadata.height,
+                tag: thumbnail.tag,
+                bytes: thumbnail.buffer.length,
+                createdAt: createdAt,
+            })
+            thumbnailFile.id = await this.fileCommandRepository.add(thumbnailFile)
+            await this.storageCommandRepository.put(thumbnail.buffer, thumbnailFile.path)
+            ret.push(thumbnailFile)
+        }
+        return ret
     }
     async uploadImage(userId: UserId, inputBuffer: Buffer, type: string): Promise<FileEntity[]> {
         const ret = []
@@ -55,7 +111,7 @@ export class UploadMediaApplication {
         if (size == null) {
             throw new ApplicationError(ErrorCodes.InvalidImageSize)
         }
-        const [origBuffer, metadata] = await this.mayRemoveExif(inputBuffer, type)
+        const [origBuffer, metadata] = await this.mayRemoveExifExceptOrientation(inputBuffer, type)
         const { width, height } = size
         const origFile = new FileEntity({
             id: -1,
@@ -157,6 +213,10 @@ export class UploadMediaApplication {
                 throw new ApplicationError(ErrorCodes.InvalidBuffer)
             }
             const type = fileType.ext
+            if (type == "heic") {
+                // iOS
+                return await this.uploadHeicImage(userId, buffer, type)
+            }
             if (config.file.allowed_file_types.image.includes(type)) {
                 return await this.uploadImage(userId, buffer, type)
             }

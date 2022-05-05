@@ -4,10 +4,13 @@ RUN apt update && \
     apt install -y \
     ffmpeg \
     libvips-dev \
-    libheif-examples
+    libheif-examples \
+    libheif-dev
+RUN vips -l | grep heif
 
 WORKDIR /app
 COPY . .
+RUN npm install --build-from-source sharp
 RUN npm install
 RUN npx prisma generate --schema prisma/mysql/schema.prisma
 
