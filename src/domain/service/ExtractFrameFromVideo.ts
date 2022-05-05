@@ -75,6 +75,7 @@ export class ExtractFrameFromVideoService {
                     cleanup()
                     resolve([resultBuffer, size])
                 } catch (error) {
+                    console.error(error)
                     cleanup()
                     reject(error)
                 }

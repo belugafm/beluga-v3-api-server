@@ -165,7 +165,7 @@ export class UploadMediaApplication {
             }
             throw new ApplicationError(ErrorCodes.InvalidType)
         } catch (error) {
-            console.log(error)
+            console.error(error)
             if (error instanceof DomainError) {
                 if (error.code === ServiceErrorCodes.DoNotHavePermission) {
                     throw new ApplicationError(ErrorCodes.DoNotHavePermission)
