@@ -303,7 +303,7 @@ const config: {
         minNumByte: 1,
         maxNumByte: 1024 * 1024 * 100,
         allowed_file_types: { image: ["png", "gif", "jpg"], video: ["mp4", "mov"] },
-        base_dir: "/media", // 最終的なパスはpath.join(storage.nfs.base_dir, base_dir, "hoge.png")になる
+        base_dir: "media", // 最終的なパスはpath.join(storage.nfs.base_dir, base_dir, "hoge.png")になる
         thumbnail_sizes: [
             {
                 tag: "square",
