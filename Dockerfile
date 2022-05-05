@@ -1,7 +1,10 @@
 FROM node:18
 
 RUN apt update && \
-    apt install -y ffmpeg libvips-dev
+    apt install -y \
+    ffmpeg \
+    libvips-dev \
+    libheif-examples
 
 WORKDIR /app
 COPY . .
