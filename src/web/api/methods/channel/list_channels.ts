@@ -58,8 +58,8 @@ function getSortBy(sortByString?: string): typeof SortBy[keyof typeof SortBy] {
     if (sortByString == SortBy.CreatedAt) {
         return SortBy.CreatedAt
     }
-    if (sortByString == SortBy.messageCount) {
-        return SortBy.messageCount
+    if (sortByString == SortBy.MessageCount) {
+        return SortBy.MessageCount
     }
     return SortBy.CreatedAt
 }

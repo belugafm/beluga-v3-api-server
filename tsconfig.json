@@ -26,7 +26,8 @@
             "turbo-http": ["@types/turbo-http.d.ts"],
             "cookie": ["@types/cookie.d.ts"],
             "qs": ["@types/qs.d.ts"],
-            "find-my-way": ["@types/find-my-way.d.ts"]
+            "find-my-way": ["@types/find-my-way.d.ts"],
+            "ffmpeg-extract-frames": ["@types/ffmpeg-extract-frames.d.ts"]
         },
         "forceConsistentCasingInFileNames": true,
         "removeComments": true

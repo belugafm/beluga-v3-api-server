@@ -1,4 +1,4 @@
-import uploadFile, { facts } from "../api/methods/upload"
+import uploadFile, { facts } from "../api/methods/upload/media"
 
 import { TurboServer } from "../turbo"
 import { getRemoteIpAddress } from "../remoteIpAddress"
@@ -6,7 +6,7 @@ import { getRemoteIpAddress } from "../remoteIpAddress"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
-        await uploadFile(
+        const files = await uploadFile(
             {
                 file: req.body.file,
             },
@@ -15,6 +15,7 @@ export default (server: TurboServer) => {
         )
         return {
             ok: true,
+            files: files.map((file) => file.toJsonObject()),
         }
     })
 }

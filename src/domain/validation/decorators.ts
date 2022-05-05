@@ -1,11 +1,12 @@
 import * as channel from "./types/channel"
-import * as channelGroup from "./types/channelGroup"
+import * as channelGroup from "./types/channel_group"
+import * as media from "./types/file"
 import * as message from "./types/message"
 import * as user from "./types/user"
 
 import { Options as IntegerOptions, integer } from "./types/number"
 import { Options as StringOptions, string } from "./types/string"
-import { channelGroupId, channelId, messageId, readStateId, userId } from "./types/entityId"
+import { channelGroupId, channelId, fileId, messageId, readStateId, userId } from "./types/entityId"
 
 import { DomainError } from "../DomainError"
 import { Entity } from "../entity/Entity"
@@ -118,6 +119,13 @@ export function IsUserUrl(options?: ValidationOptions) {
 
 export function IsReadStateId(options?: ValidationOptions) {
     return Validate(readStateId(), options)
+}
+
+export function IsFileId(options?: ValidationOptions) {
+    return Validate(fileId(), options)
+}
+export function IsFileType(options?: ValidationOptions) {
+    return Validate(media.type(), options)
 }
 
 // Primitive

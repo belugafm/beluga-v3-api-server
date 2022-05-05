@@ -1,4 +1,4 @@
-export async function sleep(sec: number) {
+export function sleep(sec: number) {
     return new Promise((resolve) => {
         setTimeout(() => {
             resolve(null)

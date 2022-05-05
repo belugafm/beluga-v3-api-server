@@ -125,6 +125,17 @@ const config: {
     file: {
         minNumByte: number
         maxNumByte: number
+        allowed_file_types: {
+            image: string[]
+            video: string[]
+        }
+        base_dir: string
+        thumbnail_sizes: {
+            width: number
+            height: number
+            tag: string
+            fit: string
+        }[]
     }
     storage: {
         nfs: {
@@ -291,6 +302,22 @@ const config: {
     file: {
         minNumByte: 1,
         maxNumByte: 1024 * 1024 * 100,
+        allowed_file_types: { image: ["png", "gif", "jpg"], video: ["mp4", "mov"] },
+        base_dir: "/media", // 最終的なパスはpath.join(storage.nfs.base_dir, base_dir, "hoge.png")になる
+        thumbnail_sizes: [
+            {
+                tag: "square",
+                fit: "cover", // https://sharp.pixelplumbing.com/api-resize#resize
+                width: 400,
+                height: 400,
+            },
+            {
+                tag: "small",
+                fit: "inside", // `inside`は長辺が400になる
+                width: 400,
+                height: 400,
+            },
+        ],
     },
     storage: {
         nfs: {

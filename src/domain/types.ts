@@ -4,6 +4,7 @@ export type MessageId = EntityId
 export type ChannelId = EntityId
 export type ChannelGroupdId = EntityId
 export type ChannelReadStateId = EntityId
+export type FileId = EntityId
 
 export type UserJsonObjectT = {
     id: UserId
@@ -107,4 +108,19 @@ export type ChannelGroupJsonObjectT = {
     created_by: UserId
     created_at: Date
     message_count: number
+}
+
+export type FileJsonObjectT = {
+    id: FileId
+    user_id: UserId
+    group: string
+    path: string
+    type: string
+    bytes: number
+    original: boolean
+    ref_count: number
+    created_at: Date
+    width: number | null
+    height: number | null
+    tag: string | null
 }

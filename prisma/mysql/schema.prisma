@@ -119,3 +119,22 @@ model ChannelReadState {
 
     @@unique([channelId, userId])
 }
+
+model File {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    group     String   @db.VarChar(255)
+    path      String   @db.VarChar(255)
+    type      String   @db.VarChar(6)
+    bytes     Int
+    original  Boolean
+    refCount  Int      @default(0) // 使用頻度（userIdのユーザーのみカウント）
+    createdAt DateTime
+    width     Int?
+    height    Int?
+    tag       String?  @db.VarChar(255)
+
+    @@unique([path])
+    @@index([userId, original])
+    @@index([group])
+}

@@ -1,17 +1,24 @@
-import * as vs from "../../../domain/validation"
+import * as vs from "../../../../domain/validation"
 
-import { InternalErrorSpec, InvalidAuth, UnexpectedErrorSpec, raise } from "../error"
-import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../define"
+import {
+    FileCommandRepository,
+    FileQueryRepository,
+    StorageCommandRepository,
+    TransactionRepository,
+    UserQueryRepository,
+} from "../../../repositories"
+import { InternalErrorSpec, InvalidAuth, UnexpectedErrorSpec, raise } from "../../error"
+import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
-import { ApplicationError } from "../../../application/ApplicationError"
-import { AuthenticationMethods } from "../facts/authentication_method"
-import { ContentTypes } from "../facts/content_type"
-import { ErrorCodes } from "../../../application/channel/CreateChannel"
-import { HttpMethods } from "../facts/http_method"
-import { MethodIdentifiers } from "../identifier"
-import { StorageCommandRepository } from "../../repositories"
-import { fromBuffer } from "file-type"
-import { generateRandomName } from "../../../domain/entity/User"
+import { ApplicationError } from "../../../../application/ApplicationError"
+import { AuthenticationMethods } from "../../facts/authentication_method"
+import { ContentTypes } from "../../facts/content_type"
+import { ErrorCodes } from "../../../../application/channel/CreateChannel"
+import { FileEntity } from "../../../../domain/entity/File"
+import { HttpMethods } from "../../facts/http_method"
+import { MethodIdentifiers } from "../../identifier"
+import { UploadMediaApplication } from "../../../../application/media/UploadMedia"
+import { UploadMediaPermission } from "../../../../domain/permission/UploadMedia"
 
 export const argumentSpecs = defineArguments(["file"] as const, {
     file: {
@@ -53,22 +60,26 @@ export const facts: MethodFacts = {
     description: ["ファイルをアップロードします"],
 }
 
-type ReturnType = Promise<void>
+type ReturnType = Promise<FileEntity[]>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
-    // const transaction = await TransactionRepository.new<ReturnType>()
+    const transaction = await TransactionRepository.new<ReturnType>()
     if (authUser == null) {
         raise(errors["invalid_auth"])
     }
     try {
-        const buffer = args.file[0]
-        const basename = generateRandomName(24)
-        const fileType = await fromBuffer(buffer)
-        if (fileType == null) {
-            raise(errors["unexpected_error"])
-        }
-        const { ext } = fileType
-        new StorageCommandRepository().put(buffer, basename + "." + ext)
+        return await transaction.$transaction(async (transactionSession) => {
+            const files = await new UploadMediaApplication(
+                new FileQueryRepository(transactionSession),
+                new FileCommandRepository(transactionSession),
+                new StorageCommandRepository(),
+                new UploadMediaPermission(new UserQueryRepository(transactionSession))
+            ).upload({
+                userId: authUser.id,
+                buffer: args.file[0],
+            })
+            return files
+        })
     } catch (error) {
         if (error instanceof ApplicationError) {
             if (error.code === ErrorCodes.DoNotHavePermission) {

@@ -1,7 +1,7 @@
 import { PropertyValidator } from "../PropertyValidator"
 import { ValidationError } from "../error"
-import config from "../../../config/app"
-import { fromBuffer } from "file-type"
+// import config from "../../../config/app"
+// import { fromBuffer } from "file-type"
 
 export type Options = {
     minNumByte: number
@@ -18,24 +18,19 @@ export async function checkIsBufferList(value: Buffer[], options: Options): Prom
         if (buf instanceof Buffer == false) {
             throw new ValidationError("ファイルはBufferにしてください")
         }
-        const numBytes = buf.length
-        if (numBytes < options.minNumByte) {
-            throw new ValidationError("ファイルサイズが小さすぎます")
-        }
-        if (options.maxNumByte < numBytes) {
-            throw new ValidationError("ファイルサイズが大きすぎます")
-        }
-        const fileType = await fromBuffer(buf)
-        if (fileType == null) {
-            throw new ValidationError("不正なファイルです")
-        }
+        // const numBytes = buf.length
+        // if (numBytes < options.minNumByte) {
+        //     throw new ValidationError("ファイルサイズが小さすぎます")
+        // }
+        // if (options.maxNumByte < numBytes) {
+        //     throw new ValidationError("ファイルサイズが大きすぎます")
+        // }
+        // const fileType = await fromBuffer(buf)
+        // if (fileType == null) {
+        //     throw new ValidationError("不正なファイルです")
+        // }
     }
 }
-export function files(
-    options: Options = {
-        minNumByte: config.file.minNumByte,
-        maxNumByte: config.file.maxNumByte,
-    }
-) {
+export function files(options?: Options) {
     return new PropertyValidator<Buffer[]>(options || {}, [checkIsBufferList])
 }

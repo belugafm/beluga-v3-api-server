@@ -1,5 +1,5 @@
 import { Channel, PrismaClient } from "@prisma/client"
-import { ChannelGroupdId, UserId } from "../../../../domain/types"
+import { ChannelGroupdId, ChannelId, UserId } from "../../../../domain/types"
 import { IChannelQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/Channel"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 import { isInteger, isString } from "../../../../domain/validation"
@@ -36,7 +36,7 @@ function getSortBy(sortByString: typeof SortBy[keyof typeof SortBy]) {
     if (sortByString == SortBy.CreatedAt) {
         return "createdAt"
     }
-    if (sortByString == SortBy.messageCount) {
+    if (sortByString == SortBy.MessageCount) {
         return "messageCount"
     }
     throw new RepositoryError("Invalid `sortOrder`")
@@ -51,14 +51,14 @@ export class ChannelQueryRepository implements IChannelQueryRepository {
             this._prisma = prisma
         }
     }
-    async findById(userId: UserId): Promise<ChannelEntity | null> {
+    async findById(channelId: ChannelId): Promise<ChannelEntity | null> {
         try {
-            if (isInteger(userId) !== true) {
-                throw new RepositoryError("`userId` must be a number")
+            if (isInteger(channelId) !== true) {
+                throw new RepositoryError("`channelId` must be a number")
             }
             const channel = await this._prisma.channel.findUnique({
                 where: {
-                    id: userId,
+                    id: channelId,
                 },
             })
             if (channel == null) {

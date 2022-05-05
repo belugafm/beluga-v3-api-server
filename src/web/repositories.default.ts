@@ -20,4 +20,3 @@ export { ChannelTimelineQueryRepository } from "../infrastructure/prisma/reposit
 export { TransactionRepository } from "../infrastructure/prisma/repository/Transaction"
 export { IPGeolocationQueryRepository } from "../infrastructure/ipqualityscore/IPGeolocation"
 export { StorageCommandRepository } from "../infrastructure/storage/NFS"
-// export { StorageCommandRepository } from "../infrastructure/storage/CloudStorage"

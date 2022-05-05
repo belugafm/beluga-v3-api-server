@@ -4,7 +4,7 @@ import { ChannelEntity } from "../../entity/Channel"
 
 export const SortBy = {
     CreatedAt: "created_at",
-    messageCount: "message_count",
+    MessageCount: "message_count",
 } as const
 
 export const SortOrder = {
