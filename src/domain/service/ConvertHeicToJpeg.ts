@@ -14,13 +14,7 @@ export class ConvertHeicToJpegService {
                 const inputPath = pathlib.join(baseDir, "input.heic")
                 const outputPath = pathlib.join(baseDir, "output.jpg")
                 const cleanup = () => {
-                    if (fs.existsSync(inputPath)) {
-                        fs.rmSync(inputPath)
-                    }
-                    if (fs.existsSync(outputPath)) {
-                        fs.rmSync(outputPath)
-                    }
-                    fs.rmdirSync(baseDir)
+                    fs.rmSync(baseDir, { recursive: true })
                 }
                 try {
                     fs.writeFileSync(inputPath, heicBuffer)
