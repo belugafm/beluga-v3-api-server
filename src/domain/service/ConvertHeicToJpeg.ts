@@ -2,6 +2,7 @@ import { execSync } from "child_process"
 import fs from "fs"
 import pathlib from "path"
 import probe from "probe-image-size"
+import sharp from "sharp"
 import tempfile from "tmp"
 
 export class ConvertHeicToJpegService {
@@ -17,15 +18,22 @@ export class ConvertHeicToJpegService {
                     fs.rmSync(baseDir, { recursive: true })
                 }
                 try {
+                    const heicWithExif = sharp(heicBuffer)
+                    const metadata = await heicWithExif.metadata()
+                    const { orientation } = metadata
+                    const newMetadata: sharp.WriteableMetadata = {
+                        orientation, // orientationだけセット
+                    }
                     fs.writeFileSync(inputPath, heicBuffer)
                     execSync(`heif-convert ${inputPath} ${outputPath}`)
-                    const jpgBuffer = fs.readFileSync(outputPath)
-                    const size = probe.sync(jpgBuffer)
+                    const jpegBuffer = sharp(fs.readFileSync(outputPath))
+                    const jpegWithOrientationBuffer = await jpegBuffer.withMetadata(newMetadata).toBuffer()
+                    const size = probe.sync(jpegWithOrientationBuffer)
                     if (size == null) {
                         throw new Error("変換できません")
                     }
                     cleanup()
-                    resolve([jpgBuffer, size])
+                    resolve([jpegWithOrientationBuffer, size])
                 } catch (error) {
                     console.error(error)
                     cleanup()

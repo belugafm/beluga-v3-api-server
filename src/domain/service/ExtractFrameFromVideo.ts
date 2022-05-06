@@ -54,13 +54,7 @@ export class ExtractFrameFromVideoService {
                 const formattedOutputPath = pathlib.join(baseDir, "output_%d.jpg")
                 const outputPath = pathlib.join(baseDir, "output_1.jpg")
                 const cleanup = () => {
-                    if (fs.existsSync(inputPath)) {
-                        fs.rmSync(inputPath)
-                    }
-                    if (fs.existsSync(outputPath)) {
-                        fs.rmSync(outputPath)
-                    }
-                    fs.rmdirSync(baseDir)
+                    fs.rmSync(baseDir, { recursive: true })
                 }
                 try {
                     fs.writeFileSync(inputPath, buffer)
