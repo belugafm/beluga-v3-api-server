@@ -9,7 +9,7 @@ export const MethodIdentifiers = {
     ShowChannelGroup: "channel_group/show",
     ListChannelsInChannelGroup: "channel_group/list_channels",
     ListChannelGroupsInChannelGroup: "channel_group/list_channel_groups",
-    UploadFile: "upload",
+    UploadFile: "upload/media",
     CreateChannel: "channel/create",
     DeleteChannel: "channel/delete",
     FollowChannel: "channel/follow/create",

@@ -1,12 +1,12 @@
-import uploadFile, { facts } from "../api/methods/upload/media"
+import upload, { facts } from "../../api/methods/upload/media"
 
-import { TurboServer } from "../turbo"
-import { getRemoteIpAddress } from "../remoteIpAddress"
+import { TurboServer } from "../../turbo"
+import { getRemoteIpAddress } from "../../remoteIpAddress"
 
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
-        const files = await uploadFile(
+        const files = await upload(
             {
                 file: req.body.file,
             },

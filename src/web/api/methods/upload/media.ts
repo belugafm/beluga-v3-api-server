@@ -22,10 +22,10 @@ import { UploadMediaPermission } from "../../../../domain/permission/UploadMedia
 
 export const argumentSpecs = defineArguments(["file"] as const, {
     file: {
-        description: ["ファイルのBufferのリスト"],
+        description: ["ファイルのBuffer"],
         examples: ["general"],
         required: true,
-        validator: vs.files(),
+        validator: vs.buffer(),
     },
 })
 
@@ -76,7 +76,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 new UploadMediaPermission(new UserQueryRepository(transactionSession))
             ).upload({
                 userId: authUser.id,
-                buffer: args.file[0],
+                buffer: args.file,
             })
             return files
         })

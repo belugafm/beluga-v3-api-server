@@ -82,16 +82,11 @@ export function read_body(req: Request) {
                 if (contentType.indexOf("multipart/form-data") === 0) {
                     const boundary = parts[1].split("boundary=")[1]
                     const items = multipart.parse(buffer, boundary)
-                    const data: { [key: string]: Buffer[] | string } = {}
+                    const data: { [key: string]: Buffer | string } = {}
                     items.forEach((item) => {
                         if (item.filename) {
                             // ファイルアップロードの場合バイナリデータを直接格納
-                            const list = data[item.name]
-                            if (Array.isArray(list)) {
-                                list.push(item.data)
-                            } else {
-                                data[item.name] = [item.data]
-                            }
+                            data[item.name] = item.data
                         } else {
                             data[item.name] = item.data.toString()
                         }
