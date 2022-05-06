@@ -50,18 +50,18 @@ export class UploadMediaApplication {
         }
         return await new RemoveImageExifService().process(buffer)
     }
-    async uploadHeicImage(userId: UserId, inputBuffer: Buffer, type: string): Promise<FileEntity[]> {
-        const ret = []
-        const group = FileEntity.generateGroup()
-        const origPath = FileEntity.getPath(type, group)
-        const createdAt = new Date()
-        const size = probe.sync(inputBuffer)
+    async uploadHeicImage(userId: UserId, heicBuffer: Buffer): Promise<FileEntity[]> {
+        const [jpgBuffer, size] = await new ConvertHeicToJpegService().process(heicBuffer)
         if (size == null) {
             throw new ApplicationError(ErrorCodes.InvalidImageSize)
         }
-        const [heicBuffer, metadata] = await this.mayRemoveExifExceptOrientation(inputBuffer, type)
-        const origBuffer = await new ConvertHeicToJpegService(heicBuffer).process(metadata)
+        const ret = []
+        const type = "jpg"
+        const group = FileEntity.generateGroup()
+        const origPath = FileEntity.getPath(type, group)
+        const createdAt = new Date()
         const { width, height } = size
+        const [origBuffer, metadata] = await this.mayRemoveExifExceptOrientation(jpgBuffer, type)
         const origFile = new FileEntity({
             id: -1,
             userId: userId,
@@ -71,7 +71,7 @@ export class UploadMediaApplication {
             original: true,
             width: width,
             height: height,
-            bytes: inputBuffer.length,
+            bytes: origBuffer.length,
             createdAt: createdAt,
         })
         origFile.id = await this.fileCommandRepository.add(origFile)
@@ -215,7 +215,7 @@ export class UploadMediaApplication {
             const type = fileType.ext
             if (type == "heic") {
                 // iOS
-                return await this.uploadHeicImage(userId, buffer, type)
+                return await this.uploadHeicImage(userId, buffer)
             }
             if (config.file.allowed_file_types.image.includes(type)) {
                 return await this.uploadImage(userId, buffer, type)

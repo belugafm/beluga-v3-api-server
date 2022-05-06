@@ -6,7 +6,6 @@ RUN apt update && \
     libvips-dev \
     libheif-examples \
     libheif-dev
-RUN vips -l | grep heif
 
 WORKDIR /app
 COPY . .
