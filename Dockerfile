@@ -9,7 +9,6 @@ RUN apt update && \
 
 WORKDIR /app
 COPY . .
-RUN npm install --build-from-source sharp
 RUN npm install
 RUN npx prisma generate --schema prisma/mysql/schema.prisma
 

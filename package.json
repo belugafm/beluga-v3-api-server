@@ -55,7 +55,8 @@
         "start": "npx ts-node --transpileOnly src/run.prisma.ts"
     },
     "engines": {
-        "node": "v18.0.0"
+        "node": "v18.1.0",
+        "npm": "8.8.0"
     },
     "jest": {
         "testEnvironment": "node",
