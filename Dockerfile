@@ -8,8 +8,10 @@ RUN apt update && \
     libheif-dev
 
 WORKDIR /app
-COPY . .
+COPY package.json .
 RUN npm install
+
+COPY . .
 RUN npx prisma generate --schema prisma/mysql/schema.prisma
 
 RUN chmod +x ./start.sh
