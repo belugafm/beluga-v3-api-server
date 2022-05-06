@@ -107,7 +107,7 @@ export class FileEntity extends Entity {
             id: this.id,
             user_id: this.userId,
             group: this.group,
-            path: config.server.https ? "https://" : "http://" + pathlib.join(config.server.domain, this.path),
+            path: (config.server.https ? "https://" : "http://") + pathlib.join(config.server.domain, this.path),
             original: this.original,
             type: this.type,
             bytes: this.bytes,
