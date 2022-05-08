@@ -2,7 +2,7 @@ import * as vs from "../../../../domain/validation"
 
 import {
     FileCommandRepository,
-    FileQueryRepository,
+    MediaRepository,
     StorageCommandRepository,
     TransactionRepository,
     UserQueryRepository,
@@ -70,9 +70,9 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
     try {
         return await transaction.$transaction(async (transactionSession) => {
             const files = await new UploadMediaApplication(
-                new FileQueryRepository(transactionSession),
                 new FileCommandRepository(transactionSession),
                 new StorageCommandRepository(),
+                new MediaRepository(),
                 new UploadMediaPermission(new UserQueryRepository(transactionSession))
             ).upload({
                 userId: authUser.id,
