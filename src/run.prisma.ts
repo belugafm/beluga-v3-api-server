@@ -63,5 +63,5 @@ startServer()
         console.group("Server running")
     })
     .catch((error) => {
-        console.log(error)
+        console.error(error)
     })

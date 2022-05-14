@@ -4,6 +4,7 @@ import {
     ChannelCommandRepository,
     ChannelGroupQueryRepository,
     ChannelQueryRepository,
+    FileQueryRepository,
     MessageCommandRepository,
     MessageQueryRepository,
     TransactionRepository,
@@ -147,6 +148,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 new ChannelGroupQueryRepository(transactionSession),
                 new MessageQueryRepository(transactionSession),
                 new MessageCommandRepository(transactionSession),
+                new FileQueryRepository(transactionSession),
                 new ChannelGroupTimelineCommandRepository(transactionSession)
             ).post({
                 text: args.text,

@@ -1,10 +1,12 @@
 import { ChannelGroupJsonObjectT, ChannelGroupdId, UserId } from "../types"
 import {
+    IsChannelGroupDescription,
     IsChannelGroupId,
     IsChannelGroupName,
     IsChannelGroupUniqueName,
     IsDate,
     IsInteger,
+    IsUrl,
     IsUserId,
 } from "../validation/decorators"
 
@@ -28,6 +30,8 @@ export const ErrorCodes = {
     InvalidCreatedBy: "invalid_created_by",
     InvalidCreatedAt: "invalid_created_at",
     InvalidMessageCount: "invalid_message_count",
+    InvalidImageUrl: "invalid_image_url",
+    InvalidDescription: "invalid_description",
 } as const
 
 export class ChannelGroupEntity extends Entity {
@@ -60,6 +64,12 @@ export class ChannelGroupEntity extends Entity {
     @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidMessageCount })
     messageCount: number
 
+    @IsUrl({ nullable: true, errorCode: ErrorCodes.InvalidImageUrl })
+    imageUrl: string | null
+
+    @IsChannelGroupDescription({ nullable: true, errorCode: ErrorCodes.InvalidDescription })
+    description: string | null
+
     constructor(
         params: {
             id: ChannelGroupEntity["id"]
@@ -80,6 +90,8 @@ export class ChannelGroupEntity extends Entity {
         this.createdBy = params.createdBy
         this.createdAt = params.createdAt
         this.messageCount = params.messageCount != null ? params.messageCount : 0
+        this.imageUrl = params.imageUrl != null ? params.imageUrl : null
+        this.description = params.description != null ? params.description : null
     }
     toJsonObject(): ChannelGroupJsonObjectT {
         return {
@@ -92,6 +104,8 @@ export class ChannelGroupEntity extends Entity {
             created_by: this.createdBy,
             created_at: this.createdAt,
             message_count: this.messageCount,
+            description: this.description,
+            image_url: this.imageUrl,
         }
     }
     static generateUniqueName(): string {

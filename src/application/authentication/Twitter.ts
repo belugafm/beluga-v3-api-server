@@ -287,7 +287,7 @@ export class TwitterAuthenticationApplication {
                 suspended: getParam(params, "suspended"),
             })
         } catch (error) {
-            console.log(error)
+            console.error(error)
             if (error instanceof Error) {
                 if (error instanceof ResponseError) {
                     throw new ApplicationError(ErrorCodes.ApiAuthError, `Parameter '${error.paramName}' is invalid.`)

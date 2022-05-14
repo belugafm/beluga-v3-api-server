@@ -102,12 +102,24 @@ export class FileEntity extends Entity {
     static getTaggedPath(type: string, group: string, tag: string): string {
         return pathlib.join(config.file.base_dir, `${group}.${type}:${tag}`)
     }
+    static getProtocol() {
+        return config.server.https ? "https://" : "http://"
+    }
+    static getMediaUrlRegexp() {
+        const baseUrl =
+            FileEntity.getProtocol().replace("/", "\\/") + config.server.domain + "\\/" + config.file.base_dir
+        const ext = config.file.allowed_file_types.image.concat(config.file.allowed_file_types.video).join("|")
+        return new RegExp(`${baseUrl}\\/[0-9a-zA-Z]{15}\\.(${ext})`, "g")
+    }
+    static getPathFromUrl(url: string) {
+        return url.replace(FileEntity.getProtocol() + config.server.domain, "")
+    }
     toJsonObject(): FileJsonObjectT {
         return {
             id: this.id,
             user_id: this.userId,
             group: this.group,
-            path: (config.server.https ? "https://" : "http://") + pathlib.join(config.server.domain, this.path),
+            path: FileEntity.getProtocol() + pathlib.join(config.server.domain, this.path),
             original: this.original,
             type: this.type,
             bytes: this.bytes,

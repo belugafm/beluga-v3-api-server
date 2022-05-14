@@ -16,9 +16,11 @@ function toEntity(channelGroup: ChannelGroup) {
         uniqueName: channelGroup.uniqueName,
         createdBy: channelGroup.createdBy,
         createdAt: channelGroup.createdAt,
+        description: channelGroup.description,
         parentId: channelGroup.parentId,
         level: channelGroup.level,
         messageCount: channelGroup.messageCount,
+        imageUrl: channelGroup.imageUrl,
     })
 }
 

@@ -105,6 +105,8 @@ export class MessageEntity extends Entity {
                 channel_groups: this.deleted ? [] : [],
                 channels: this.deleted ? [] : [],
                 messages: this.deleted ? [] : [],
+                files: this.deleted ? [] : [],
+                urls: this.deleted ? [] : [],
                 style: this.deleted || this.textStyle == null ? [] : JSON.parse(this.textStyle),
             },
         }

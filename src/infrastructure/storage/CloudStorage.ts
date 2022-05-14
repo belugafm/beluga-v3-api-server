@@ -20,7 +20,7 @@ export class StorageCommandRepository implements IStorageCommandRepository {
                 })
                 blobStream.end(buffer)
             } catch (error) {
-                console.log(error)
+                console.error(error)
                 throw new RepositoryError("internal_error")
             }
         })

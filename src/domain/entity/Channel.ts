@@ -67,8 +67,8 @@ export class ChannelEntity extends Entity {
     @IsString({ minLength: 1, maxLength: 1 }, { errorCode: ErrorCodes.InvalidStatusString })
     statusString: string
 
-    @IsChannelDescription({ errorCode: ErrorCodes.InvalidDescription })
-    description: string
+    @IsChannelDescription({ nullable: true, errorCode: ErrorCodes.InvalidDescription })
+    description: string | null
 
     @IsMessageId({ nullable: true, errorCode: ErrorCodes.InvalidLastMessageId })
     lastMessageId: MessageId | null
@@ -95,9 +95,9 @@ export class ChannelEntity extends Entity {
         this.createdAt = params.createdAt
         this.messageCount = params.messageCount != null ? params.messageCount : 0
         this.statusString = params.statusString != null ? params.statusString : "#"
-        this.description = params.description != null ? params.description : ""
         this.lastMessageId = params.lastMessageId != null ? params.lastMessageId : null
         this.lastMessageCreatedAt = params.lastMessageCreatedAt != null ? params.lastMessageCreatedAt : null
+        this.description = params.description != null ? params.description : null
     }
     toJsonObject(): ChannelJsonObjectT {
         return {

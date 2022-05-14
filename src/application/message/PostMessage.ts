@@ -12,10 +12,12 @@ import { ErrorCodes as DomainErrorCodes, MessageEntity } from "../../domain/enti
 import { ApplicationError } from "../ApplicationError"
 import { ChannelEntity } from "../../domain/entity/Channel"
 import { DomainError } from "../../domain/DomainError"
+import { FileEntity } from "../../domain/entity/File"
 import { IChannelCommandRepository } from "../../domain/repository/command/Channel"
 import { IChannelGroupQueryRepository } from "../../domain/repository/query/ChannelGroup"
 import { IChannelGroupTimelineCommandRepository } from "../../domain/repository/command/ChannelGroupTimeline"
 import { IChannelQueryRepository } from "../../domain/repository/query/Channel"
+import { IFileQueryRepository } from "../../domain/repository/query/File"
 import { IMessageCommandRepository } from "../../domain/repository/command/Message"
 import { IMessageQueryRepository } from "../../domain/repository/query/Message"
 import { IUserCommandRepository } from "../../domain/repository/command/User"
@@ -42,6 +44,7 @@ export class PostMessageApplication {
     private channelGroupQueryRepository: IChannelGroupQueryRepository
     private userQueryRepository: IUserQueryRepository
     private userCommandRepository: IUserCommandRepository
+    private fileQueryRepository: IFileQueryRepository
     private channelGroupTimelineCommandRepository: IChannelGroupTimelineCommandRepository
     private permissionToPostMessageService: PostMessagePermission
     private checkRateLimitForPostingMessageService: CheckRateLimitForPostingMessageService
@@ -53,6 +56,7 @@ export class PostMessageApplication {
         channelGroupQueryRepository: IChannelGroupQueryRepository,
         messageQueryRepository: IMessageQueryRepository,
         messageCommandRepository: IMessageCommandRepository,
+        fileQueryRepository: IFileQueryRepository,
         channelGroupTimelineCommandRepository: IChannelGroupTimelineCommandRepository
     ) {
         this.messageQueryRepository = messageQueryRepository
@@ -62,12 +66,33 @@ export class PostMessageApplication {
         this.channelGroupQueryRepository = channelGroupQueryRepository
         this.userQueryRepository = userQueryRepository
         this.userCommandRepository = userCommandRepository
+        this.fileQueryRepository = fileQueryRepository
         this.channelGroupTimelineCommandRepository = channelGroupTimelineCommandRepository
         this.permissionToPostMessageService = new PostMessagePermission(userQueryRepository, channelQueryRepository)
         this.checkRateLimitForPostingMessageService = new CheckRateLimitForPostingMessageService(
             userQueryRepository,
             messageQueryRepository
         )
+    }
+    async findMediaUrls(text: string): Promise<FileEntity[]> {
+        const ret: FileEntity[] = []
+        const regexp = FileEntity.getMediaUrlRegexp()
+        const results = text.match(regexp)
+        if (results == null) {
+            return []
+        }
+        for (const url of results) {
+            const path = FileEntity.getPathFromUrl(url)
+            const file = await this.fileQueryRepository.findByPath(path)
+            if (file == null) {
+                continue
+            }
+            if (file.original !== true) {
+                continue
+            }
+            ret.push(file)
+        }
+        return ret
     }
     async _postMessage({
         text,
@@ -120,6 +145,12 @@ export class PostMessageApplication {
             parentChannelGroupId = parentChannelGroup.parentId
             parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
         }
+
+        const attachedFiles = await this.findMediaUrls(text)
+        for (const file of attachedFiles) {
+            console.log(file)
+        }
+
         return message
     }
     async post({

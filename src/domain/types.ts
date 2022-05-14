@@ -68,6 +68,17 @@ export type MessageJsonObjectT = {
             message: MessageJsonObjectT | null
             indices: [number, number]
         }[]
+        files: {
+            file_id: number
+            file: FileJsonObjectT | null
+            indices: [number, number]
+        }[]
+        urls: {
+            title: string
+            description: string | null
+            image_url: string | null
+            indices: [number, number]
+        }[]
         style: MessageEntityStyleNode[]
     }
 }
@@ -90,7 +101,7 @@ export type ChannelJsonObjectT = {
     created_by: UserId
     created_at: Date
     message_count: number
-    description: string
+    description: string | null
     status_string: string
     last_message_id: MessageId | null
     last_message_created_at: Date | null
@@ -108,6 +119,8 @@ export type ChannelGroupJsonObjectT = {
     created_by: UserId
     created_at: Date
     message_count: number
+    description: string | null
+    image_url: string | null
 }
 
 export type FileJsonObjectT = {
