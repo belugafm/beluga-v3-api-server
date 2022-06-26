@@ -24,6 +24,8 @@ export const ErrorCodes = {
     InvalidTextStyle: "invalid_text_style",
     InvalidThreadId: "invalid_thread_id",
     InvalidDeleted: "invalid_deleted",
+    InvalidLastReplyMessageId: "invalid_last_reply_message_id",
+    InvalidLastReplyMessageCreatedAt: "invalid_last_reply_message_created_at",
 } as const
 
 export class MessageEntity extends Entity {
@@ -62,6 +64,12 @@ export class MessageEntity extends Entity {
     @IsBoolean({ errorCode: ErrorCodes.InvalidDeleted })
     deleted: boolean
 
+    @IsMessageId({ nullable: true, errorCode: ErrorCodes.InvalidLastReplyMessageId })
+    lastReplyMessageId: MessageId | null
+
+    @IsDate({ nullable: true, errorCode: ErrorCodes.InvalidLastReplyMessageCreatedAt })
+    lastReplyMessageCreatedAt: Date | null
+
     constructor(
         params: {
             id: MessageEntity["id"]
@@ -86,6 +94,9 @@ export class MessageEntity extends Entity {
         this.threadId = params.threadId != null ? params.threadId : null
         this.deleted = params.deleted != null ? params.deleted : false
         this.textStyle = params.textStyle != null ? params.textStyle : null
+        this.lastReplyMessageId = params.lastReplyMessageId != null ? params.lastReplyMessageId : null
+        this.lastReplyMessageCreatedAt =
+            params.lastReplyMessageCreatedAt != null ? params.lastReplyMessageCreatedAt : null
     }
     toJsonObject(): MessageJsonObjectT {
         return {

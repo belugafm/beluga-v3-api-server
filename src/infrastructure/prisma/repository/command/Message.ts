@@ -18,6 +18,8 @@ export function has_changed(a: Message, b: Message) {
         a.likeCount === b.likeCount &&
         a.replyCount === b.replyCount &&
         a.threadId === b.threadId &&
+        a.lastReplyMessageId === b.lastReplyMessageId &&
+        a.lastReplyMessageCreatedAt === b.lastReplyMessageCreatedAt &&
         a.deleted === b.deleted
     )
 }
@@ -47,6 +49,8 @@ export class MessageCommandRepository extends ChangeEventHandler implements IMes
                     likeCount: message.likeCount,
                     replyCount: message.replyCount,
                     threadId: message.threadId,
+                    lastReplyMessageId: message.lastReplyMessageId,
+                    lastReplyMessageCreatedAt: message.lastReplyMessageCreatedAt,
                 },
             })
             return result.id
@@ -85,6 +89,8 @@ export class MessageCommandRepository extends ChangeEventHandler implements IMes
                     replyCount: message.replyCount,
                     threadId: message.threadId,
                     deleted: message.deleted,
+                    lastReplyMessageId: message.lastReplyMessageId,
+                    lastReplyMessageCreatedAt: message.lastReplyMessageCreatedAt,
                 },
             })
             if (has_changed(origMessage, updatedMessage)) {

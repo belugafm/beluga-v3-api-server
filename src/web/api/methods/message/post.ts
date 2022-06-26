@@ -2,6 +2,7 @@ import * as vs from "../../../../domain/validation"
 
 import {
     ChannelCommandRepository,
+    ChannelGroupCommandRepository,
     ChannelGroupQueryRepository,
     ChannelQueryRepository,
     FileQueryRepository,
@@ -146,6 +147,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 new ChannelQueryRepository(transactionSession),
                 new ChannelCommandRepository(transactionSession),
                 new ChannelGroupQueryRepository(transactionSession),
+                new ChannelGroupCommandRepository(transactionSession),
                 new MessageQueryRepository(transactionSession),
                 new MessageCommandRepository(transactionSession),
                 new FileQueryRepository(transactionSession),

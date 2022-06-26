@@ -19,6 +19,8 @@ export function toEntity(message: Message) {
         likeCount: message.likeCount,
         replyCount: message.replyCount,
         threadId: message.threadId,
+        lastReplyMessageId: message.lastReplyMessageId,
+        lastReplyMessageCreatedAt: message.lastReplyMessageCreatedAt,
     })
 }
 

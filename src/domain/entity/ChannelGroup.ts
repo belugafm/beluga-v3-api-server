@@ -1,4 +1,4 @@
-import { ChannelGroupJsonObjectT, ChannelGroupdId, UserId } from "../types"
+import { ChannelGroupJsonObjectT, ChannelGroupdId, MessageId, UserId } from "../types"
 import {
     IsChannelGroupDescription,
     IsChannelGroupId,
@@ -6,6 +6,7 @@ import {
     IsChannelGroupUniqueName,
     IsDate,
     IsInteger,
+    IsMessageId,
     IsUrl,
     IsUserId,
 } from "../validation/decorators"
@@ -32,6 +33,8 @@ export const ErrorCodes = {
     InvalidMessageCount: "invalid_message_count",
     InvalidImageUrl: "invalid_image_url",
     InvalidDescription: "invalid_description",
+    InvalidLastMessageId: "invalid_last_message_id",
+    InvalidLastMessageCreatedAt: "invalid_last_message_created_at",
 } as const
 
 export class ChannelGroupEntity extends Entity {
@@ -70,6 +73,12 @@ export class ChannelGroupEntity extends Entity {
     @IsChannelGroupDescription({ nullable: true, errorCode: ErrorCodes.InvalidDescription })
     description: string | null
 
+    @IsMessageId({ nullable: true, errorCode: ErrorCodes.InvalidLastMessageId })
+    lastMessageId: MessageId | null
+
+    @IsDate({ nullable: true, errorCode: ErrorCodes.InvalidLastMessageCreatedAt })
+    lastMessageCreatedAt: Date | null
+
     constructor(
         params: {
             id: ChannelGroupEntity["id"]
@@ -91,6 +100,8 @@ export class ChannelGroupEntity extends Entity {
         this.createdAt = params.createdAt
         this.messageCount = params.messageCount != null ? params.messageCount : 0
         this.imageUrl = params.imageUrl != null ? params.imageUrl : null
+        this.lastMessageId = params.lastMessageId != null ? params.lastMessageId : null
+        this.lastMessageCreatedAt = params.lastMessageCreatedAt != null ? params.lastMessageCreatedAt : null
         this.description = params.description != null ? params.description : null
     }
     toJsonObject(): ChannelGroupJsonObjectT {

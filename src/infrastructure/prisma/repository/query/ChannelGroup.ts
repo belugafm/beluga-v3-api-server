@@ -21,6 +21,8 @@ function toEntity(channelGroup: ChannelGroup) {
         level: channelGroup.level,
         messageCount: channelGroup.messageCount,
         imageUrl: channelGroup.imageUrl,
+        lastMessageId: channelGroup.lastMessageId,
+        lastMessageCreatedAt: channelGroup.lastMessageCreatedAt,
     })
 }
 

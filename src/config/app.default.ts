@@ -151,7 +151,7 @@ const config: {
     server: {
         domain: "localhost.beluga.fm",
         port: 8080,
-        https: false,
+        https: true,
         get_base_url: () => {
             if (config.server.https) {
                 return `https://${config.server.domain}`

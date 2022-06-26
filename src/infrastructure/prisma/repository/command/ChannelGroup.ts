@@ -17,6 +17,8 @@ export function has_changed(a: ChannelGroup, b: ChannelGroup) {
         a.createdBy === b.createdBy &&
         a.imageUrl === b.imageUrl &&
         a.description === b.description &&
+        a.lastMessageId === b.lastMessageId &&
+        a.lastMessageCreatedAt === b.lastMessageCreatedAt &&
         a.messageCount === b.messageCount
     )
 }
@@ -47,6 +49,8 @@ export class ChannelGroupCommandRepository extends ChangeEventHandler implements
                     messageCount: channelGroup.messageCount,
                     description: channelGroup.description,
                     imageUrl: channelGroup.imageUrl,
+                    lastMessageId: channelGroup.lastMessageId,
+                    lastMessageCreatedAt: channelGroup.lastMessageCreatedAt,
                 },
             })
             return result.id
@@ -86,6 +90,8 @@ export class ChannelGroupCommandRepository extends ChangeEventHandler implements
                     messageCount: channelGroup.messageCount,
                     description: channelGroup.description,
                     imageUrl: channelGroup.imageUrl,
+                    lastMessageId: channelGroup.lastMessageId,
+                    lastMessageCreatedAt: channelGroup.lastMessageCreatedAt,
                 },
             })
             if (has_changed(origChannelGroup, updatedChannelGroup)) {

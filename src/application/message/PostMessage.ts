@@ -14,6 +14,7 @@ import { ChannelEntity } from "../../domain/entity/Channel"
 import { DomainError } from "../../domain/DomainError"
 import { FileEntity } from "../../domain/entity/File"
 import { IChannelCommandRepository } from "../../domain/repository/command/Channel"
+import { IChannelGroupCommandRepository } from "../../domain/repository/command/ChannelGroup"
 import { IChannelGroupQueryRepository } from "../../domain/repository/query/ChannelGroup"
 import { IChannelGroupTimelineCommandRepository } from "../../domain/repository/command/ChannelGroupTimeline"
 import { IChannelQueryRepository } from "../../domain/repository/query/Channel"
@@ -42,6 +43,7 @@ export class PostMessageApplication {
     private channelQueryRepository: IChannelQueryRepository
     private channelCommandRepository: IChannelCommandRepository
     private channelGroupQueryRepository: IChannelGroupQueryRepository
+    private channelGroupCommandRepository: IChannelGroupCommandRepository
     private userQueryRepository: IUserQueryRepository
     private userCommandRepository: IUserCommandRepository
     private fileQueryRepository: IFileQueryRepository
@@ -54,6 +56,7 @@ export class PostMessageApplication {
         channelQueryRepository: IChannelQueryRepository,
         channelCommandRepository: IChannelCommandRepository,
         channelGroupQueryRepository: IChannelGroupQueryRepository,
+        channelGroupCommandRepository: IChannelGroupCommandRepository,
         messageQueryRepository: IMessageQueryRepository,
         messageCommandRepository: IMessageCommandRepository,
         fileQueryRepository: IFileQueryRepository,
@@ -64,6 +67,7 @@ export class PostMessageApplication {
         this.channelQueryRepository = channelQueryRepository
         this.channelCommandRepository = channelCommandRepository
         this.channelGroupQueryRepository = channelGroupQueryRepository
+        this.channelGroupCommandRepository = channelGroupCommandRepository
         this.userQueryRepository = userQueryRepository
         this.userCommandRepository = userCommandRepository
         this.fileQueryRepository = fileQueryRepository
@@ -135,13 +139,22 @@ export class PostMessageApplication {
 
         if (thread) {
             thread.replyCount += 1
+            thread.lastReplyMessageId = message.id
+            thread.lastReplyMessageCreatedAt = message.createdAt
             await this.messageCommandRepository.update(thread)
         }
 
         let parentChannelGroupId = channel.parentChannelGroupId
         let parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
         while (parentChannelGroup) {
+            // Update channel group
+            parentChannelGroup.lastMessageId = message.id
+            parentChannelGroup.lastMessageCreatedAt = message.createdAt
+            await this.channelGroupCommandRepository.update(parentChannelGroup)
+
+            // Update timeline
             await this.channelGroupTimelineCommandRepository.add(message, parentChannelGroup)
+
             parentChannelGroupId = parentChannelGroup.parentId
             parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
         }
