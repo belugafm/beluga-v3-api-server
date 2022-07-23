@@ -9,3 +9,4 @@ src/web/repositories.ts
 npm-debug.log
 docker_compose/mysql/docker/mysql/data
 docker_compose/mysql/docker/mysql/sql
+*.pem
