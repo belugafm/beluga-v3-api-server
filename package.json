@@ -54,10 +54,6 @@
         "test": "jest --clearCache && node --allow-natives-syntax ./node_modules/.bin/jest --runInBand",
         "start": "npx ts-node --transpileOnly src/run.prisma.ts"
     },
-    "engines": {
-        "node": "v18.1.0",
-        "npm": "8.8.0"
-    },
     "jest": {
         "testEnvironment": "node",
         "verbose": true,
