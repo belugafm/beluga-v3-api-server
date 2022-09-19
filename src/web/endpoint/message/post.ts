@@ -18,7 +18,7 @@ export default (server: TurboServer) => {
         )
         return {
             ok: true,
-            message: message.toJsonObject(),
+            message: message,
         }
     })
 }

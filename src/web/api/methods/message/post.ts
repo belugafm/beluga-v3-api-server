@@ -24,6 +24,7 @@ import { HttpMethods } from "../../facts/http_method"
 import { MessageEntity } from "../../../../domain/entity/Message"
 import { MethodIdentifiers } from "../../identifier"
 import config from "../../../../config/app"
+import { MessageJsonObjectT } from "../../../../domain/types"
 
 export const argumentSpecs = defineArguments(["text", "text_style", "channel_id", "thread_id"] as const, {
     text: {
@@ -129,50 +130,54 @@ export const facts: MethodFacts = {
     description: ["チャンネルまたはスレッドに投稿します"],
 }
 
-type ReturnType = Promise<MessageEntity>
-
-export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
-    if (authUser == null) {
-        raise(errors["invalid_auth"])
-    }
-    if (args.channel_id == null && args.thread_id == null) {
-        raise(errors["argument_missing"])
-    }
-    try {
-        const transaction = await TransactionRepository.new<ReturnType>()
-        return await transaction.$transaction(async (transactionSession) => {
-            return await new PostMessageApplication(
-                new UserQueryRepository(transactionSession),
-                new UserCommandRepository(transactionSession),
-                new ChannelQueryRepository(transactionSession),
-                new ChannelCommandRepository(transactionSession),
-                new ChannelGroupQueryRepository(transactionSession),
-                new ChannelGroupCommandRepository(transactionSession),
-                new MessageQueryRepository(transactionSession),
-                new MessageCommandRepository(transactionSession),
-                new FileQueryRepository(transactionSession),
-                new ChannelGroupTimelineCommandRepository(transactionSession)
-            ).post({
-                text: args.text,
-                textStyle: args.text_style,
-                channelId: args.channel_id,
-                threadId: args.thread_id,
-                userId: authUser.id,
+export default defineMethod(
+    facts,
+    argumentSpecs,
+    expectedErrorSpecs,
+    async (args, errors, authUser): Promise<MessageJsonObjectT> => {
+        if (authUser == null) {
+            raise(errors["invalid_auth"])
+        }
+        if (args.channel_id == null && args.thread_id == null) {
+            raise(errors["argument_missing"])
+        }
+        try {
+            const transaction = await TransactionRepository.new<Promise<MessageEntity>>()
+            const message = await transaction.$transaction(async (transactionSession) => {
+                return await new PostMessageApplication(
+                    new UserQueryRepository(transactionSession),
+                    new UserCommandRepository(transactionSession),
+                    new ChannelQueryRepository(transactionSession),
+                    new ChannelCommandRepository(transactionSession),
+                    new ChannelGroupQueryRepository(transactionSession),
+                    new ChannelGroupCommandRepository(transactionSession),
+                    new MessageQueryRepository(transactionSession),
+                    new MessageCommandRepository(transactionSession),
+                    new FileQueryRepository(transactionSession),
+                    new ChannelGroupTimelineCommandRepository(transactionSession)
+                ).post({
+                    text: args.text,
+                    textStyle: args.text_style,
+                    channelId: args.channel_id,
+                    threadId: args.thread_id,
+                    userId: authUser.id,
+                })
             })
-        })
-    } catch (error) {
-        if (error instanceof ApplicationError) {
-            if (error.code === ErrorCodes.DoNotHavePermission) {
-                raise(errors["do_not_have_permission"], error)
-            } else if (error.code === ErrorCodes.TextLengthNotMeetPolicy) {
-                raise(errors["text_length_not_meet_policy"], error)
+            return message.toJsonObject()
+        } catch (error) {
+            if (error instanceof ApplicationError) {
+                if (error.code === ErrorCodes.DoNotHavePermission) {
+                    raise(errors["do_not_have_permission"], error)
+                } else if (error.code === ErrorCodes.TextLengthNotMeetPolicy) {
+                    raise(errors["text_length_not_meet_policy"], error)
+                } else {
+                    raise(errors["internal_error"], error)
+                }
+            } else if (error instanceof Error) {
+                raise(errors["unexpected_error"], error)
             } else {
-                raise(errors["internal_error"], error)
+                raise(errors["unexpected_error"], new Error("unexpected_error"))
             }
-        } else if (error instanceof Error) {
-            raise(errors["unexpected_error"], error)
-        } else {
-            raise(errors["unexpected_error"], new Error("unexpected_error"))
         }
     }
-})
+)
