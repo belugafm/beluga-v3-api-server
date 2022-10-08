@@ -1,7 +1,7 @@
 import { Message, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../../../ChangeEventHandler"
 import { IMessageCommandRepository } from "../../../../domain/repository/command/Message"
 import { MessageEntity } from "../../../../domain/entity/Message"
 import { MessageId } from "../../../../domain/types"
@@ -27,7 +27,7 @@ export function has_changed(a: Message, b: Message) {
 export class MessageCommandRepository extends ChangeEventHandler implements IMessageCommandRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
-        super(MessageCommandRepository)
+        super()
         if (transaction) {
             this._prisma = transaction
         } else {
@@ -127,3 +127,4 @@ export class MessageCommandRepository extends ChangeEventHandler implements IMes
         }
     }
 }
+assignChangeEventHandlerProperties(MessageCommandRepository)

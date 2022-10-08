@@ -4,9 +4,51 @@ import { Request, Response, TurboServer } from "./web/turbo"
 import { Authenticator } from "./web/auth"
 import { CookieAuthenticationApplication } from "./application/authentication/Cookie"
 import { UserCommandRepository } from "./infrastructure/prisma/repository/command/User"
+import { ChannelCommandRepository } from "./infrastructure/prisma/repository/command/Channel"
+import { ChannelGroupCommandRepository } from "./infrastructure/prisma/repository/command/ChannelGroup"
+import { MessageCommandRepository } from "./infrastructure/prisma/repository/command/Message"
 import config from "./config/app"
+import WebSocket, { WebSocketServer } from "ws"
+import { UserId } from "../src/domain/types"
 
-async function startServer() {
+function startWebsocketServer() {
+    const wss = new WebSocketServer({
+        port: config.server.websocket_port,
+    })
+    // wss.on("connection", (ws: any, request: any, client: any) => {
+    //     console.log(wss.clients.size)
+    // })
+    const broadcast = (data: { [key: string]: any }) => {
+        wss.clients.forEach(function each(client) {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify(data))
+            }
+        })
+    }
+    UserCommandRepository.subscribe((userId: UserId) => {
+        broadcast({
+            user_id: userId,
+        })
+    })
+    ChannelCommandRepository.subscribe((channelId: UserId) => {
+        broadcast({
+            channel_id: channelId,
+        })
+    })
+    ChannelGroupCommandRepository.subscribe((channelGroupId: UserId) => {
+        broadcast({
+            channel_group_id: channelGroupId,
+        })
+    })
+    MessageCommandRepository.subscribe((messageId: UserId) => {
+        broadcast({
+            message_id: messageId,
+        })
+    })
+    return wss
+}
+
+async function startAPIServer() {
     const server = new TurboServer(
         {
             maxParamLength: 128,
@@ -59,9 +101,14 @@ async function startServer() {
     server.listen(config.server.port)
 }
 
-startServer()
+async function main() {
+    await startAPIServer()
+    startWebsocketServer()
+}
+main()
     .then(() => {
-        console.group("Server running")
+        console.log(`API Server running on localhost:${config.server.port}`)
+        console.log(`WebSocket Server running on localhost:${config.server.websocket_port}`)
     })
     .catch((error) => {
         console.error(error)

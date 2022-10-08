@@ -1,7 +1,7 @@
 import { File, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../../../ChangeEventHandler"
 import { FileEntity } from "../../../../domain/entity/File"
 import { FileId } from "../../../../domain/types"
 import { IFileCommandRepository } from "../../../../domain/repository/command/File"
@@ -26,7 +26,7 @@ export function has_changed(a: File, b: File) {
 export class FileCommandRepository extends ChangeEventHandler implements IFileCommandRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
-        super(FileCommandRepository)
+        super()
         if (transaction) {
             this._prisma = transaction
         } else {
@@ -127,3 +127,4 @@ export class FileCommandRepository extends ChangeEventHandler implements IFileCo
         }
     }
 }
+assignChangeEventHandlerProperties(FileCommandRepository)

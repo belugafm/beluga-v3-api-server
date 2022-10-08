@@ -1,7 +1,7 @@
 import { ChannelReadState, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../../../ChangeEventHandler"
 import { ChannelReadStateEntity } from "../../../../domain/entity/ChannelReadState"
 import { ChannelReadStateId } from "../../../../domain/types"
 import { IChannelReadStateCommandRepository } from "../../../../domain/repository/command/ChannelReadState"
@@ -17,7 +17,7 @@ export class ChannelReadStateCommandRepository
 {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
-        super(ChannelReadStateCommandRepository)
+        super()
         if (transaction) {
             this._prisma = transaction
         } else {
@@ -148,3 +148,4 @@ export class ChannelReadStateCommandRepository
         }
     }
 }
+assignChangeEventHandlerProperties(ChannelReadStateCommandRepository)

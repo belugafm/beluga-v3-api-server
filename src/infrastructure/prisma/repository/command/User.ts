@@ -1,7 +1,7 @@
 import { PrismaClient, User } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../../../ChangeEventHandler"
 import { IUserCommandRepository } from "../../../../domain/repository/command/User"
 import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
@@ -35,7 +35,7 @@ export function has_changed(a: User, b: User) {
 export class UserCommandRepository extends ChangeEventHandler implements IUserCommandRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
-        super(UserCommandRepository)
+        super()
         if (transaction) {
             this._prisma = transaction
         } else {
@@ -191,3 +191,4 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
         }
     }
 }
+assignChangeEventHandlerProperties(UserCommandRepository)

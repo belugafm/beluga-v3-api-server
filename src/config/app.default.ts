@@ -2,6 +2,7 @@ const config: {
     server: {
         domain: string
         port: number
+        websocket_port: number
         https: boolean
         get_base_url: () => string
     }
@@ -151,6 +152,7 @@ const config: {
     server: {
         domain: "localhost.beluga.fm",
         port: 8080,
+        websocket_port: 6000,
         https: true,
         get_base_url: () => {
             if (config.server.https) {

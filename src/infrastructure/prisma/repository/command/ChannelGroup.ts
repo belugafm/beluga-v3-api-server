@@ -1,7 +1,7 @@
 import { ChannelGroup, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../../../ChangeEventHandler"
 import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
 import { ChannelGroupdId } from "../../../../domain/types"
 import { IChannelGroupCommandRepository } from "../../../../domain/repository/command/ChannelGroup"
@@ -26,7 +26,7 @@ export function has_changed(a: ChannelGroup, b: ChannelGroup) {
 export class ChannelGroupCommandRepository extends ChangeEventHandler implements IChannelGroupCommandRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
-        super(ChannelGroupCommandRepository)
+        super()
         if (transaction) {
             this._prisma = transaction
         } else {
@@ -128,3 +128,4 @@ export class ChannelGroupCommandRepository extends ChangeEventHandler implements
         }
     }
 }
+assignChangeEventHandlerProperties(ChannelGroupCommandRepository)

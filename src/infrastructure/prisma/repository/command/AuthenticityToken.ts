@@ -1,21 +1,13 @@
-import {
-    RepositoryError,
-    UnknownRepositoryError,
-} from "../../../../domain/repository/RepositoryError"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
 import { AuthenticityTokenEntity } from "../../../../domain/entity/AuthenticityToken"
-import { ChangeEventHandler } from "../../../ChangeEventHandler"
 import { IAuthenticityTokenCommandRepository } from "../../../../domain/repository/command/AuthenticityToken"
 import { PrismaClient } from "@prisma/client"
 import { prisma } from "../client"
 
-export class AuthenticityTokenCommandRepository
-    extends ChangeEventHandler
-    implements IAuthenticityTokenCommandRepository
-{
+export class AuthenticityTokenCommandRepository implements IAuthenticityTokenCommandRepository {
     private _prisma: PrismaClient
     constructor(transaction?: PrismaClient) {
-        super(AuthenticityTokenCommandRepository)
         if (transaction) {
             this._prisma = transaction
         } else {

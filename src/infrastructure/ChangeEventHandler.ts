@@ -1,25 +1,31 @@
 export class ChangeEventHandler {
+    // 型定義用のダミー
     static subscribe(func: (changedId: any) => void) {}
     static deleteAllEventHandlers() {}
-    protected static _eventListeners: ((changedId: any) => void)[] = []
-    protected async emitChanges(changedId: number | string) {}
-    constructor(cls: any) {
-        if (cls.hasOwnProperty("_eventListeners")) {
-            return
-        }
-        Object.assign(cls, {
-            _eventListeners: [],
-            subscribe: (func: (changedId: any) => void) => {
-                cls._eventListeners.push(func)
-            },
-            deleteAllEventHandlers: () => {
-                cls._eventListeners = []
-            },
-        })
-        cls.prototype.emitChanges = function (changedEntityId: any) {
-            cls._eventListeners.forEach((func: any) => {
+    static getEventListerSize() {}
+    static eventListeners: ((changedId: any) => void)[] = []
+    async emitChanges(changedId: number | string) {}
+}
+
+export function assignChangeEventHandlerProperties<T extends typeof ChangeEventHandler>(cls: T): T {
+    Object.assign(cls, {
+        eventListeners: [],
+        subscribe: (func: (changedId: any) => void) => {
+            cls.eventListeners.push(func)
+        },
+        deleteAllEventHandlers: () => {
+            cls.eventListeners = []
+        },
+        getEventListerSize: () => {
+            return cls.eventListeners.length
+        },
+    })
+    Object.assign(cls.prototype, {
+        emitChanges: (changedEntityId: any) => {
+            cls.eventListeners.forEach((func: any) => {
                 func(changedEntityId)
             })
-        }
-    }
+        },
+    })
+    return cls
 }
