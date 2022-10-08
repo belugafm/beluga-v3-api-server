@@ -1,7 +1,6 @@
 ```
-cd infrastructure/prisma
-npx prisma generate --schema mysql.prisma
-env DATABASE_URL=mysql://root:root@127.0.0.2:3306/test_database npx prisma migrate dev --name init --schema schema.mysql.prisma
+npx prisma generate --schema prisma/mysql/schema.prisma
+env DATABASE_URL=mysql://root:root@127.0.0.2:3306/test_database npx prisma migrate dev --name init --schema prisma/mysql/schema.prisma
 ```
 
 docker_compose/mysql/docker/mysql/data
@@ -28,8 +27,8 @@ env DATABASE_URL=mysql://root:root@127.0.0.1:3306/test_database npx prisma migra
 env DATABASE_URL=mysql://root:root@127.0.0.1:3306/test_database GCLOUD_STORAGE_BUCKET=beluga-public npx ts-node src/run.prisma.ts
 ```
 
+ローカル PC の IP アドレスを調べて nginx.conf に書く
 
-ローカルPCのIPアドレスを調べてnginx.confに書く
 ```
 ip
 ```
