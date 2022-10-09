@@ -4,5 +4,9 @@ volumes/
 sandbox/
 .DS_Store
 npm-debug.log
-docker_compose/mysql/docker/mysql/data
-docker_compose/mysql/docker/mysql/sql
+docker_compose/local/mysql/docker/mysql/data
+docker_compose/local/mysql/docker/mysql/sql
+docker_compose/compute_engine/mysql/docker/mysql/data
+docker_compose/compute_engine/mysql/docker/mysql/sql
+docker_compose/compute_engine/mysql/docker/redis/data
+*.pem

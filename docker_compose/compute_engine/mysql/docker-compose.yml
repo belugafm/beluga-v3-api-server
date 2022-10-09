@@ -5,6 +5,11 @@ services:
     image: mysql:latest
     container_name: mysql_host
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_DATABASE
+      - MYSQL_USER
+      - MYSQL_PASSWORD
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
       - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
@@ -18,3 +23,13 @@ services:
     volumes:
       - ./docker/redis/data:/data
       - ./redis.conf:/etc/redis.conf
+  api:
+    image: beluga-v3-api-server:latest
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - DATABASE_URL
+      - GCLOUD_STORAGE_BUCKET
+    ports:
+      - 8080:8080
