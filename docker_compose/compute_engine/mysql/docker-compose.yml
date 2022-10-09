@@ -4,11 +4,6 @@ services:
     restart: always
     image: mysql:latest
     container_name: mysql_host
-    environment:
-      - MYSQL_DATABASE
-      - MYSQL_USER
-      - MYSQL_PASSWORD
-      - MYSQL_ROOT_PASSWORD
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - ./docker/mysql/data:/var/lib/mysql
@@ -16,3 +11,10 @@ services:
       - ./docker/mysql/sql:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
+  redis:
+    image: redis:latest
+    ports:
+      - 6379:6379
+    volumes:
+      - ./docker/redis/data:/data
+      - ./redis.conf:/etc/redis.conf
