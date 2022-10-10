@@ -33,3 +33,16 @@ services:
       - GCLOUD_STORAGE_BUCKET
     ports:
       - 8080:8080
+  client:
+    image: beluga-v3-browser-client:latest
+    depends_on:
+      - api
+    ports:
+      - 3000:3000
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 7000:8080
+    depends_on:
+      - mysql

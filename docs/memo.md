@@ -30,5 +30,5 @@ env DATABASE_URL=mysql://root:root@127.0.0.1:3306/test_database GCLOUD_STORAGE_B
 ローカル PC の IP アドレスを調べて nginx.conf に書く
 
 ```
-ip
+ip addr show
 ```
