@@ -1,7 +1,7 @@
 import { File, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../../../ChangeEventHandler"
+import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../ChangeEventHandler"
 import { FileEntity } from "../../../../domain/entity/File"
 import { FileId } from "../../../../domain/types"
 import { IFileCommandRepository } from "../../../../domain/repository/command/File"

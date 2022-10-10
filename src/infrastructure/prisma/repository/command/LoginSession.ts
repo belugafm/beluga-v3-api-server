@@ -1,7 +1,7 @@
 import { LoginSession, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../../../ChangeEventHandler"
+import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../ChangeEventHandler"
 import { ILoginSessionCommandRepository } from "../../../../domain/repository/command/LoginSession"
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { prisma } from "../client"

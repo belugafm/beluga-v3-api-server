@@ -1,7 +1,7 @@
 import { Message, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../../../ChangeEventHandler"
+import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../ChangeEventHandler"
 import { IMessageCommandRepository } from "../../../../domain/repository/command/Message"
 import { MessageEntity } from "../../../../domain/entity/Message"
 import { MessageId } from "../../../../domain/types"

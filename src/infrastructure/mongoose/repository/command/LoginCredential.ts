@@ -1,15 +1,8 @@
-import {
-    EmptyTransactionRepository,
-    TransactionRepository,
-    TransactionRepositoryInterface,
-} from "../Transaction"
+import { EmptyTransactionRepository, TransactionRepository, TransactionRepositoryInterface } from "../Transaction"
 import { LoginCredentialModel, schemaVersion } from "../../schema/LoginCredential"
-import {
-    RepositoryError,
-    UnknownRepositoryError,
-} from "../../../../domain/repository/RepositoryError"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { ChangeEventHandler } from "../../../prisma/repository/ChangeEventHandler"
 import { ILoginCredentialCommandRepository } from "../../../../domain/repository/command/LoginCredential"
 import { LoginCredentialEntity } from "../../../../domain/entity/LoginCredential"
 import { MongoError } from "mongodb"
@@ -21,7 +14,7 @@ export class LoginCredentialCommandRepository<T>
 {
     private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
     constructor(transaction?: TransactionRepository<T>) {
-        super(LoginCredentialCommandRepository)
+        super()
         if (transaction) {
             this._transaction = transaction
         }

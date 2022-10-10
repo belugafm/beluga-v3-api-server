@@ -1,15 +1,8 @@
-import {
-    EmptyTransactionRepository,
-    TransactionRepository,
-    TransactionRepositoryInterface,
-} from "../Transaction"
-import {
-    RepositoryError,
-    UnknownRepositoryError,
-} from "../../../../domain/repository/RepositoryError"
+import { EmptyTransactionRepository, TransactionRepository, TransactionRepositoryInterface } from "../Transaction"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 import { UserModel, schemaVersion } from "../../schema/User"
 
-import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { ChangeEventHandler } from "../../../prisma/repository/ChangeEventHandler"
 import { IUserCommandRepository } from "../../../../domain/repository/command/User"
 import { MongoError } from "mongodb"
 import { UserEntity } from "../../../../domain/entity/User"
@@ -19,7 +12,7 @@ import mongoose from "mongoose"
 export class UserCommandRepository<T> extends ChangeEventHandler implements IUserCommandRepository {
     private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
     constructor(transaction?: TransactionRepository<T>) {
-        super(UserCommandRepository)
+        super()
         if (transaction) {
             this._transaction = transaction
         }
@@ -57,9 +50,7 @@ export class UserCommandRepository<T> extends ChangeEventHandler implements IUse
                 schema_version: schemaVersion,
             }
             const session = this._transaction.getSession()
-            const results = await (session
-                ? UserModel.create([doc], { session })
-                : UserModel.create([doc]))
+            const results = await (session ? UserModel.create([doc], { session }) : UserModel.create([doc]))
             const userId = results[0]._id.toHexString()
             return userId
         } catch (error) {

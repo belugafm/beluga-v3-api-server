@@ -1,15 +1,20 @@
+import { WithTransaction } from "./WithTransaction"
+
 export class ChangeEventHandler {
     // 型定義用のダミー
     static subscribe(func: (changedId: any) => void) {}
     static deleteAllEventHandlers() {}
     static getEventListerSize() {}
     static eventListeners: ((changedId: any) => void)[] = []
-    async emitChanges(changedId: number | string) {}
+    static changedEntityIds: Set<any> = new Set()
+    static lazyEmitChanges() {}
+    emitChanges(changedId: number | string) {}
 }
 
 export function assignChangeEventHandlerProperties<T extends typeof ChangeEventHandler>(cls: T): T {
     Object.assign(cls, {
         eventListeners: [],
+        changedEntityIds: new Set(),
         subscribe: (func: (changedId: any) => void) => {
             cls.eventListeners.push(func)
         },
@@ -19,12 +24,24 @@ export function assignChangeEventHandlerProperties<T extends typeof ChangeEventH
         getEventListerSize: () => {
             return cls.eventListeners.length
         },
+        lazyEmitChanges: () => {
+            cls.eventListeners.forEach((func: any) => {
+                for (const changedEntityId of cls.changedEntityIds) {
+                    func(changedEntityId)
+                }
+            })
+            cls.changedEntityIds.clear()
+        },
     })
     Object.assign(cls.prototype, {
         emitChanges: (changedEntityId: any) => {
-            cls.eventListeners.forEach((func: any) => {
-                func(changedEntityId)
-            })
+            if (WithTransaction()) {
+                cls.changedEntityIds.add(changedEntityId)
+            } else {
+                cls.eventListeners.forEach((func: any) => {
+                    func(changedEntityId)
+                })
+            }
         },
     })
     return cls

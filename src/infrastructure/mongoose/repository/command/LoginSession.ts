@@ -1,26 +1,16 @@
-import {
-    EmptyTransactionRepository,
-    TransactionRepository,
-    TransactionRepositoryInterface,
-} from "../Transaction"
+import { EmptyTransactionRepository, TransactionRepository, TransactionRepositoryInterface } from "../Transaction"
 import { LoginSessionModel, schemaVersion } from "../../schema/LoginSession"
-import {
-    RepositoryError,
-    UnknownRepositoryError,
-} from "../../../../domain/repository/RepositoryError"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { ChangeEventHandler } from "../../../prisma/repository/ChangeEventHandler"
 import { ILoginSessionCommandRepository } from "../../../../domain/repository/command/LoginSession"
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { MongoError } from "mongodb"
 
-export class LoginSessionCommandRepository<T>
-    extends ChangeEventHandler
-    implements ILoginSessionCommandRepository
-{
+export class LoginSessionCommandRepository<T> extends ChangeEventHandler implements ILoginSessionCommandRepository {
     private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
     constructor(transaction?: TransactionRepository<T>) {
-        super(LoginSessionCommandRepository)
+        super()
         if (transaction) {
             this._transaction = transaction
         }

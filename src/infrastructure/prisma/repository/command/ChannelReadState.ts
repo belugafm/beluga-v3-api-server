@@ -1,7 +1,7 @@
 import { ChannelReadState, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../../../ChangeEventHandler"
+import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../ChangeEventHandler"
 import { ChannelReadStateEntity } from "../../../../domain/entity/ChannelReadState"
 import { ChannelReadStateId } from "../../../../domain/types"
 import { IChannelReadStateCommandRepository } from "../../../../domain/repository/command/ChannelReadState"

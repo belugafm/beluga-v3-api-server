@@ -1,16 +1,9 @@
 import { AuthenticityTokenModel, schemaVersion } from "../../schema/AuthenticityToken"
-import {
-    EmptyTransactionRepository,
-    TransactionRepository,
-    TransactionRepositoryInterface,
-} from "../Transaction"
-import {
-    RepositoryError,
-    UnknownRepositoryError,
-} from "../../../../domain/repository/RepositoryError"
+import { EmptyTransactionRepository, TransactionRepository, TransactionRepositoryInterface } from "../Transaction"
+import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
 import { AuthenticityTokenEntity } from "../../../../domain/entity/AuthenticityToken"
-import { ChangeEventHandler } from "../../../ChangeEventHandler"
+import { ChangeEventHandler } from "../../../prisma/repository/ChangeEventHandler"
 import { IAuthenticityTokenCommandRepository } from "../../../../domain/repository/command/AuthenticityToken"
 import { MongoError } from "mongodb"
 
@@ -20,7 +13,7 @@ export class AuthenticityTokenCommandRepository<T>
 {
     private _transaction: TransactionRepositoryInterface<T> = new EmptyTransactionRepository()
     constructor(transaction?: TransactionRepository<T>) {
-        super(AuthenticityTokenCommandRepository)
+        super()
         if (transaction) {
             this._transaction = transaction
         }

@@ -1,7 +1,7 @@
 import { ChannelGroup, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../../../ChangeEventHandler"
+import { assignChangeEventHandlerProperties, ChangeEventHandler } from "../ChangeEventHandler"
 import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
 import { ChannelGroupdId } from "../../../../domain/types"
 import { IChannelGroupCommandRepository } from "../../../../domain/repository/command/ChannelGroup"
