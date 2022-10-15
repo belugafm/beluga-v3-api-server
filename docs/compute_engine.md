@@ -13,4 +13,12 @@ https://cloud.google.com/compute/docs/disks/add-persistent-disk?hl=ja#formatting
 
 src/web/repositories.ts と src/config/app.ts を作る
 docker build -t beluga-v3-api-server .
+
+cd desktop
 docker build -t beluga-v3-browser-client .
+
+ロードバランサ
+バックエンドにインスタンスグループを指定
+プロトコルは HTTP でいい
+分散モードは使用率で最大使用率は 100%
+CDN はオフ
