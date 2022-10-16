@@ -137,3 +137,22 @@ export type FileJsonObjectT = {
     height: number | null
     tag: string | null
 }
+
+export type LikeJsonObjectT = {
+    id: MessageId
+    message_id: MessageId
+    message: MessageJsonObjectT | null
+    user_id: UserId
+    user: UserJsonObjectT | null
+    updated_at: Date
+    count: number
+}
+
+export type FavoriteJsonObjectT = {
+    id: MessageId
+    message_id: MessageId
+    message: MessageJsonObjectT | null
+    user_id: UserId
+    user: UserJsonObjectT | null
+    createdAt: Date
+}

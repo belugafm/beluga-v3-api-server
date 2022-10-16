@@ -6,7 +6,7 @@ import * as user from "./types/user"
 
 import { Options as IntegerOptions, integer } from "./types/number"
 import { Options as StringOptions, string } from "./types/string"
-import { channelGroupId, channelId, fileId, messageId, readStateId, userId } from "./types/entityId"
+import { channelGroupId, channelId, entityId, fileId, messageId, readStateId, userId } from "./types/entityId"
 
 import { DomainError } from "../DomainError"
 import { Entity } from "../entity/Entity"
@@ -56,6 +56,11 @@ export function Validate<T>(validator: PropertyValidator<T>, options?: Validatio
             enumerable: true,
         })
     }
+}
+
+// Comon
+export function IsEntityId(options?: ValidationOptions) {
+    return Validate(entityId(), options)
 }
 
 // Message

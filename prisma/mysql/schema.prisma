@@ -169,3 +169,24 @@ model File {
     @@index([userId, original])
     @@index([group])
 }
+
+model Like {
+    id        Int      @id @default(autoincrement())
+    messageId Int
+    userId    Int
+    count     Int      @default(0)
+    updatedAt DateTime
+
+    @@unique([messageId, userId])
+    @@index([messageId])
+}
+
+model Favorite {
+    id        Int      @id @default(autoincrement())
+    messageId Int
+    userId    Int
+    createdAt DateTime
+
+    @@unique([messageId, userId])
+    @@index([messageId])
+}
