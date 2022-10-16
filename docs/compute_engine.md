@@ -22,3 +22,9 @@ docker build -t beluga-v3-browser-client .
 プロトコルは HTTP でいい
 分散モードは使用率で最大使用率は 100%
 CDN はオフ
+
+Cloud Storage へのアクセス
+https://cloud.google.com/docs/authentication/getting-started
+
+サービスアカウントを作ってロールを Storage オブジェクト作成者にする
+JSON でキーを保存しパスを.env の GOOGLE_APPLICATION_CREDENTIALS に書く
