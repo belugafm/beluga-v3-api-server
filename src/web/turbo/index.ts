@@ -130,6 +130,10 @@ export class TurboServer {
             const req = new Request(_req)
             const res = new Response(_res)
             const { host } = req.headers
+            if (host == null) {
+                console.log(req.headers)
+                return AccessDeniedRoute(req, res)
+            }
             const domain = host.split(":")[0]
             if (domain !== config.server.domain) {
                 return AccessDeniedRoute(req, res)
