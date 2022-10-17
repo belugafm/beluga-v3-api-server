@@ -9,9 +9,10 @@ import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../
 
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
-import { MessageEntity } from "../../../../domain/entity/Message"
 import { MethodIdentifiers } from "../../identifier"
 import { SortOrder } from "../../../../domain/repository/query/ChannelGroupTimeline"
+import { includeMessageRelations } from "../../relations/message"
+import { MessageJsonObjectT } from "../../../../domain/types"
 
 export const argumentSpecs = defineArguments(
     ["channel_group_id", "since_id", "max_id", "limit", "sort_order"] as const,
@@ -76,7 +77,7 @@ export const facts: MethodFacts = {
     description: ["チャンネルグループのタイムラインを取得します"],
 }
 
-type ReturnType = Promise<MessageEntity[]>
+type ReturnType = Promise<MessageJsonObjectT[]>
 
 function getSortOrder(sortOrderString?: string) {
     if (sortOrderString == SortOrder.Descending) {
@@ -98,14 +99,21 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
             sortOrder: getSortOrder(args.sort_order),
         })
         const messageQueryRepository = new MessageQueryRepository()
-        const messages = []
+        const messageObjs = []
         for (const messageId of messageIds) {
             const message = await messageQueryRepository.findById(messageId)
             if (message) {
-                messages.push(message)
+                const messageObj = await includeMessageRelations(message.toJsonObject(), authUser)
+                if (messageObj.user == null) {
+                    continue
+                }
+                if (messageObj.channel == null) {
+                    continue
+                }
+                messageObjs.push(messageObj)
             }
         }
-        return messages
+        return messageObjs
     } catch (error) {
         if (error instanceof Error) {
             raise(errors["unexpected_error"], error)

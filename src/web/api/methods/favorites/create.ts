@@ -31,6 +31,7 @@ export const expectedErrorSpecs = defineErrors(
     [
         ErrorCodes.DoNotHavePermission,
         ErrorCodes.CanNotFavoriteYourOwnMessage,
+        ErrorCodes.AlreadyFavorited,
         "invalid_auth",
         "internal_error",
         "unexpected_error",
@@ -46,6 +47,11 @@ export const expectedErrorSpecs = defineErrors(
             description: ["自分のメッセージに「ふぁぼ」することはできません"],
             hint: [],
             code: "can_not_favorite_your_own_message",
+        },
+        already_favorited: {
+            description: ["すでに「ふぁぼ」しています"],
+            hint: [],
+            code: "already_favorited",
         },
         invalid_auth: new InvalidAuth(),
         internal_error: new InternalErrorSpec(),
@@ -95,6 +101,8 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 raise(errors["do_not_have_permission"], error)
             } else if (error.code === ErrorCodes.CanNotFavoriteYourOwnMessage) {
                 raise(errors["can_not_favorite_your_own_message"], error)
+            } else if (error.code === ErrorCodes.AlreadyFavorited) {
+                raise(errors["already_favorited"], error)
             } else {
                 raise(errors["internal_error"], error)
             }

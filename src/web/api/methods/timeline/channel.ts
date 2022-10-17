@@ -16,6 +16,8 @@ import { HttpMethods } from "../../facts/http_method"
 import { MessageEntity } from "../../../../domain/entity/Message"
 import { MethodIdentifiers } from "../../identifier"
 import { SortOrder } from "../../../../domain/repository/query/ChannelTimeline"
+import { MessageJsonObjectT } from "../../../../domain/types"
+import { includeMessageRelations } from "../../relations/message"
 
 export const argumentSpecs = defineArguments(["channel_id", "since_id", "max_id", "limit", "sort_order"] as const, {
     channel_id: {
@@ -81,7 +83,7 @@ export const facts: MethodFacts = {
     description: ["チャンネルのタイムラインを取得します"],
 }
 
-type ReturnType = Promise<MessageEntity[]>
+type ReturnType = Promise<MessageJsonObjectT[]>
 
 function getSortOrder(sortOrderString?: string) {
     if (sortOrderString == SortOrder.Descending) {
@@ -98,8 +100,8 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
         raise(errors["internal_error"])
     }
     try {
-        const transaction = await TransactionRepository.new<ReturnType>()
-        return await transaction.$transaction(async (transactionSession) => {
+        const transaction = await TransactionRepository.new<Promise<MessageEntity[]>>()
+        const messages = await transaction.$transaction(async (transactionSession) => {
             return await new ChannelTimelineApplication(
                 new ChannelTimelineQueryRepository(transactionSession),
                 new ChannelReadStateQueryRepository(transactionSession),
@@ -113,6 +115,17 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 sortOrder: getSortOrder(args.sort_order),
             })
         })
+        const messageObjs = []
+        for (const message of messages) {
+            if (message) {
+                const messageObj = await includeMessageRelations(message.toJsonObject(), authUser)
+                if (messageObj.user == null) {
+                    continue
+                }
+                messageObjs.push(messageObj)
+            }
+        }
+        return messageObjs
     } catch (error) {
         if (error instanceof Error) {
             raise(errors["unexpected_error"], error)

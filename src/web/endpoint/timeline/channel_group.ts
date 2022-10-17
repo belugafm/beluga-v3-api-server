@@ -1,4 +1,3 @@
-import { ChannelQueryRepository, UserQueryRepository } from "../../repositories"
 import listMessage, { facts } from "../../api/methods/timeline/channel_group"
 
 import { TurboServer } from "../../turbo"
@@ -18,26 +17,9 @@ export default (server: TurboServer) => {
             remoteIpAddress,
             params["authUser"]
         )
-        const userQueryRepository = new UserQueryRepository()
-        const channelQueryRepository = new ChannelQueryRepository()
-        const objects: any[] = []
-        for (const message of messages) {
-            const user = await userQueryRepository.findById(message.userId)
-            if (user == null) {
-                continue
-            }
-            const channel = await channelQueryRepository.findById(message.channelId)
-            if (channel == null) {
-                continue
-            }
-            const messageObject = message.toJsonObject()
-            messageObject.user = user.toJsonObject()
-            messageObject.channel = channel.toJsonObject()
-            objects.push(messageObject)
-        }
         return {
             ok: true,
-            messages: objects,
+            messages,
         }
     })
 }
