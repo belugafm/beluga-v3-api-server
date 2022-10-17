@@ -30,7 +30,6 @@ export const argumentSpecs = defineArguments(["message_id"] as const, {
 export const expectedErrorSpecs = defineErrors(
     [
         ErrorCodes.DoNotHavePermission,
-        ErrorCodes.CanNotFavoriteYourOwnMessage,
         ErrorCodes.AlreadyFavorited,
         "invalid_auth",
         "internal_error",
@@ -42,11 +41,6 @@ export const expectedErrorSpecs = defineErrors(
             description: ["このメッセージに「ふぁぼ」する権限がありません"],
             hint: ["信用レベルを上げると「ふぁぼ」できるようになります"],
             code: "do_not_have_permission",
-        },
-        can_not_favorite_your_own_message: {
-            description: ["自分のメッセージに「ふぁぼ」することはできません"],
-            hint: [],
-            code: "can_not_favorite_your_own_message",
         },
         already_favorited: {
             description: ["すでに「ふぁぼ」しています"],
@@ -99,8 +93,6 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
         if (error instanceof ApplicationError) {
             if (error.code === ErrorCodes.DoNotHavePermission) {
                 raise(errors["do_not_have_permission"], error)
-            } else if (error.code === ErrorCodes.CanNotFavoriteYourOwnMessage) {
-                raise(errors["can_not_favorite_your_own_message"], error)
             } else if (error.code === ErrorCodes.AlreadyFavorited) {
                 raise(errors["already_favorited"], error)
             } else {

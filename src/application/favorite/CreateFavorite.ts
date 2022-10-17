@@ -52,9 +52,6 @@ export class CreateFavoriteApplication {
             await this.permissionToCreateFavorite.hasThrow(requestUserId, messageId)
         } catch (error) {
             if (error instanceof DomainError) {
-                if (error.code === PermissionErrorCodes.CanNotFavoriteYourOwnMessage) {
-                    throw new ApplicationError(ErrorCodes.CanNotFavoriteYourOwnMessage)
-                }
                 if (error.code === PermissionErrorCodes.DoNotHavePermission) {
                     throw new ApplicationError(ErrorCodes.DoNotHavePermission)
                 }

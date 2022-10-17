@@ -4,10 +4,8 @@ import { DomainError } from "../DomainError"
 import { IMessageQueryRepository } from "../repository/query/Message"
 import { IUserQueryRepository } from "../repository/query/User"
 import { TrustLevel } from "../../config/trust_level"
-import { entityIdEquals } from "../entityIdEquals"
 
 export const ErrorCodes = {
-    CanNotFavoriteYourOwnMessage: "can_not_favorite_your_own_message",
     DoNotHavePermission: "do_not_have_permission",
 } as const
 
@@ -29,9 +27,6 @@ export class CreateFavoritePermission {
         const message = await this.messageRepository.findById(messageId)
         if (message == null) {
             throw new DomainError(ErrorCodes.DoNotHavePermission)
-        }
-        if (entityIdEquals(message.userId, user.id) === true) {
-            throw new DomainError(ErrorCodes.CanNotFavoriteYourOwnMessage)
         }
     }
 }
