@@ -1,6 +1,6 @@
 import * as vs from "../../../../domain/validation"
 
-import { MessageQueryRepository } from "../../../repositories"
+import { MessageQueryRepository, FavoriteQueryRepository, UserQueryRepository } from "../../../repositories"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
@@ -56,18 +56,37 @@ export const facts: MethodFacts = {
 
 type ReturnType = Promise<MessageJsonObjectT | null>
 
-export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors): ReturnType => {
+export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
     if (args.id == null) {
         raise(errors["missing_argument"])
     }
     try {
-        const message = await (async () => {
-            return await new MessageQueryRepository().findById(args.id)
-        })()
+        const message = await new MessageQueryRepository().findById(args.id)
         if (message == null) {
             return null
         }
-        return message.toJsonObject()
+        const messageObj = message.toJsonObject()
+        if (message.favoriteCount > 0) {
+            const favorites = await new FavoriteQueryRepository().findAllByMessageId(
+                message.id,
+                "created_at",
+                "ascending"
+            )
+            const userRepository = new UserQueryRepository()
+            const favoritedUserObjs = []
+            for (const favorite of favorites) {
+                const user = await userRepository.findById(favorite.userId)
+                if (user) {
+                    favoritedUserObjs.push(user.toJsonObject())
+                }
+            }
+            messageObj.entities.favorited_users = favoritedUserObjs
+        }
+        if (authUser) {
+            const favorite = await new FavoriteQueryRepository().findByMessageAndUserId(message.id, authUser.id)
+            messageObj.favorited = favorite != null
+        }
+        return messageObj
     } catch (error) {
         if (error instanceof Error) {
             raise(errors["unexpected_error"], error)

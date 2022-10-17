@@ -48,6 +48,7 @@ export type MessageJsonObjectT = {
     text: string | null
     created_at: Date
     favorite_count: number
+    favorited: boolean
     like_count: number
     reply_count: number
     thread_id: MessageId | null
@@ -79,6 +80,7 @@ export type MessageJsonObjectT = {
             image_url: string | null
             indices: [number, number]
         }[]
+        favorited_users: UserJsonObjectT[]
         style: MessageEntityStyleNode[]
     }
 }
@@ -154,5 +156,5 @@ export type FavoriteJsonObjectT = {
     message: MessageJsonObjectT | null
     user_id: UserId
     user: UserJsonObjectT | null
-    createdAt: Date
+    created_at: Date
 }

@@ -94,6 +94,8 @@ async function startAPIServer() {
     server.register(require("./web/endpoint/message/delete"))
     server.register(require("./web/endpoint/message/show"))
     server.register(require("./web/endpoint/likes/create"))
+    server.register(require("./web/endpoint/favorites/create"))
+    server.register(require("./web/endpoint/favorites/destroy"))
     server.register(require("./web/endpoint/timeline/channel"))
     server.register(require("./web/endpoint/timeline/channel_group"))
     server.register(require("./web/endpoint/upload/media"))

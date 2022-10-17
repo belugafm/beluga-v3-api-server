@@ -21,7 +21,7 @@ export const MethodIdentifiers = {
     ShowMessage: "message/show",
     CreateLike: "likes/create",
     CreateFavorite: "favorites/create",
-    DeleteFavorite: "favorites/delete",
+    DestroyFavorite: "favorites/destroy",
     MuteUser: "mutes/create",
     UnmuteUser: "mutes/delete",
     BlockUser: "blocks/create",
