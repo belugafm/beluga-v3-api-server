@@ -80,6 +80,8 @@ async function startAPIServer() {
     console.log("Register endpoints")
     server.register(require("./web/endpoint/account/signup"))
     server.register(require("./web/endpoint/account/signin"))
+    server.register(require("./web/endpoint/app/create"))
+    server.register(require("./web/endpoint/app/list_app"))
     server.register(require("./web/endpoint/auth/cookie/authenticate"))
     server.register(require("./web/endpoint/auth/twitter/request_token"))
     server.register(require("./web/endpoint/auth/twitter/authenticate"))
@@ -100,6 +102,9 @@ async function startAPIServer() {
     server.register(require("./web/endpoint/timeline/channel_debug"))
     server.register(require("./web/endpoint/timeline/channel_group"))
     server.register(require("./web/endpoint/upload/media"))
+    server.register(require("./web/endpoint/oauth/request_token"))
+    server.register(require("./web/endpoint/oauth/authorize"))
+    server.register(require("./web/endpoint/oauth/access_token"))
     // server.register(require("./web/endpoint/debug"))
 
     server.listen(config.server.port)

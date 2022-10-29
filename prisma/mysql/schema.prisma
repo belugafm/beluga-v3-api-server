@@ -26,6 +26,7 @@ model LoginSession {
     device       String?  @db.VarChar(255)
 }
 
+// CSRF対策
 model AuthenticityToken {
     id        Int    @id @default(autoincrement())
     sessionId String @unique @db.VarChar(255)
@@ -189,4 +190,42 @@ model Favorite {
 
     @@unique([messageId, userId])
     @@index([messageId])
+}
+
+model Application {
+    id          Int      @id @default(autoincrement())
+    userId      Int
+    createdAt   DateTime @default(now())
+    name        String   @db.VarChar(255)
+    description String?  @db.Text
+    callbackUrl String
+    read        Boolean  @default(true)
+    write       Boolean  @default(false)
+    token       String   @unique @db.VarChar(255)
+    secret      String   @unique @db.VarChar(255)
+
+    @@unique([token, secret])
+}
+
+model RequestToken {
+    id             Int      @id @default(autoincrement())
+    token          String   @unique @db.VarChar(255)
+    secret         String   @unique @db.VarChar(255)
+    applicationId  Int
+    expireDate     DateTime
+    verifier       String?  @db.VarChar(255)
+    verifiedUserId Int?
+
+    @@unique([token, secret])
+}
+
+model AccessToken {
+    id            Int    @id @default(autoincrement())
+    token         String @unique @db.VarChar(255)
+    secret        String @unique @db.VarChar(255)
+    userId        Int
+    applicationId Int
+
+    @@unique([token, secret])
+    @@unique([applicationId, userId])
 }

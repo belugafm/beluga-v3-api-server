@@ -244,6 +244,7 @@ export class TurboServer {
                 }
                 res.write(Buffer.from(JSON.stringify(data)))
             } catch (error) {
+                console.error(error)
                 if (error instanceof Error) {
                     if (error instanceof WebApiRuntimeError) {
                         res.write(

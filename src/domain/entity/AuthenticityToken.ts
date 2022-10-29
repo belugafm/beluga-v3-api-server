@@ -1,5 +1,5 @@
 import { Entity } from "./Entity"
-import { IsSessionId } from "../validation/decorators"
+import { IsToken } from "../validation/decorators"
 import { v4 } from "uuid"
 
 export const ErrorCodes = {
@@ -8,10 +8,10 @@ export const ErrorCodes = {
 } as const
 
 export class AuthenticityTokenEntity extends Entity {
-    @IsSessionId({ errorCode: ErrorCodes.InvalidSessionId })
+    @IsToken({ errorCode: ErrorCodes.InvalidSessionId })
     sessionId: string
 
-    @IsSessionId({ errorCode: ErrorCodes.InvalidToken })
+    @IsToken({ errorCode: ErrorCodes.InvalidToken })
     token: string
 
     constructor(
@@ -21,6 +21,6 @@ export class AuthenticityTokenEntity extends Entity {
     ) {
         super()
         this.sessionId = params.sessionId
-        this.token = params.token != null ? params.token : [v4(), v4()].join("-")
+        this.token = params.token != null ? params.token : v4()
     }
 }
