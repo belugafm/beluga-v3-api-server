@@ -70,6 +70,9 @@ export function read_body(req: Request) {
         req.onEnd(() => {
             try {
                 const buffer = Buffer.concat(chunks)
+                if (typeof headers["content-type"] !== "string") {
+                    reject(new Error("Content-Typeが不正です"))
+                }
                 const parts = headers["content-type"].split(";")
                 const contentType = parts[0]
                 if (contentType === "application/json") {
