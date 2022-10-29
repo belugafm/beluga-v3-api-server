@@ -5,6 +5,8 @@ export type ChannelId = EntityId
 export type ChannelGroupdId = EntityId
 export type ChannelReadStateId = EntityId
 export type FileId = EntityId
+export type ApplicationId = EntityId
+export type ApplicationTokenId = EntityId
 
 export type UserJsonObjectT = {
     id: UserId
@@ -157,4 +159,15 @@ export type FavoriteJsonObjectT = {
     user_id: UserId
     user: UserJsonObjectT | null
     created_at: Date
+}
+
+export type ApplicationJsonObjectT = {
+    id: ApplicationId
+    user_id: UserId
+    created_at: Date
+    name: string
+    description: string | null
+    callback_url: string
+    read: boolean
+    write: boolean
 }

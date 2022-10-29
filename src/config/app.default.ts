@@ -138,6 +138,16 @@ const config: {
             fit: string
         }[]
     }
+    application: {
+        name: {
+            min_length: number
+            max_length: number
+        }
+        description: {
+            min_length: number
+            max_length: number
+        }
+    }
     storage: {
         nfs: {
             base_dir: string
@@ -320,6 +330,16 @@ const config: {
                 height: 400,
             },
         ],
+    },
+    application: {
+        name: {
+            min_length: 1,
+            max_length: 100,
+        },
+        description: {
+            min_length: 0,
+            max_length: 1000,
+        },
     },
     storage: {
         nfs: {

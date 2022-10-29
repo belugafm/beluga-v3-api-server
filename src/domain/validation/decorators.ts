@@ -3,10 +3,21 @@ import * as channelGroup from "./types/channel_group"
 import * as media from "./types/file"
 import * as message from "./types/message"
 import * as user from "./types/user"
+import * as application from "./types/application"
 
 import { Options as IntegerOptions, integer } from "./types/number"
 import { Options as StringOptions, string } from "./types/string"
-import { channelGroupId, channelId, entityId, fileId, messageId, readStateId, userId } from "./types/entityId"
+import {
+    applicationId,
+    applicationTokenId,
+    channelGroupId,
+    channelId,
+    entityId,
+    fileId,
+    messageId,
+    readStateId,
+    userId,
+} from "./types/entityId"
 
 import { DomainError } from "../DomainError"
 import { Entity } from "../entity/Entity"
@@ -133,8 +144,25 @@ export function IsFileType(options?: ValidationOptions) {
     return Validate(media.type(), options)
 }
 
+export function IsApplicationId(options?: ValidationOptions) {
+    return Validate(applicationId(), options)
+}
+export function IsApplicationName(options?: ValidationOptions) {
+    return Validate(application.name(), options)
+}
+export function IsApplicationDescription(options?: ValidationOptions) {
+    return Validate(application.description(), options)
+}
+
+export function IsApplicationTokenId(options?: ValidationOptions) {
+    return Validate(applicationTokenId(), options)
+}
+
 // Primitive
 export function IsSessionId(options?: ValidationOptions) {
+    return Validate(sessionId(), options)
+}
+export function IsToken(options?: ValidationOptions) {
     return Validate(sessionId(), options)
 }
 export function IsIpAddress(options?: ValidationOptions) {

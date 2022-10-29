@@ -78,10 +78,10 @@ export const facts: MethodFacts = {
 type ReturnType = Promise<ChannelEntity>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
-    const transaction = await TransactionRepository.new<ReturnType>()
     if (authUser == null) {
         raise(errors["invalid_auth"])
     }
+    const transaction = await TransactionRepository.new<ReturnType>()
     try {
         return await transaction.$transaction(async (transactionSession) => {
             const channel = await new CreateChannelApplication(

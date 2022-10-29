@@ -1,4 +1,14 @@
-import { ChannelGroupdId, ChannelId, ChannelReadStateId, EntityId, FileId, MessageId, UserId } from "../../types"
+import {
+    ApplicationId,
+    ApplicationTokenId,
+    ChannelGroupdId,
+    ChannelId,
+    ChannelReadStateId,
+    EntityId,
+    FileId,
+    MessageId,
+    UserId,
+} from "../../types"
 import { CommonErrorMessages, ValidationError } from "../error"
 
 import { PropertyValidator } from "../PropertyValidator"
@@ -40,4 +50,12 @@ export function messageId() {
 
 export function fileId() {
     return new PropertyValidator<FileId>({}, [checkIsEntityId])
+}
+
+export function applicationId() {
+    return new PropertyValidator<ApplicationId>({}, [checkIsEntityId])
+}
+
+export function applicationTokenId() {
+    return new PropertyValidator<ApplicationTokenId>({}, [checkIsEntityId])
 }
