@@ -20,8 +20,8 @@ export default (server: TurboServer) => {
         return {
             ok: true,
             app: app.toJsonObject(),
-            token: app.token,
-            secret: app.secret,
+            consumer_key: app.token,
+            consumer_secret: app.secret,
         }
     })
 }

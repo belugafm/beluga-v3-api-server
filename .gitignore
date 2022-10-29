@@ -3,7 +3,6 @@ volumes/
 sandbox/
 src/config/app.ts
 src/infrastructure/ipqualityscore/config.ts
-src/web/repositories.ts
 .vscode/
 .DS_Store
 npm-debug.log
