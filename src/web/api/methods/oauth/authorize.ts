@@ -5,6 +5,7 @@ import {
     TransactionRepository,
     RequestTokenCommandRepository,
     RequestTokenQueryRepository,
+    ApplicationQueryRepository,
 } from "../../../repositories"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
@@ -13,26 +14,54 @@ import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
 import * as vs from "../../../../domain/validation"
 import { AuthenticationMethods } from "../../facts/authentication_method"
+import { ApplicationJsonObjectT } from "../../../../domain/types"
 
-export const argumentSpecs = defineArguments(["request_token", "request_token_secret"] as const, {
-    request_token: {
-        description: [""],
-        examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
-        required: true,
-        validator: vs.string({ minLength: 1, maxLength: 100 }),
-    },
-    request_token_secret: {
-        description: [""],
-        examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
-        required: true,
-        validator: vs.string({ minLength: 1, maxLength: 100 }),
-    },
-})
+export const argumentSpecs = defineArguments(
+    ["consumer_key", "consumer_secret", "request_token", "request_token_secret"] as const,
+    {
+        consumer_key: {
+            description: [""],
+            examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
+            required: true,
+            validator: vs.string({ minLength: 1, maxLength: 100 }),
+        },
+        consumer_secret: {
+            description: [""],
+            examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
+            required: true,
+            validator: vs.string({ minLength: 1, maxLength: 100 }),
+        },
+        request_token: {
+            description: [""],
+            examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
+            required: true,
+            validator: vs.string({ minLength: 1, maxLength: 100 }),
+        },
+        request_token_secret: {
+            description: [""],
+            examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
+            required: true,
+            validator: vs.string({ minLength: 1, maxLength: 100 }),
+        },
+    }
+)
 
 export const expectedErrorSpecs = defineErrors(
-    [ErrorCodes.InvalidRequestToken, ErrorCodes.Expired, "internal_error", "unexpected_error"] as const,
+    [
+        ErrorCodes.InvalidRequestToken,
+        ErrorCodes.Expired,
+        "invalid_consumer_key",
+        "internal_error",
+        "unexpected_error",
+    ] as const,
     argumentSpecs,
     {
+        invalid_consumer_key: {
+            description: ["consumer_keyまたはconsumer_secretを正しく指定してください"],
+            hint: [],
+            code: "invalid_consumer_key",
+            argument: "consumer_key",
+        },
         invalid_request_token: {
             description: ["無効なリクエストトークンです"],
             hint: [],
@@ -61,15 +90,19 @@ export const facts: MethodFacts = {
     description: [],
 }
 
-type ReturnType = Promise<string>
+type ReturnType = Promise<[string, ApplicationJsonObjectT]>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
     if (authUser == null) {
         raise(errors["internal_error"])
     }
-    const transaction = await TransactionRepository.new<ReturnType>()
+    const transaction = await TransactionRepository.new<Promise<string>>()
     try {
-        return await transaction.$transaction(async (transactionSession) => {
+        const app = await new ApplicationQueryRepository().findByToken(args.consumer_key, args.consumer_secret)
+        if (app == null) {
+            raise(errors["invalid_consumer_key"])
+        }
+        const verifier = await transaction.$transaction(async (transactionSession) => {
             return await new AuthorizeUserApplication(
                 new RequestTokenCommandRepository(transactionSession),
                 new RequestTokenQueryRepository(transactionSession)
@@ -79,6 +112,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 requestTokenSecret: args.request_token_secret,
             })
         })
+        return [verifier, app.toJsonObject()]
     } catch (error) {
         if (error instanceof ApplicationError) {
             if (error.code == ErrorCodes.Expired) {

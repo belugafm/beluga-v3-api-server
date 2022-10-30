@@ -15,7 +15,6 @@ import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
 import * as vs from "../../../../domain/validation"
 import { AccessTokenEntity } from "../../../../domain/entity/AccessToken"
-import { ApplicationJsonObjectT } from "../../../../domain/types"
 import { AuthenticationMethods } from "../../facts/authentication_method"
 
 export const argumentSpecs = defineArguments(
@@ -99,15 +98,15 @@ export const facts: MethodFacts = {
     description: [],
 }
 
-type ReturnType = Promise<[AccessTokenEntity, ApplicationJsonObjectT]>
+type ReturnType = Promise<AccessTokenEntity>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
     if (authUser == null) {
         raise(errors["internal_error"])
     }
-    const transaction = await TransactionRepository.new<Promise<AccessTokenEntity>>()
+    const transaction = await TransactionRepository.new<ReturnType>()
     try {
-        const token = await transaction.$transaction(async (transactionSession) => {
+        return await transaction.$transaction(async (transactionSession) => {
             return await new GenerateAccessTokenApplication(
                 new AccessTokenCommandRepository(transactionSession),
                 new RequestTokenQueryRepository(transactionSession),
@@ -122,11 +121,6 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 verifier: args.verifier,
             })
         })
-        const app = await new ApplicationQueryRepository().findByToken(args.consumer_key, args.consumer_secret)
-        if (app == null) {
-            throw new Error()
-        }
-        return [token, app.toJsonObject()]
     } catch (error) {
         console.error(error)
         if (error instanceof ApplicationError) {

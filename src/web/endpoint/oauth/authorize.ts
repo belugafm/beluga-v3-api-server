@@ -6,8 +6,10 @@ import { getRemoteIpAddress } from "../../remoteIpAddress"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
-        const verifier = await authorize(
+        const [verifier, app] = await authorize(
             {
+                consumer_key: req.body.consumer_key,
+                consumer_secret: req.body.consumer_secret,
                 request_token: req.body.request_token,
                 request_token_secret: req.body.request_token_secret,
             },
@@ -16,7 +18,8 @@ export default (server: TurboServer) => {
         )
         return {
             ok: true,
-            verifier: verifier,
+            verifier,
+            app,
         }
     })
 }

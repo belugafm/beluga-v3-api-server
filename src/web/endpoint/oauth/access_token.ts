@@ -6,7 +6,7 @@ import { getRemoteIpAddress } from "../../remoteIpAddress"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
-        const [token, app] = await generateAccessToken(
+        const token = await generateAccessToken(
             {
                 consumer_key: req.body.consumer_key,
                 consumer_secret: req.body.consumer_secret,
@@ -21,7 +21,6 @@ export default (server: TurboServer) => {
             ok: true,
             access_token: token.token,
             access_token_secret: token.secret,
-            app: app,
         }
     })
 }
