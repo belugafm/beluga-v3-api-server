@@ -19,8 +19,8 @@ export default (server: TurboServer) => {
         )
         return {
             ok: true,
-            request_token: token.token,
-            request_token_secret: token.secret,
+            access_token: token.token,
+            access_token_secret: token.secret,
             app: app,
         }
     })
