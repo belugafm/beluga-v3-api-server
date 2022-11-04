@@ -162,6 +162,8 @@ export class TurboServer {
                 const query = qs.parse(req.url.replace(/^.+\?/, ""), {
                     decoder: decodeURIComponent,
                 })
+                req.query = query
+
                 if (facts.userAuthenticationRequired) {
                     // ユーザー認証をここで行う
                     const authUser = await this.userAuthenticator.authenticate({
