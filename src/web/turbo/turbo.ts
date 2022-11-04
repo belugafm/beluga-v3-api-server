@@ -106,7 +106,7 @@ export function read_body(req: Request): Promise<{ [key: string]: Buffer | strin
                     parts.forEach((part) => {
                         const kv = part.split("=")
                         const key = kv[0]
-                        const value = kv[1]
+                        const value = decodeURIComponent(kv[1])
                         data[key] = value
                     })
                     return resolve(data)
