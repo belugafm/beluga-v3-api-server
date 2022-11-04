@@ -24,8 +24,26 @@ export class RequestTokenQueryRepository implements IRequestTokenQueryRepository
             this._prisma = prisma
         }
     }
-
-    async find(token: string, secret: string): Promise<RequestTokenEntity | null> {
+    async findByToken(token: string): Promise<RequestTokenEntity | null> {
+        try {
+            const auth = await this._prisma.requestToken.findUnique({
+                where: {
+                    token,
+                },
+            })
+            if (auth == null) {
+                return null
+            }
+            return toEntity(auth)
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
+    async findByTokenAndSecret(token: string, secret: string): Promise<RequestTokenEntity | null> {
         try {
             const auth = await this._prisma.requestToken.findUnique({
                 where: {

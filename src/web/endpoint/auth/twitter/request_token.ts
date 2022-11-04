@@ -8,7 +8,7 @@ import { getRemoteIpAddress } from "../../../remoteIpAddress"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
-        const response = await getRequestToken({}, remoteIpAddress, null)
+        const response = await getRequestToken({}, remoteIpAddress, null, null)
         if (response == null) {
             return {
                 ok: false,

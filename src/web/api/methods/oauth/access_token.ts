@@ -4,9 +4,9 @@ import { GenerateAccessTokenApplication, ErrorCodes } from "../../../../applicat
 import {
     TransactionRepository,
     RequestTokenCommandRepository,
-    ApplicationQueryRepository,
     RequestTokenQueryRepository,
     AccessTokenCommandRepository,
+    AccessTokenQueryRepository,
 } from "../../../repositories"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
@@ -17,58 +17,25 @@ import * as vs from "../../../../domain/validation"
 import { AccessTokenEntity } from "../../../../domain/entity/AccessToken"
 import { AuthenticationMethods } from "../../facts/authentication_method"
 
-export const argumentSpecs = defineArguments(
-    ["consumer_key", "consumer_secret", "request_token", "request_token_secret", "verifier"] as const,
-    {
-        consumer_key: {
-            description: [""],
-            examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
-            required: true,
-            validator: vs.string({ minLength: 1, maxLength: 100 }),
-        },
-        consumer_secret: {
-            description: [""],
-            examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
-            required: true,
-            validator: vs.string({ minLength: 1, maxLength: 100 }),
-        },
-        request_token: {
-            description: [""],
-            examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
-            required: true,
-            validator: vs.string({ minLength: 1, maxLength: 100 }),
-        },
-        request_token_secret: {
-            description: [""],
-            examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
-            required: true,
-            validator: vs.string({ minLength: 1, maxLength: 100 }),
-        },
-        verifier: {
-            description: [""],
-            examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
-            required: true,
-            validator: vs.string({ minLength: 1, maxLength: 100 }),
-        },
-    }
-)
+export const argumentSpecs = defineArguments(["request_token", "verifier"] as const, {
+    request_token: {
+        description: [""],
+        examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
+        required: true,
+        validator: vs.string({ minLength: 1, maxLength: 100 }),
+    },
+    verifier: {
+        description: [""],
+        examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
+        required: true,
+        validator: vs.string({ minLength: 1, maxLength: 100 }),
+    },
+})
 
 export const expectedErrorSpecs = defineErrors(
-    [
-        ErrorCodes.InvalidConsumerKey,
-        ErrorCodes.InvalidRequestToken,
-        ErrorCodes.InvalidVerifier,
-        "internal_error",
-        "unexpected_error",
-    ] as const,
+    [ErrorCodes.InvalidRequestToken, ErrorCodes.InvalidVerifier, "internal_error", "unexpected_error"] as const,
     argumentSpecs,
     {
-        invalid_consumer_key: {
-            description: ["consumer_keyまたはconsumer_secretを正しく指定してください"],
-            hint: [],
-            code: "invalid_consumer_key",
-            argument: "consumer_key",
-        },
         invalid_request_token: {
             description: ["無効なリクエストトークンです"],
             hint: [],
@@ -91,47 +58,49 @@ export const facts: MethodFacts = {
     httpMethod: HttpMethods.POST,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    authenticationRequired: true,
+    userAuthenticationRequired: true,
     private: false,
-    acceptedAuthenticationMethods: [AuthenticationMethods.Cookie],
+    acceptedAuthenticationMethods: [AuthenticationMethods.OAuth],
     acceptedScopes: {},
     description: [],
 }
 
 type ReturnType = Promise<AccessTokenEntity>
 
-export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
-    if (authUser == null) {
-        raise(errors["internal_error"])
-    }
-    const transaction = await TransactionRepository.new<ReturnType>()
-    try {
-        return await transaction.$transaction(async (transactionSession) => {
-            return await new GenerateAccessTokenApplication(
-                new AccessTokenCommandRepository(transactionSession),
-                new RequestTokenQueryRepository(transactionSession),
-                new RequestTokenCommandRepository(transactionSession),
-                new ApplicationQueryRepository(transactionSession)
-            ).generate({
-                userId: authUser.id,
-                consumerKey: args.consumer_key,
-                consumerSecret: args.consumer_secret,
-                requestToken: args.request_token,
-                requestTokenSecret: args.request_token_secret,
-                verifier: args.verifier,
+export default defineMethod(
+    facts,
+    argumentSpecs,
+    expectedErrorSpecs,
+    async (args, errors, authUser, authApp): ReturnType => {
+        if (authApp == null) {
+            raise(errors["internal_error"])
+        }
+        const transaction = await TransactionRepository.new<ReturnType>()
+        try {
+            return await transaction.$transaction(async (transactionSession) => {
+                return await new GenerateAccessTokenApplication(
+                    new AccessTokenQueryRepository(transactionSession),
+                    new AccessTokenCommandRepository(transactionSession),
+                    new RequestTokenQueryRepository(transactionSession),
+                    new RequestTokenCommandRepository(transactionSession)
+                ).generate({
+                    app: authApp,
+                    requestToken: args.request_token,
+                    verifier: args.verifier,
+                })
             })
-        })
-    } catch (error) {
-        console.error(error)
-        if (error instanceof ApplicationError) {
-            if (error.code === ErrorCodes.InvalidRequestToken) {
-                raise(errors["invalid_request_token"], error)
+        } catch (error) {
+            console.error(error)
+            if (error instanceof ApplicationError) {
+                if (error.code === ErrorCodes.InvalidRequestToken) {
+                    raise(errors["invalid_request_token"], error)
+                }
+                raise(errors["internal_error"], error)
+            } else if (error instanceof Error) {
+                raise(errors["unexpected_error"], error)
+            } else {
+                raise(errors["unexpected_error"], new Error("unexpected_error"))
             }
-            raise(errors["internal_error"], error)
-        } else if (error instanceof Error) {
-            raise(errors["unexpected_error"], error)
-        } else {
-            raise(errors["unexpected_error"], new Error("unexpected_error"))
         }
     }
-})
+)

@@ -1,5 +1,6 @@
 import { RequestTokenEntity } from "../../entity/RequestToken"
 
 export interface IRequestTokenQueryRepository {
-    find(token: string, secret: string): Promise<RequestTokenEntity | null>
+    findByToken(token: string): Promise<RequestTokenEntity | null>
+    findByTokenAndSecret(token: string, secret: string): Promise<RequestTokenEntity | null>
 }

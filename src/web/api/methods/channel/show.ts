@@ -49,13 +49,9 @@ export const facts: MethodFacts = {
     httpMethod: HttpMethods.GET,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    authenticationRequired: true,
+    userAuthenticationRequired: true,
     private: false,
-    acceptedAuthenticationMethods: [
-        AuthenticationMethods.OAuth,
-        AuthenticationMethods.AccessToken,
-        AuthenticationMethods.Cookie,
-    ],
+    acceptedAuthenticationMethods: [AuthenticationMethods.OAuth, AuthenticationMethods.Cookie],
     acceptedScopes: {},
     description: ["チャンネルの情報を取得します"],
 }

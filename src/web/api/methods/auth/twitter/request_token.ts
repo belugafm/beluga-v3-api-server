@@ -13,21 +13,17 @@ import { MethodIdentifiers } from "../../../identifier"
 
 export const argumentSpecs = defineArguments([] as const, {})
 
-export const expectedErrorSpecs = defineErrors(
-    ["internal_error", "unexpected_error"] as const,
-    argumentSpecs,
-    {
-        internal_error: new InternalErrorSpec(),
-        unexpected_error: new UnexpectedErrorSpec(),
-    }
-)
+export const expectedErrorSpecs = defineErrors(["internal_error", "unexpected_error"] as const, argumentSpecs, {
+    internal_error: new InternalErrorSpec(),
+    unexpected_error: new UnexpectedErrorSpec(),
+})
 
 export const facts: MethodFacts = {
     url: MethodIdentifiers.GetTwitterRequestToken,
     httpMethod: HttpMethods.POST,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    authenticationRequired: false,
+    userAuthenticationRequired: false,
     private: false,
     acceptedAuthenticationMethods: [],
     acceptedScopes: {},

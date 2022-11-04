@@ -6,7 +6,7 @@ import { getRemoteIpAddress } from "../../remoteIpAddress"
 export default (server: TurboServer) => {
     server.get(facts, async (req, res, params) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
-        const apps = await listApps({}, remoteIpAddress, params["authUser"])
+        const apps = await listApps({}, remoteIpAddress, params["authUser"], null)
         return {
             ok: true,
             apps: apps.map((app) => app.toJsonObject()),

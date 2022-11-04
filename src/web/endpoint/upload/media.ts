@@ -11,7 +11,8 @@ export default (server: TurboServer) => {
                 file: req.body.file,
             },
             remoteIpAddress,
-            params["authUser"]
+            params["authUser"],
+            null
         )
         return {
             ok: true,

@@ -1,7 +1,7 @@
 import { InvalidContentTypeErrorSpec, WebApiRuntimeError } from "../api/error"
 import { Request, Response, read_body } from "./turbo"
 
-import { Authenticator } from "../auth"
+import { UserAuthenticator } from "../authentication/user"
 import { ContentTypesUnion } from "../api/facts/content_type"
 import { IUserCommandRepository } from "../../domain/repository/command/User"
 import { MethodFacts } from "../api/define"
@@ -10,6 +10,9 @@ import { UserEntity } from "../../domain/entity/User"
 import config from "../../config/app"
 import qs from "qs"
 import turbo from "turbo-http"
+import { ApplicationAuthenticator } from "../authentication/application"
+import { ApplicationEntity } from "../../domain/entity/Application"
+import { MethodIdentifiers } from "../api/identifier"
 
 export { Request, Response }
 
@@ -59,7 +62,7 @@ declare module "find-my-way" {
     type Handler = (
         req: Request,
         res: Response,
-        params: { ipAddress: string; authUser: UserEntity | null },
+        params: { ipAddress: string; authUser: UserEntity | null; authApp: ApplicationEntity | null },
         store?: any
     ) => object | string
     type HTTPMethod = "GET" | "POST" | "OPTIONS"
@@ -117,13 +120,20 @@ export class TurboServer {
     router: Router.Instance
     server: turbo.Server
     userCommandRepository: IUserCommandRepository
-    authenticator: Authenticator
-    constructor(opt: Router.Config, userCommandRepository: IUserCommandRepository, authenticator: Authenticator) {
+    userAuthenticator: UserAuthenticator
+    appAuthenticator: ApplicationAuthenticator
+    constructor(
+        opt: Router.Config,
+        userCommandRepository: IUserCommandRepository,
+        userAuthenticator: UserAuthenticator,
+        appAuthenticator: ApplicationAuthenticator
+    ) {
         if (opt.defaultRoute == null) {
             opt.defaultRoute = DefaultRoute
         }
         this.userCommandRepository = userCommandRepository
-        this.authenticator = authenticator
+        this.userAuthenticator = userAuthenticator
+        this.appAuthenticator = appAuthenticator
         this.router = Router(opt)
         this.server = turbo.createServer(async (_req, _res) => {
             // アクセスがあるたびここを通る
@@ -152,15 +162,15 @@ export class TurboServer {
                 const query = qs.parse(req.url.replace(/^.+\?/, ""), {
                     decoder: decodeURIComponent,
                 })
-                if (facts.authenticationRequired) {
+                if (facts.userAuthenticationRequired) {
                     // ユーザー認証をここで行う
-                    const authUser = await this.authenticator.authenticateUser(
-                        facts,
-                        config.server.get_base_url() + requestPath,
-                        req.headers,
-                        req.cookies,
-                        query
-                    )
+                    const authUser = await this.userAuthenticator.authenticate({
+                        facts: facts,
+                        requestUrl: config.server.get_base_url() + requestPath,
+                        headers: req.headers,
+                        cookies: req.cookies || {},
+                        body: query,
+                    })
                     if (authUser == null) {
                         return InvalidAuthRoute(req, res)
                     }
@@ -227,15 +237,29 @@ export class TurboServer {
                     throw new WebApiRuntimeError(new InvalidContentTypeErrorSpec())
                 }
 
-                if (facts.authenticationRequired) {
-                    // ユーザー認証をここで行う
-                    const authUser = await this.authenticator.authenticateUser(
-                        facts,
-                        config.server.get_base_url() + requestPath,
-                        req.headers,
-                        req.cookies,
-                        body
-                    )
+                if (facts.url == MethodIdentifiers.GenerateRequestToken) {
+                    // アプリケーションの認証
+                    const authApp = await this.appAuthenticator.authenticate({
+                        requestUrl: config.server.get_base_url() + requestPath,
+                        headers: req.headers,
+                        body: body,
+                    })
+                    if (authApp == null) {
+                        return InvalidAuthRoute(req, res)
+                    }
+                    params["authApp"] = authApp
+                } else if (facts.url == MethodIdentifiers.GenerateAccessToken) {
+                    // リクエストトークンによるユーザー認証
+                    const [authApp, authUser] = await this.userAuthenticator.authenticateByRequestToken({
+                        facts: facts,
+                        requestUrl: config.server.get_base_url() + requestPath,
+                        headers: req.headers,
+                        cookies: req.cookies || {},
+                        body: body,
+                    })
+                    if (authApp == null) {
+                        return InvalidAuthRoute(req, res)
+                    }
                     if (authUser == null) {
                         return InvalidAuthRoute(req, res)
                     }
@@ -243,6 +267,25 @@ export class TurboServer {
                     await this.userCommandRepository.activate(authUser)
                     await this.userCommandRepository.updateLastActivityDate(authUser, new Date())
                     params["authUser"] = authUser
+                    params["authApp"] = authApp
+                } else {
+                    if (facts.userAuthenticationRequired) {
+                        // アクセストークンもしくはCookieによるユーザー認証を行う
+                        const authUser = await this.userAuthenticator.authenticate({
+                            facts: facts,
+                            requestUrl: config.server.get_base_url() + requestPath,
+                            headers: req.headers,
+                            cookies: req.cookies || {},
+                            body: body,
+                        })
+                        if (authUser == null) {
+                            return InvalidAuthRoute(req, res)
+                        }
+                        // activeなユーザーにする
+                        await this.userCommandRepository.activate(authUser)
+                        await this.userCommandRepository.updateLastActivityDate(authUser, new Date())
+                        params["authUser"] = authUser
+                    }
                 }
 
                 // IPアドレス等を使ってアクセス制限をする場合はここで行う

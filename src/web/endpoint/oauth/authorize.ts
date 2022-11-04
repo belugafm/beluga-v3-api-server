@@ -14,7 +14,8 @@ export default (server: TurboServer) => {
                 request_token_secret: req.body.request_token_secret,
             },
             remoteIpAddress,
-            params["authUser"]
+            params["authUser"],
+            null
         )
         return {
             ok: true,

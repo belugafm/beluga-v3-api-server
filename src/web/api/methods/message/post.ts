@@ -119,13 +119,9 @@ export const facts: MethodFacts = {
     httpMethod: HttpMethods.POST,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson, ContentTypes.ApplicationFormUrlEncoded],
-    authenticationRequired: true,
+    userAuthenticationRequired: true,
     private: false,
-    acceptedAuthenticationMethods: [
-        AuthenticationMethods.OAuth,
-        AuthenticationMethods.AccessToken,
-        AuthenticationMethods.Cookie,
-    ],
+    acceptedAuthenticationMethods: [AuthenticationMethods.OAuth, AuthenticationMethods.Cookie],
     acceptedScopes: {},
     description: ["チャンネルまたはスレッドに投稿します"],
 }

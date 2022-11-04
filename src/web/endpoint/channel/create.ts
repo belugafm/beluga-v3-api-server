@@ -12,7 +12,8 @@ export default (server: TurboServer) => {
                 parent_channel_group_id: req.body.parent_channel_group_id,
             },
             remoteIpAddress,
-            params["authUser"]
+            params["authUser"],
+            null
         )
         return {
             ok: true,

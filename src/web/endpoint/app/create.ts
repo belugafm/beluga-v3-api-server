@@ -15,7 +15,8 @@ export default (server: TurboServer) => {
                 write: req.body.write,
             },
             remoteIpAddress,
-            params["authUser"]
+            params["authUser"],
+            null
         )
         return {
             ok: true,

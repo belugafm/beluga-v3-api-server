@@ -49,21 +49,17 @@ export const argumentSpecs = defineArguments(
     }
 )
 
-export const expectedErrorSpecs = defineErrors(
-    ["internal_error", "unexpected_error"] as const,
-    argumentSpecs,
-    {
-        internal_error: new InternalErrorSpec(),
-        unexpected_error: new UnexpectedErrorSpec(),
-    }
-)
+export const expectedErrorSpecs = defineErrors(["internal_error", "unexpected_error"] as const, argumentSpecs, {
+    internal_error: new InternalErrorSpec(),
+    unexpected_error: new UnexpectedErrorSpec(),
+})
 
 export const facts: MethodFacts = {
     url: MethodIdentifiers.AuthenticateUserWithTwitter,
     httpMethod: HttpMethods.POST,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    authenticationRequired: false,
+    userAuthenticationRequired: false,
     private: false,
     acceptedAuthenticationMethods: [],
     acceptedScopes: {},
@@ -72,44 +68,39 @@ export const facts: MethodFacts = {
 
 type ReturnType = Promise<[UserEntity, LoginSessionEntity, AuthenticityTokenEntity]>
 
-export default defineMethod(
-    facts,
-    argumentSpecs,
-    expectedErrorSpecs,
-    async (args, errors): ReturnType => {
-        const transaction = await TransactionRepository.new<ReturnType>()
-        try {
-            return await transaction.$transaction(async (transactionSession) => {
-                const user = await new TwitterAuthenticationApplication(
-                    new UserQueryRepository(),
-                    new UserCommandRepository()
-                ).authenticate({
-                    requestToken: args.oauth_token,
-                    verifier: args.oauth_verifier,
-                    ipAddress: args.ip_address,
-                    authSessionId: args.auth_session_id,
-                })
-                const [_, loginSession, authenticityToken] = await new SignInWithTwitterApplication(
-                    new UserQueryRepository(transactionSession),
-                    new LoginSessionCommandRepository(transactionSession),
-                    new AuthenticityTokenCommandRepository(transactionSession)
-                ).signin({
-                    // @ts-ignore
-                    twitterUserId: user.twitterUserId,
-                    ipAddress: args.ip_address,
-                    lastLocation: null,
-                    device: null,
-                })
-                return [user, loginSession, authenticityToken]
+export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors): ReturnType => {
+    const transaction = await TransactionRepository.new<ReturnType>()
+    try {
+        return await transaction.$transaction(async (transactionSession) => {
+            const user = await new TwitterAuthenticationApplication(
+                new UserQueryRepository(),
+                new UserCommandRepository()
+            ).authenticate({
+                requestToken: args.oauth_token,
+                verifier: args.oauth_verifier,
+                ipAddress: args.ip_address,
+                authSessionId: args.auth_session_id,
             })
-        } catch (error) {
-            if (error instanceof ApplicationError) {
-                raise(errors["internal_error"], error)
-            } else if (error instanceof Error) {
-                raise(errors["unexpected_error"], error)
-            } else {
-                raise(errors["unexpected_error"], new Error("unexpected_error"))
-            }
+            const [_, loginSession, authenticityToken] = await new SignInWithTwitterApplication(
+                new UserQueryRepository(transactionSession),
+                new LoginSessionCommandRepository(transactionSession),
+                new AuthenticityTokenCommandRepository(transactionSession)
+            ).signin({
+                // @ts-ignore
+                twitterUserId: user.twitterUserId,
+                ipAddress: args.ip_address,
+                lastLocation: null,
+                device: null,
+            })
+            return [user, loginSession, authenticityToken]
+        })
+    } catch (error) {
+        if (error instanceof ApplicationError) {
+            raise(errors["internal_error"], error)
+        } else if (error instanceof Error) {
+            raise(errors["unexpected_error"], error)
+        } else {
+            raise(errors["unexpected_error"], new Error("unexpected_error"))
         }
     }
-)
+})

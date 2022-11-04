@@ -12,7 +12,8 @@ export default (server: TurboServer) => {
                 id: req.query.id ? Math.trunc(req.query.id) : undefined,
             },
             remoteIpAddress,
-            params["authUser"]
+            params["authUser"],
+            null
         )
         if (channelGroup) {
             return {

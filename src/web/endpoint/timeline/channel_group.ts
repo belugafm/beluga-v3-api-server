@@ -15,7 +15,8 @@ export default (server: TurboServer) => {
                 sort_order: req.query.sort_order,
             },
             remoteIpAddress,
-            params["authUser"]
+            params["authUser"],
+            null
         )
         return {
             ok: true,

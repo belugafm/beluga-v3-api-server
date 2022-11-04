@@ -11,7 +11,8 @@ export default (server: TurboServer) => {
                 id: Math.trunc(req.body.id),
             },
             remoteIpAddress,
-            params["authUser"]
+            params["authUser"],
+            null
         )
         return {
             ok: succeeded,

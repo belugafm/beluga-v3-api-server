@@ -14,7 +14,8 @@ export default (server: TurboServer) => {
                 thread_id: req.body.thread_id ? Math.trunc(req.body.thread_id) : undefined,
             },
             remoteIpAddress,
-            params["authUser"]
+            params["authUser"],
+            null
         )
         return {
             ok: true,

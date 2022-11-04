@@ -4,10 +4,12 @@ import {
     UserQueryRepository,
     ApplicationQueryRepository,
     AccessTokenQueryRepository,
+    RequestTokenQueryRepository,
 } from "./web/repositories"
 import { Request, Response, TurboServer } from "./web/turbo"
 
-import { Authenticator } from "./web/auth"
+import { UserAuthenticator } from "./web/authentication/user"
+import { ApplicationAuthenticator } from "./web/authentication/application"
 import { CookieAuthenticationApplication } from "./application/authentication/Cookie"
 import { UserCommandRepository } from "./infrastructure/prisma/repository/command/User"
 import { ChannelCommandRepository } from "./infrastructure/prisma/repository/command/Channel"
@@ -16,7 +18,9 @@ import { MessageCommandRepository } from "./infrastructure/prisma/repository/com
 import config from "./config/app"
 import WebSocket, { WebSocketServer } from "ws"
 import { UserId } from "../src/domain/types"
-import { OAuthAuthenticateUserApplication } from "./application/oauth/Authenticate"
+import { AuthenticateUserByAccessTokenApplication } from "./application/oauth/AuthenticateUserByAccessToken"
+import { OAuthAuthenticateAppApplication } from "./application/oauth/AuthenticateApp"
+import { AuthenticateUserByRequestTokenApplication } from "./application/oauth/AuthenticateUserByRequestToken"
 
 function startWebsocketServer() {
     const wss = new WebSocketServer({
@@ -74,18 +78,24 @@ async function startAPIServer() {
             },
         },
         new UserCommandRepository(),
-        new Authenticator(
+        new UserAuthenticator(
             new CookieAuthenticationApplication(
                 new UserQueryRepository(),
                 new LoginSessionQueryRepository(),
                 new AuthenticityTokenQueryRepository()
             ),
-            new OAuthAuthenticateUserApplication(
+            new AuthenticateUserByAccessTokenApplication(
                 new AccessTokenQueryRepository(),
                 new ApplicationQueryRepository(),
                 new UserQueryRepository()
+            ),
+            new AuthenticateUserByRequestTokenApplication(
+                new RequestTokenQueryRepository(),
+                new ApplicationQueryRepository(),
+                new UserQueryRepository()
             )
-        )
+        ),
+        new ApplicationAuthenticator(new OAuthAuthenticateAppApplication(new ApplicationQueryRepository()))
     )
 
     // routerにendpointを登録

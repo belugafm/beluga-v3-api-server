@@ -30,7 +30,7 @@ export class AuthorizeUserApplication {
         requestToken: string
         requestTokenSecret: string
     }): Promise<string> {
-        const auth = await this.requestTokenQueryRepository.find(requestToken, requestTokenSecret)
+        const auth = await this.requestTokenQueryRepository.findByTokenAndSecret(requestToken, requestTokenSecret)
         if (auth == null) {
             throw new ApplicationError(ErrorCodes.InvalidRequestToken)
         }

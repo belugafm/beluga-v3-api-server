@@ -45,7 +45,7 @@ export const facts: MethodFacts = {
     httpMethod: HttpMethods.POST,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    authenticationRequired: false,
+    userAuthenticationRequired: false,
     private: false,
     acceptedAuthenticationMethods: [],
     acceptedScopes: {},

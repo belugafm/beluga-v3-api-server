@@ -14,6 +14,7 @@ export default (server: TurboServer) => {
                 ip_address: remoteIpAddress,
             },
             remoteIpAddress,
+            null,
             null
         )
         if (loginSession) {

@@ -8,14 +8,12 @@ export default (server: TurboServer) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
         const token = await generateAccessToken(
             {
-                consumer_key: req.body.consumer_key,
-                consumer_secret: req.body.consumer_secret,
                 request_token: req.body.request_token,
-                request_token_secret: req.body.request_token_secret,
                 verifier: req.body.verifier,
             },
             remoteIpAddress,
-            params["authUser"]
+            params["authUser"],
+            params["authApp"]
         )
         return {
             ok: true,

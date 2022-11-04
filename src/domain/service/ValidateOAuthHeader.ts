@@ -9,8 +9,8 @@ type ValidationInputT = {
     nonce: string
     signatureMethod: string
     timestamp: number // 秒
-    accessToken: string
-    accessTokenSecret: string
+    accessToken: string | null
+    accessTokenSecret: string | null
     version: string
 }
 export class ValidateOAuthHeader {
@@ -58,15 +58,23 @@ export class ValidateOAuthHeader {
                 method: "POST",
                 data: requestParams,
             },
-            accessTokenSecret,
-            {
-                oauth_consumer_key: consumerKey,
-                oauth_token: accessToken,
-                oauth_nonce: nonce,
-                oauth_signature_method: signatureMethod,
-                oauth_timestamp: timestamp,
-                oauth_version: version,
-            }
+            accessTokenSecret ? accessTokenSecret : undefined,
+            accessToken
+                ? {
+                      oauth_consumer_key: consumerKey,
+                      oauth_token: accessToken,
+                      oauth_nonce: nonce,
+                      oauth_signature_method: signatureMethod,
+                      oauth_timestamp: timestamp,
+                      oauth_version: version,
+                  }
+                : {
+                      oauth_consumer_key: consumerKey,
+                      oauth_nonce: nonce,
+                      oauth_signature_method: signatureMethod,
+                      oauth_timestamp: timestamp,
+                      oauth_version: version,
+                  }
         )
     }
 }

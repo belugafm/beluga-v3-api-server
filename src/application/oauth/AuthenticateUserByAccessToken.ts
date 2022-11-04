@@ -11,7 +11,7 @@ export const ErrorCodes = {
     InvalidAuth: "invalid_auth",
 } as const
 
-export class OAuthAuthenticateUserApplication {
+export class AuthenticateUserByAccessTokenApplication {
     private accessTokenRepository: IAccessTokenQueryRepository
     private applicationRepository: IApplicationQueryRepository
     private userRepository: IUserQueryRepository

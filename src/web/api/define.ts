@@ -10,6 +10,7 @@ import { TokenTypesUnion } from "./facts/token_type"
 import { UserEntity } from "../../domain/entity/User"
 import { ValidationError } from "../../domain/validation/error"
 import config from "../../config/app"
+import { ApplicationEntity } from "../../domain/entity/Application"
 
 // Web APIの仕様を定義
 export interface MethodFacts {
@@ -41,7 +42,7 @@ export interface MethodFacts {
     // - rate_limiting
     // - accepted_authentication_methods
     // - accepted_scopes
-    authenticationRequired: boolean
+    userAuthenticationRequired: boolean
 
     // Web APIをリクエストする時の認証方法
     acceptedAuthenticationMethods: AuthenticationMethodsLiteralUnion[]
@@ -142,11 +143,22 @@ export function defineMethod<
     callback: (
         args: Args,
         errors: ExpectedErrorSpecs<ArgumentSpecs, ErrorCodes>,
-        authUser: UserEntity | null
+        authUser: UserEntity | null,
+        authApp: ApplicationEntity | null
     ) => Promise<CallbackReturnType>
-): (args: Args, remoteIpAddress: string, authUser: UserEntity | null) => Promise<CallbackReturnType> {
-    return async (args: Args, remoteIpAddress: string, authUser: UserEntity | null) => {
-        if (facts.authenticationRequired) {
+): (
+    args: Args,
+    remoteIpAddress: string,
+    authUser: UserEntity | null,
+    authApp: ApplicationEntity | null
+) => Promise<CallbackReturnType> {
+    return async (
+        args: Args,
+        remoteIpAddress: string,
+        authUser: UserEntity | null,
+        authApp: ApplicationEntity | null
+    ) => {
+        if (facts.userAuthenticationRequired) {
             if (authUser === null) {
                 throw new WebApiRuntimeError(new InvalidAuth())
             }
@@ -205,6 +217,6 @@ export function defineMethod<
                 }
             }
         }
-        return callback(args, expectedErrorSpecs, authUser)
+        return callback(args, expectedErrorSpecs, authUser, authApp)
     }
 }

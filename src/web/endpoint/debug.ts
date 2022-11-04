@@ -5,7 +5,7 @@ import { TurboServer } from "../turbo"
 export default (server: TurboServer) => {
     server.get(facts, async (req, res, params) => {
         const remoteIpAddress = req.headers["x-real-ip"]
-        await debug({}, remoteIpAddress, null)
+        await debug({}, remoteIpAddress, null, null)
         return {
             ok: true,
         }
