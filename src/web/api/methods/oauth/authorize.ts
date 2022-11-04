@@ -82,7 +82,7 @@ export const facts: MethodFacts = {
     url: MethodIdentifiers.Authorize,
     httpMethod: HttpMethods.POST,
     rateLimiting: {},
-    acceptedContentTypes: [ContentTypes.ApplicationJson],
+    acceptedContentTypes: [ContentTypes.ApplicationJson, ContentTypes.ApplicationFormUrlEncoded],
     userAuthenticationRequired: true,
     private: false,
     acceptedAuthenticationMethods: [AuthenticationMethods.Cookie],

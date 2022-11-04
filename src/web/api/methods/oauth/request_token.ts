@@ -29,7 +29,7 @@ export const facts: MethodFacts = {
     url: MethodIdentifiers.GenerateRequestToken,
     httpMethod: HttpMethods.POST,
     rateLimiting: {},
-    acceptedContentTypes: [ContentTypes.ApplicationJson],
+    acceptedContentTypes: [ContentTypes.ApplicationJson, ContentTypes.ApplicationFormUrlEncoded],
     userAuthenticationRequired: false,
     private: false,
     acceptedAuthenticationMethods: [],
