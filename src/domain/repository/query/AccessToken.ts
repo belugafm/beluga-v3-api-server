@@ -1,5 +1,6 @@
 import { AccessTokenEntity } from "../../entity/AccessToken"
 
 export interface IAccessTokenQueryRepository {
-    find(token: string, secret: string): Promise<AccessTokenEntity | null>
+    findByTokenAndSecret(token: string, secret: string): Promise<AccessTokenEntity | null>
+    findByToken(token: string): Promise<AccessTokenEntity | null>
 }

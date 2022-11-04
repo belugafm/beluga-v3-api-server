@@ -98,7 +98,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
     }
     const transaction = await TransactionRepository.new<Promise<string>>()
     try {
-        const app = await new ApplicationQueryRepository().findByToken(args.consumer_key, args.consumer_secret)
+        const app = await new ApplicationQueryRepository().findByTokenAndSecret(args.consumer_key, args.consumer_secret)
         if (app == null) {
             raise(errors["invalid_consumer_key"])
         }

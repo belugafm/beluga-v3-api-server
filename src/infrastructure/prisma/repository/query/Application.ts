@@ -53,7 +53,7 @@ export class ApplicationQueryRepository implements IApplicationQueryRepository {
             }
         }
     }
-    async findByToken(token: string, secret: string): Promise<ApplicationEntity | null> {
+    async findByTokenAndSecret(token: string, secret: string): Promise<ApplicationEntity | null> {
         try {
             if (isString(token) !== true) {
                 throw new RepositoryError("`token` must be a string")
@@ -67,6 +67,28 @@ export class ApplicationQueryRepository implements IApplicationQueryRepository {
                         token,
                         secret,
                     },
+                },
+            })
+            if (app == null) {
+                return null
+            }
+            return toEntity(app)
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
+    async findByToken(token: string): Promise<ApplicationEntity | null> {
+        try {
+            if (isString(token) !== true) {
+                throw new RepositoryError("`token` must be a string")
+            }
+            const app = await this._prisma.application.findUnique({
+                where: {
+                    token,
                 },
             })
             if (app == null) {

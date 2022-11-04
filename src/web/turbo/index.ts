@@ -143,19 +143,24 @@ export class TurboServer {
     }
     get(facts: MethodFacts, handler: Router.Handler, options: Options = {}) {
         if (facts.httpMethod !== "GET") {
-            throw new Error("POSTリクエストが要求されているendpointをGETに登録することはできません")
+            throw new Error("POSTリクエストが要求されているエンドポイントをGETに登録することはできません")
         }
-        this.router.get(base_url + facts.url, async (req, res, params) => {
+        const requestPath = base_url + facts.url
+        this.router.get(requestPath, async (req, res, params) => {
             res.setHeader("Content-Type", ContentType.JSON)
             try {
                 const query = qs.parse(req.url.replace(/^.+\?/, ""), {
                     decoder: decodeURIComponent,
                 })
-                req.query = query
-
                 if (facts.authenticationRequired) {
                     // ユーザー認証をここで行う
-                    const authUser = await this.authenticator.authenticateUser(facts, req.query, req.cookies)
+                    const authUser = await this.authenticator.authenticateUser(
+                        facts,
+                        config.server.get_base_url() + requestPath,
+                        req.headers,
+                        req.cookies,
+                        query
+                    )
                     if (authUser == null) {
                         return InvalidAuthRoute(req, res)
                     }
@@ -208,9 +213,10 @@ export class TurboServer {
     }
     post(facts: MethodFacts, handler: Router.Handler, options: Options = {}) {
         if (facts.httpMethod !== "POST") {
-            throw new Error("GETリクエストが要求されているendpointをPOSTに登録することはできません")
+            throw new Error("GETリクエストが要求されているエンドポイントをPOSTに登録することはできません")
         }
-        this.router.post(base_url + facts.url, async (req, res, params) => {
+        const requestPath = base_url + facts.url
+        this.router.post(requestPath, async (req, res, params) => {
             res.setHeader("Content-Type", ContentType.JSON)
             res.setStatusCode(200)
             try {
@@ -223,7 +229,13 @@ export class TurboServer {
 
                 if (facts.authenticationRequired) {
                     // ユーザー認証をここで行う
-                    const authUser = await this.authenticator.authenticateUser(facts, req.body, req.cookies)
+                    const authUser = await this.authenticator.authenticateUser(
+                        facts,
+                        config.server.get_base_url() + requestPath,
+                        req.headers,
+                        req.cookies,
+                        body
+                    )
                     if (authUser == null) {
                         return InvalidAuthRoute(req, res)
                     }

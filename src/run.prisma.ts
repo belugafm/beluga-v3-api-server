@@ -1,4 +1,10 @@
-import { AuthenticityTokenQueryRepository, LoginSessionQueryRepository, UserQueryRepository } from "./web/repositories"
+import {
+    AuthenticityTokenQueryRepository,
+    LoginSessionQueryRepository,
+    UserQueryRepository,
+    ApplicationQueryRepository,
+    AccessTokenQueryRepository,
+} from "./web/repositories"
 import { Request, Response, TurboServer } from "./web/turbo"
 
 import { Authenticator } from "./web/auth"
@@ -10,6 +16,7 @@ import { MessageCommandRepository } from "./infrastructure/prisma/repository/com
 import config from "./config/app"
 import WebSocket, { WebSocketServer } from "ws"
 import { UserId } from "../src/domain/types"
+import { OAuthAuthenticateUserApplication } from "./application/oauth/Authenticate"
 
 function startWebsocketServer() {
     const wss = new WebSocketServer({
@@ -72,6 +79,11 @@ async function startAPIServer() {
                 new UserQueryRepository(),
                 new LoginSessionQueryRepository(),
                 new AuthenticityTokenQueryRepository()
+            ),
+            new OAuthAuthenticateUserApplication(
+                new AccessTokenQueryRepository(),
+                new ApplicationQueryRepository(),
+                new UserQueryRepository()
             )
         )
     )

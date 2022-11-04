@@ -22,8 +22,26 @@ export class AccessTokenQueryRepository implements IAccessTokenQueryRepository {
             this._prisma = prisma
         }
     }
-
-    async find(token: string, secret: string): Promise<AccessTokenEntity | null> {
+    async findByToken(token: string): Promise<AccessTokenEntity | null> {
+        try {
+            const auth = await this._prisma.accessToken.findUnique({
+                where: {
+                    token,
+                },
+            })
+            if (auth == null) {
+                return null
+            }
+            return toEntity(auth)
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
+    async findByTokenAndSecret(token: string, secret: string): Promise<AccessTokenEntity | null> {
         try {
             const auth = await this._prisma.accessToken.findUnique({
                 where: {

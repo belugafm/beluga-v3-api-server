@@ -26,7 +26,7 @@ export class GenerateRequestTokenApplication {
         consumerKey: string
         consumerSecret: string
     }): Promise<RequestTokenEntity> {
-        const app = await this.appQueryRepository.findByToken(consumerKey, consumerSecret)
+        const app = await this.appQueryRepository.findByTokenAndSecret(consumerKey, consumerSecret)
         if (app == null) {
             throw new ApplicationError(ErrorCodes.InvalidConsumerKey)
         }

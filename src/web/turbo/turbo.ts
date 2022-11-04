@@ -57,7 +57,7 @@ export class Response {
     }
 }
 
-export function read_body(req: Request) {
+export function read_body(req: Request): Promise<{ [key: string]: Buffer | string | number }> {
     return new Promise((resolve, reject) => {
         const headers = req.headers ? req.headers : {}
         const chunks: Buffer[] = []
@@ -85,7 +85,7 @@ export function read_body(req: Request) {
                 if (contentType.indexOf("multipart/form-data") === 0) {
                     const boundary = parts[1].split("boundary=")[1]
                     const items = multipart.parse(buffer, boundary)
-                    const data: { [key: string]: Buffer | string } = {}
+                    const data: { [key: string]: Buffer | string | number } = {}
                     items.forEach((item) => {
                         if (item.filename) {
                             // ファイルアップロードの場合バイナリデータを直接格納

@@ -47,7 +47,7 @@ export class GenerateAccessTokenApplication {
         requestTokenSecret: string
         verifier: string
     }): Promise<AccessTokenEntity> {
-        const app = await this.appQueryRepository.findByToken(consumerKey, consumerSecret)
+        const app = await this.appQueryRepository.findByTokenAndSecret(consumerKey, consumerSecret)
         if (app == null) {
             throw new ApplicationError(ErrorCodes.InvalidConsumerKey)
         }
