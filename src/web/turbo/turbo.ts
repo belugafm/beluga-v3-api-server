@@ -97,7 +97,11 @@ export function read_body(req: Request): Promise<{ [key: string]: Buffer | strin
                     return resolve(data)
                 }
                 if (contentType === "application/x-www-form-urlencoded") {
-                    const parts = buffer.toString().split("&")
+                    const encodedStr = buffer.toString()
+                    if (encodedStr.indexOf("=") == -1) {
+                        return resolve({})
+                    }
+                    const parts = encodedStr.split("&")
                     const data: { [key: string]: string } = {}
                     parts.forEach((part) => {
                         const kv = part.split("=")
