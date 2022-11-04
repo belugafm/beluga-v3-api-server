@@ -11,7 +11,7 @@ function matchPattern(str: string, pattern: RegExp) {
 
 function all(...values: any[]) {
     for (const value of values) {
-        if (typeof value !== "string" && typeof value !== "number") {
+        if (typeof value !== "string") {
             return false
         }
     }
@@ -47,7 +47,7 @@ export class ApplicationAuthenticator {
                     // @ts-ignore
                     signatureMethod,
                     // @ts-ignore
-                    timestamp,
+                    timestamp: Math.trunc(timestamp),
                     // @ts-ignore
                     version,
                     // @ts-ignore

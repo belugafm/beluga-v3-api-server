@@ -41,6 +41,9 @@ export class ValidateOAuthHeader {
         if (signatureMethod !== "HMAC-SHA1") {
             throw new Error()
         }
+        if (typeof timestamp != "number") {
+            throw new Error()
+        }
         if (Date.now() > (timestamp + 300) * 1000) {
             // 5分のマージン
             throw new Error()
