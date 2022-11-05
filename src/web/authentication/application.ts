@@ -24,11 +24,11 @@ export class ApplicationAuthenticator {
         this.oAuthAuthentication = oAuthAuthentication
     }
     async authenticate(params: {
-        requestUrl: string
+        requestBaseUrl: string
         headers: { [key: string]: string }
         body: { [key: string]: string | number | Buffer }
     }): Promise<ApplicationEntity | null> {
-        const { requestUrl, headers, body } = params
+        const { requestBaseUrl, headers, body } = params
         const authorizationHeader = headers["authorization"]
         if (typeof authorizationHeader == "string" && authorizationHeader.indexOf("OAuth") == 0) {
             // OAuth認証
@@ -52,7 +52,7 @@ export class ApplicationAuthenticator {
                     version,
                     // @ts-ignore
                     signature,
-                    requestUrl,
+                    requestBaseUrl,
                     httpMethod: "POST",
                     requestParams: body,
                 })

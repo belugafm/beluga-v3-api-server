@@ -30,7 +30,7 @@ export class AuthenticateUserByAccessTokenApplication {
         consumerKey,
         accessToken,
         requestParams,
-        requestUrl,
+        requestBaseUrl,
         nonce,
         signatureMethod,
         timestamp,
@@ -42,7 +42,7 @@ export class AuthenticateUserByAccessTokenApplication {
         accessToken: string
         requestTokenSecret: string
         requestParams: { [key: string]: string | number | Buffer }
-        requestUrl: string
+        requestBaseUrl: string
         nonce: string
         signatureMethod: string
         timestamp: number
@@ -63,7 +63,7 @@ export class AuthenticateUserByAccessTokenApplication {
                 consumerKey,
                 accessToken,
                 requestParams,
-                requestUrl,
+                requestBaseUrl,
                 nonce,
                 signatureMethod,
                 timestamp,

@@ -112,7 +112,7 @@ export const ContentType = {
 //     await user.save()
 // }
 
-const base_url = "/api/v1/"
+const versionPath = "/api/v1/"
 
 type Options = {}
 
@@ -155,7 +155,8 @@ export class TurboServer {
         if (facts.httpMethod !== "GET") {
             throw new Error("POSTリクエストが要求されているエンドポイントをGETに登録することはできません")
         }
-        this.router.get(base_url + facts.url, async (req, res, params) => {
+        const requestBasePath = versionPath + facts.url
+        this.router.get(requestBasePath, async (req, res, params) => {
             res.setHeader("Content-Type", ContentType.JSON)
             try {
                 const query = qs.parse(req.url.replace(/^.+\?/, ""), {
@@ -167,7 +168,8 @@ export class TurboServer {
                     // ユーザー認証をここで行う
                     const authUser = await this.userAuthenticator.authenticate({
                         facts: facts,
-                        requestUrl: config.server.get_base_url() + req.url,
+                        // GETリクエストの場合requestBaseUrlは?以降を削除したもの
+                        requestBaseUrl: config.server.get_base_url() + requestBasePath,
                         headers: req.headers,
                         cookies: req.cookies || {},
                         body: query,
@@ -227,8 +229,8 @@ export class TurboServer {
         if (facts.httpMethod !== "POST") {
             throw new Error("GETリクエストが要求されているエンドポイントをPOSTに登録することはできません")
         }
-        const requestPath = base_url + facts.url
-        this.router.post(requestPath, async (req, res, params) => {
+        const requestBasePath = versionPath + facts.url
+        this.router.post(requestBasePath, async (req, res, params) => {
             res.setHeader("Content-Type", ContentType.JSON)
             res.setStatusCode(200)
             try {
@@ -242,7 +244,7 @@ export class TurboServer {
                 if (facts.url == MethodIdentifiers.GenerateRequestToken) {
                     // アプリケーションの認証
                     const authApp = await this.appAuthenticator.authenticate({
-                        requestUrl: config.server.get_base_url() + requestPath,
+                        requestBaseUrl: config.server.get_base_url() + requestBasePath,
                         headers: req.headers,
                         body: body,
                     })
@@ -254,7 +256,7 @@ export class TurboServer {
                     // リクエストトークンによるユーザー認証
                     const [authApp, authUser] = await this.userAuthenticator.authenticateByRequestToken({
                         facts: facts,
-                        requestUrl: config.server.get_base_url() + requestPath,
+                        requestBaseUrl: config.server.get_base_url() + requestBasePath,
                         headers: req.headers,
                         cookies: req.cookies || {},
                         body: body,
@@ -275,7 +277,7 @@ export class TurboServer {
                         // アクセストークンもしくはCookieによるユーザー認証を行う
                         const authUser = await this.userAuthenticator.authenticate({
                             facts: facts,
-                            requestUrl: config.server.get_base_url() + requestPath,
+                            requestBaseUrl: config.server.get_base_url() + requestBasePath,
                             headers: req.headers,
                             cookies: req.cookies || {},
                             body: body,

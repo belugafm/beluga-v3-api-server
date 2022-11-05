@@ -19,7 +19,7 @@ export class OAuthAuthenticateAppApplication {
     async authenticate({
         consumerKey,
         requestParams,
-        requestUrl,
+        requestBaseUrl,
         nonce,
         signatureMethod,
         timestamp,
@@ -30,7 +30,7 @@ export class OAuthAuthenticateAppApplication {
         consumerKey: string
         accessToken: string
         requestParams: { [key: string]: string | number | Buffer }
-        requestUrl: string
+        requestBaseUrl: string
         nonce: string
         signatureMethod: string
         timestamp: number
@@ -46,7 +46,7 @@ export class OAuthAuthenticateAppApplication {
             this.validator.validateSignature(signature, {
                 consumerKey,
                 requestParams,
-                requestUrl,
+                requestBaseUrl,
                 nonce,
                 signatureMethod,
                 timestamp,

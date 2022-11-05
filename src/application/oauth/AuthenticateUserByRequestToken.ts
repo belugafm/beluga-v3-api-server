@@ -31,7 +31,7 @@ export class AuthenticateUserByRequestTokenApplication {
         consumerKey,
         requestToken,
         requestParams,
-        requestUrl,
+        requestBaseUrl,
         nonce,
         signatureMethod,
         timestamp,
@@ -42,7 +42,7 @@ export class AuthenticateUserByRequestTokenApplication {
         consumerKey: string
         requestToken: string
         requestParams: { [key: string]: string | number | Buffer }
-        requestUrl: string
+        requestBaseUrl: string
         nonce: string
         signatureMethod: string
         timestamp: number
@@ -65,7 +65,7 @@ export class AuthenticateUserByRequestTokenApplication {
             this.validator.validateSignature(signature, {
                 consumerKey,
                 requestParams,
-                requestUrl,
+                requestBaseUrl,
                 nonce,
                 signatureMethod,
                 timestamp,

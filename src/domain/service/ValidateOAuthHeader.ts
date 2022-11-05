@@ -3,7 +3,7 @@ import OAuth from "oauth-1.0a"
 
 type ValidationInputT = {
     requestParams: { [key: string]: string | number | Buffer }
-    requestUrl: string
+    requestBaseUrl: string
     consumerKey: string
     consumerSecret: string
     nonce: string
@@ -31,7 +31,7 @@ export class ValidateOAuthHeader {
     tryCreateSignature(params: ValidationInputT): string {
         const {
             requestParams,
-            requestUrl,
+            requestBaseUrl,
             consumerKey,
             consumerSecret,
             nonce,
@@ -61,7 +61,7 @@ export class ValidateOAuthHeader {
         })
         return oauth.getSignature(
             {
-                url: requestUrl,
+                url: requestBaseUrl,
                 method: httpMethod,
                 data: requestParams,
             },

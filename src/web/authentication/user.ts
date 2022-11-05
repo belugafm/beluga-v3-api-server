@@ -37,12 +37,12 @@ export class UserAuthenticator {
     }
     async authenticateByRequestToken(params: {
         facts: MethodFacts
-        requestUrl: string
+        requestBaseUrl: string
         headers: { [key: string]: string }
         cookies: { [key: string]: string }
         body: { [key: string]: string | number | Buffer }
     }): Promise<[ApplicationEntity | null, UserEntity | null]> {
-        const { requestUrl, headers, body } = params
+        const { requestBaseUrl, headers, body } = params
         const authorizationHeader = headers["authorization"]
         if (typeof authorizationHeader == "string" && authorizationHeader.indexOf("OAuth") == 0) {
             // OAuth認証
@@ -69,7 +69,7 @@ export class UserAuthenticator {
                     version,
                     // @ts-ignore
                     signature,
-                    requestUrl,
+                    requestBaseUrl,
                     httpMethod: "POST",
                     requestParams: body,
                 })
@@ -79,13 +79,13 @@ export class UserAuthenticator {
     }
     async authenticate(params: {
         facts: MethodFacts
-        requestUrl: string
+        requestBaseUrl: string
         headers: { [key: string]: string }
         cookies: { [key: string]: string }
         body: { [key: string]: string | number | Buffer }
         httpMethod: string
     }): Promise<UserEntity | null> {
-        const { facts, requestUrl, headers, cookies, body, httpMethod } = params
+        const { facts, requestBaseUrl, headers, cookies, body, httpMethod } = params
         if (facts.acceptedAuthenticationMethods.includes("OAuth")) {
             const authorizationHeader = headers["authorization"]
             if (typeof authorizationHeader == "string" && authorizationHeader.indexOf("OAuth") == 0) {
@@ -113,7 +113,7 @@ export class UserAuthenticator {
                         version,
                         // @ts-ignore
                         signature,
-                        requestUrl,
+                        requestBaseUrl,
                         httpMethod,
                         requestParams: body,
                     })
