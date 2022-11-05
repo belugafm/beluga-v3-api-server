@@ -8,6 +8,7 @@ import { ChannelGroupQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
+import { AuthenticationMethods } from "../../facts/authentication_method"
 
 export const argumentSpecs = defineArguments(["unique_name", "id"] as const, {
     unique_name: {
@@ -47,10 +48,10 @@ export const facts: MethodFacts = {
     url: MethodIdentifiers.ShowChannelGroup,
     httpMethod: HttpMethods.GET,
     rateLimiting: {},
-    acceptedContentTypes: [ContentTypes.ApplicationJson],
-    userAuthenticationRequired: false,
+    acceptedContentTypes: [ContentTypes.ApplicationJson, ContentTypes.ApplicationFormUrlEncoded],
+    userAuthenticationRequired: true,
     private: false,
-    acceptedAuthenticationMethods: [],
+    acceptedAuthenticationMethods: [AuthenticationMethods.OAuth, AuthenticationMethods.Cookie],
     acceptedScopes: {},
     description: ["チャンネルグループの情報を取得します"],
 }

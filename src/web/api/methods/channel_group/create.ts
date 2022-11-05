@@ -63,7 +63,7 @@ export const facts: MethodFacts = {
     url: MethodIdentifiers.CreateChannelGroup,
     httpMethod: HttpMethods.POST,
     rateLimiting: {},
-    acceptedContentTypes: [ContentTypes.ApplicationJson],
+    acceptedContentTypes: [ContentTypes.ApplicationJson, ContentTypes.ApplicationFormUrlEncoded],
     userAuthenticationRequired: true,
     private: false,
     acceptedAuthenticationMethods: [AuthenticationMethods.OAuth, AuthenticationMethods.Cookie],

@@ -9,6 +9,7 @@ import { ChannelQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
+import { AuthenticationMethods } from "../../facts/authentication_method"
 
 export const argumentSpecs = defineArguments(["sort_by", "sort_order"] as const, {
     sort_by: {
@@ -34,10 +35,10 @@ export const facts: MethodFacts = {
     url: MethodIdentifiers.ListAllChannels,
     httpMethod: HttpMethods.GET,
     rateLimiting: {},
-    acceptedContentTypes: [ContentTypes.ApplicationJson],
-    userAuthenticationRequired: false,
+    acceptedContentTypes: [ContentTypes.ApplicationJson, ContentTypes.ApplicationFormUrlEncoded],
+    userAuthenticationRequired: true,
     private: false,
-    acceptedAuthenticationMethods: [],
+    acceptedAuthenticationMethods: [AuthenticationMethods.OAuth, AuthenticationMethods.Cookie],
     acceptedScopes: {},
     description: ["存在する全てのチャンネルの一覧を取得します"],
 }
