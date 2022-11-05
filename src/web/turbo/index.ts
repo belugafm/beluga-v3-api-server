@@ -155,8 +155,7 @@ export class TurboServer {
         if (facts.httpMethod !== "GET") {
             throw new Error("POSTリクエストが要求されているエンドポイントをGETに登録することはできません")
         }
-        const requestPath = base_url + facts.url
-        this.router.get(requestPath, async (req, res, params) => {
+        this.router.get(base_url + facts.url, async (req, res, params) => {
             res.setHeader("Content-Type", ContentType.JSON)
             try {
                 const query = qs.parse(req.url.replace(/^.+\?/, ""), {
@@ -168,7 +167,7 @@ export class TurboServer {
                     // ユーザー認証をここで行う
                     const authUser = await this.userAuthenticator.authenticate({
                         facts: facts,
-                        requestUrl: config.server.get_base_url() + requestPath,
+                        requestUrl: config.server.get_base_url() + req.url,
                         headers: req.headers,
                         cookies: req.cookies || {},
                         body: query,
