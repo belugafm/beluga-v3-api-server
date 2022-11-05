@@ -24,6 +24,7 @@ export class OAuthAuthenticateAppApplication {
         signatureMethod,
         timestamp,
         version,
+        httpMethod,
         signature,
     }: {
         consumerKey: string
@@ -34,6 +35,7 @@ export class OAuthAuthenticateAppApplication {
         signatureMethod: string
         timestamp: number
         version: string
+        httpMethod: string
         signature: string
     }): Promise<ApplicationEntity | null> {
         const app = await this.applicationRepository.findByToken(consumerKey)
@@ -49,6 +51,7 @@ export class OAuthAuthenticateAppApplication {
                 signatureMethod,
                 timestamp,
                 version,
+                httpMethod,
                 consumerSecret: app.secret,
                 accessToken: null,
                 accessTokenSecret: null,

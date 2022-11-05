@@ -36,6 +36,7 @@ export class AuthenticateUserByRequestTokenApplication {
         signatureMethod,
         timestamp,
         version,
+        httpMethod,
         signature,
     }: {
         consumerKey: string
@@ -46,6 +47,7 @@ export class AuthenticateUserByRequestTokenApplication {
         signatureMethod: string
         timestamp: number
         version: string
+        httpMethod: string
         signature: string
     }): Promise<[ApplicationEntity | null, UserEntity | null]> {
         const auth = await this.requestTokenRepository.findByToken(requestToken)
@@ -68,6 +70,7 @@ export class AuthenticateUserByRequestTokenApplication {
                 signatureMethod,
                 timestamp,
                 version,
+                httpMethod,
                 accessToken: requestToken,
                 consumerSecret: app.secret,
                 accessTokenSecret: auth.secret,

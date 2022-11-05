@@ -70,6 +70,7 @@ export class UserAuthenticator {
                     // @ts-ignore
                     signature,
                     requestUrl,
+                    httpMethod: "POST",
                     requestParams: body,
                 })
             }
@@ -82,8 +83,9 @@ export class UserAuthenticator {
         headers: { [key: string]: string }
         cookies: { [key: string]: string }
         body: { [key: string]: string | number | Buffer }
+        httpMethod: string
     }): Promise<UserEntity | null> {
-        const { facts, requestUrl, headers, cookies, body } = params
+        const { facts, requestUrl, headers, cookies, body, httpMethod } = params
         if (facts.acceptedAuthenticationMethods.includes("OAuth")) {
             const authorizationHeader = headers["authorization"]
             if (typeof authorizationHeader == "string" && authorizationHeader.indexOf("OAuth") == 0) {
@@ -112,6 +114,7 @@ export class UserAuthenticator {
                         // @ts-ignore
                         signature,
                         requestUrl,
+                        httpMethod,
                         requestParams: body,
                     })
                 }

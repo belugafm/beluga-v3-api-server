@@ -53,6 +53,7 @@ export class ApplicationAuthenticator {
                     // @ts-ignore
                     signature,
                     requestUrl,
+                    httpMethod: "POST",
                     requestParams: body,
                 })
             }

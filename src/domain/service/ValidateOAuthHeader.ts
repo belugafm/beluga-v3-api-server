@@ -12,6 +12,7 @@ type ValidationInputT = {
     accessToken: string | null
     accessTokenSecret: string | null
     version: string
+    httpMethod: string
 }
 export class ValidateOAuthHeader {
     validateSignature(signature: string, params: ValidationInputT): boolean {
@@ -37,6 +38,7 @@ export class ValidateOAuthHeader {
             accessToken,
             accessTokenSecret,
             version,
+            httpMethod,
         } = params
         if (signatureMethod !== "HMAC-SHA1") {
             throw new Error()
@@ -58,7 +60,7 @@ export class ValidateOAuthHeader {
         return oauth.getSignature(
             {
                 url: requestUrl,
-                method: "POST",
+                method: httpMethod,
                 data: requestParams,
             },
             accessTokenSecret ? accessTokenSecret : undefined,

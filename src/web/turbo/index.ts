@@ -172,6 +172,7 @@ export class TurboServer {
                         headers: req.headers,
                         cookies: req.cookies || {},
                         body: query,
+                        httpMethod: "GET",
                     })
                     if (authUser == null) {
                         return InvalidAuthRoute(req, res)
@@ -279,6 +280,7 @@ export class TurboServer {
                             headers: req.headers,
                             cookies: req.cookies || {},
                             body: body,
+                            httpMethod: "POST",
                         })
                         if (authUser == null) {
                             return InvalidAuthRoute(req, res)
