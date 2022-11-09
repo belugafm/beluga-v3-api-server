@@ -49,9 +49,9 @@ export const facts: MethodFacts = {
     httpMethod: HttpMethods.GET,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson, ContentTypes.ApplicationFormUrlEncoded],
-    userAuthenticationRequired: true,
+    userAuthenticationRequired: false,
     private: false,
-    acceptedAuthenticationMethods: [AuthenticationMethods.OAuth, AuthenticationMethods.Cookie],
+    acceptedAuthenticationMethods: [],
     acceptedScopes: {},
     description: ["チャンネルグループの情報を取得します"],
 }

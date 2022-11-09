@@ -71,9 +71,9 @@ export const facts: MethodFacts = {
     httpMethod: HttpMethods.GET,
     rateLimiting: {},
     acceptedContentTypes: [ContentTypes.ApplicationJson],
-    userAuthenticationRequired: true,
+    userAuthenticationRequired: false,
     private: false,
-    acceptedAuthenticationMethods: [AuthenticationMethods.OAuth, AuthenticationMethods.Cookie],
+    acceptedAuthenticationMethods: [],
     acceptedScopes: {},
     description: ["チャンネルグループのタイムラインを取得します"],
 }
