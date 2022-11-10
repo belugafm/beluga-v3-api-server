@@ -227,5 +227,4 @@ model AccessToken {
     applicationId Int
 
     @@unique([token, secret])
-    @@unique([applicationId, userId])
 }

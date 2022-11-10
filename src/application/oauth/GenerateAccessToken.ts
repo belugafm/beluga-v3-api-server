@@ -60,15 +60,7 @@ export class GenerateAccessTokenApplication {
                 userId: req.verifiedUserId,
                 applicationId: app.id,
             })
-            const existingAuth = await this.accessTokenQueryRepository.findByUserIdAndApplicationId(
-                req.verifiedUserId,
-                app.id
-            )
-            if (existingAuth) {
-                await this.accessTokenCommandRepository.update(auth)
-            } else {
-                await this.accessTokenCommandRepository.add(auth)
-            }
+            await this.accessTokenCommandRepository.add(auth)
             return auth
         } catch (error) {
             console.error(error)
