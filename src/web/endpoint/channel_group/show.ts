@@ -15,15 +15,9 @@ export default (server: TurboServer) => {
             params["authUser"],
             null
         )
-        if (channelGroup) {
-            return {
-                ok: true,
-                channel_group: channelGroup.toJsonObject(),
-            }
-        }
         return {
             ok: true,
-            channel_group: null,
+            channel_group: channelGroup,
         }
     })
 }

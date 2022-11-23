@@ -4,7 +4,6 @@ import { IRequestTokenQueryRepository } from "../../domain/repository/query/Requ
 import { AccessTokenEntity } from "../../domain/entity/AccessToken"
 import { IAccessTokenCommandRepository } from "../../domain/repository/command/AccessToken"
 import { ApplicationEntity } from "../../domain/entity/Application"
-import { IAccessTokenQueryRepository } from "../../domain/repository/query/AccessToken"
 
 export const ErrorCodes = {
     InvalidConsumerKey: "invalid_consumer_key",
@@ -17,17 +16,14 @@ export const ErrorCodes = {
 } as const
 
 export class GenerateAccessTokenApplication {
-    private accessTokenQueryRepository: IAccessTokenQueryRepository
     private accessTokenCommandRepository: IAccessTokenCommandRepository
     private requestTokenQueryRepository: IRequestTokenQueryRepository
     private requestTokenCommandRepository: IRequestTokenCommandRepository
     constructor(
-        accessTokenQueryRepository: IAccessTokenQueryRepository,
         accessTokenCommandRepository: IAccessTokenCommandRepository,
         requestTokenQueryRepository: IRequestTokenQueryRepository,
         requestTokenCommandRepository: IRequestTokenCommandRepository
     ) {
-        this.accessTokenQueryRepository = accessTokenQueryRepository
         this.accessTokenCommandRepository = accessTokenCommandRepository
         this.requestTokenQueryRepository = requestTokenQueryRepository
         this.requestTokenCommandRepository = requestTokenCommandRepository

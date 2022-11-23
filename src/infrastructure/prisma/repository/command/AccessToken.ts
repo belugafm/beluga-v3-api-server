@@ -14,32 +14,6 @@ export class AccessTokenCommandRepository implements IAccessTokenCommandReposito
             this._prisma = prisma
         }
     }
-    async update(auth: AccessTokenEntity): Promise<boolean> {
-        if (auth instanceof AccessTokenEntity !== true) {
-            throw new RepositoryError("`auth` must be an instance of AccessTokenEntity")
-        }
-        try {
-            await this._prisma.accessToken.update({
-                where: {
-                    applicationId_userId: {
-                        applicationId: auth.applicationId,
-                        userId: auth.userId,
-                    },
-                },
-                data: {
-                    secret: auth.secret,
-                    token: auth.token,
-                },
-            })
-            return true
-        } catch (error) {
-            if (error instanceof Error) {
-                throw new RepositoryError(error.message, error.stack)
-            } else {
-                throw new UnknownRepositoryError()
-            }
-        }
-    }
     async add(auth: AccessTokenEntity): Promise<boolean> {
         if (auth instanceof AccessTokenEntity !== true) {
             throw new RepositoryError("`auth` must be an instance of AccessTokenEntity")

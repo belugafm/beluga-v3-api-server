@@ -6,7 +6,6 @@ import {
     RequestTokenCommandRepository,
     RequestTokenQueryRepository,
     AccessTokenCommandRepository,
-    AccessTokenQueryRepository,
 } from "../../../repositories"
 
 import { ApplicationError } from "../../../../application/ApplicationError"
@@ -79,7 +78,6 @@ export default defineMethod(
         try {
             return await transaction.$transaction(async (transactionSession) => {
                 return await new GenerateAccessTokenApplication(
-                    new AccessTokenQueryRepository(transactionSession),
                     new AccessTokenCommandRepository(transactionSession),
                     new RequestTokenQueryRepository(transactionSession),
                     new RequestTokenCommandRepository(transactionSession)

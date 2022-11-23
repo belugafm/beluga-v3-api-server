@@ -55,8 +55,8 @@ export class ChannelGroupEntity extends Entity {
     @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidLevel })
     level: number
 
-    @IsChannelGroupId({ errorCode: ErrorCodes.InvalidParentId })
-    parentId: ChannelGroupdId
+    @IsChannelGroupId({ nullable: true, errorCode: ErrorCodes.InvalidParentId })
+    parentId: ChannelGroupdId | null
 
     @IsUserId({ errorCode: ErrorCodes.InvalidCreatedBy })
     createdBy: UserId
@@ -112,7 +112,8 @@ export class ChannelGroupEntity extends Entity {
             parent_id: this.parentId,
             parent: null,
             level: this.level,
-            created_by: this.createdBy,
+            user_id: this.createdBy,
+            user: null,
             created_at: this.createdAt,
             message_count: this.messageCount,
             description: this.description,

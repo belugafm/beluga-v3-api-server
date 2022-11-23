@@ -3,12 +3,12 @@ import * as vs from "../../../../domain/validation"
 import { InternalErrorSpec, UnexpectedErrorSpec, raise } from "../../error"
 import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../define"
 
-import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
 import { ChannelGroupQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
-import { AuthenticationMethods } from "../../facts/authentication_method"
+import { includeChannelGroupRelations } from "../../relations/channel_group"
+import { ChannelGroupJsonObjectT } from "../../../../domain/types"
 
 export const argumentSpecs = defineArguments(["unique_name", "id"] as const, {
     unique_name: {
@@ -56,7 +56,7 @@ export const facts: MethodFacts = {
     description: ["チャンネルグループの情報を取得します"],
 }
 
-type ReturnType = Promise<ChannelGroupEntity | null>
+type ReturnType = Promise<ChannelGroupJsonObjectT | null>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors): ReturnType => {
     if (args.unique_name == null && args.id == null) {
@@ -64,12 +64,18 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
     }
     try {
         if (args.unique_name) {
-            return await new ChannelGroupQueryRepository().findByUniqueName(args.unique_name)
+            const channelGroup = await new ChannelGroupQueryRepository().findByUniqueName(args.unique_name)
+            if (channelGroup) {
+                return includeChannelGroupRelations(channelGroup.toJsonObject())
+            }
         }
         if (args.id) {
-            return await new ChannelGroupQueryRepository().findById(args.id)
+            const channelGroup = await new ChannelGroupQueryRepository().findById(args.id)
+            if (channelGroup) {
+                return includeChannelGroupRelations(channelGroup.toJsonObject())
+            }
         }
-        throw new Error()
+        return null
     } catch (error) {
         if (error instanceof Error) {
             raise(errors["unexpected_error"], error)

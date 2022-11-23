@@ -144,8 +144,10 @@ export class PostMessageApplication {
             await this.messageCommandRepository.update(thread)
         }
 
-        let parentChannelGroupId = channel.parentChannelGroupId
-        let parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+        let parentChannelGroupId: number | null = channel.parentChannelGroupId
+        let parentChannelGroup = parentChannelGroupId
+            ? await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+            : null
         while (parentChannelGroup) {
             // Update channel group
             parentChannelGroup.lastMessageId = message.id
@@ -156,7 +158,9 @@ export class PostMessageApplication {
             await this.channelGroupTimelineCommandRepository.add(message, parentChannelGroup)
 
             parentChannelGroupId = parentChannelGroup.parentId
-            parentChannelGroup = await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+            parentChannelGroup = parentChannelGroupId
+                ? await this.channelGroupQueryRepository.findById(parentChannelGroupId)
+                : null
         }
 
         const attachedFiles = await this.findMediaUrls(text)

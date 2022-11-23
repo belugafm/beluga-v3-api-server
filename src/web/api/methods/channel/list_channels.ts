@@ -9,7 +9,6 @@ import { ChannelQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
-import { AuthenticationMethods } from "../../facts/authentication_method"
 
 export const argumentSpecs = defineArguments(["sort_by", "sort_order"] as const, {
     sort_by: {

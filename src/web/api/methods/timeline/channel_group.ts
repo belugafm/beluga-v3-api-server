@@ -13,7 +13,6 @@ import { MethodIdentifiers } from "../../identifier"
 import { SortOrder } from "../../../../domain/repository/query/ChannelGroupTimeline"
 import { includeMessageRelations } from "../../relations/message"
 import { MessageJsonObjectT } from "../../../../domain/types"
-import { AuthenticationMethods } from "../../facts/authentication_method"
 
 export const argumentSpecs = defineArguments(
     ["channel_group_id", "since_id", "max_id", "limit", "sort_order"] as const,

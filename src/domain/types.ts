@@ -102,7 +102,8 @@ export type ChannelJsonObjectT = {
     unique_name: string
     parent_channel_group_id: ChannelGroupdId
     parent_channel_group: ChannelGroupJsonObjectT | null
-    created_by: UserId
+    user_id: UserId
+    user: UserJsonObjectT | null
     created_at: Date
     message_count: number
     description: string | null
@@ -117,10 +118,11 @@ export type ChannelGroupJsonObjectT = {
     id: ChannelGroupdId
     name: string
     unique_name: string
-    parent_id: ChannelGroupdId
+    parent_id: ChannelGroupdId | null
     parent: ChannelGroupJsonObjectT | null
     level: number
-    created_by: UserId
+    user_id: UserId
+    user: UserJsonObjectT | null
     created_at: Date
     message_count: number
     description: string | null

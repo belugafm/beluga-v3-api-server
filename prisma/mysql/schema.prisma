@@ -61,7 +61,7 @@ model ChannelGroup {
     id                   Int       @id @default(autoincrement())
     name                 String    @db.VarChar(255)
     uniqueName           String    @unique @db.VarChar(255)
-    parentId             Int
+    parentId             Int?
     createdBy            Int
     createdAt            DateTime  @default(now())
     level                Int // 階層の深さ 0が最上位
