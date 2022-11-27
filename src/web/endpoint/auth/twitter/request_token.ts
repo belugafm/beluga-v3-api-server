@@ -17,7 +17,6 @@ export default (server: TurboServer) => {
         if (response.authSessionId) {
             res.setCookie("tw_auth_session_id", response.authSessionId, {
                 expires: new Date(Date.now() + authSessionExpireSeconds * 1000),
-                domain: config.server.domain,
                 path: "/",
                 httpOnly: true,
                 secure: config.server.https,

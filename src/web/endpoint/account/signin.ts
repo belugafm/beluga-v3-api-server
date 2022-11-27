@@ -22,7 +22,6 @@ export default (server: TurboServer) => {
         if (loginSession) {
             res.setCookie("session_id", loginSession.sessionId, {
                 expires: loginSession.expireDate,
-                domain: config.server.domain,
                 path: "/",
                 httpOnly: true,
                 secure: config.server.https,

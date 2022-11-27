@@ -20,7 +20,6 @@ export default (server: TurboServer) => {
         if (loginSession) {
             res.setCookie("session_id", loginSession.sessionId, {
                 expires: loginSession.expireDate,
-                domain: config.server.domain,
                 path: "/",
                 httpOnly: true,
                 secure: config.server.https,
@@ -28,7 +27,6 @@ export default (server: TurboServer) => {
             // ユーザー名は乱数なのでCookieに保存して入力補助する
             res.setCookie("user_name", user.name, {
                 expires: new Date(Date.now() + 86400 * 365 * 1000),
-                domain: config.server.domain,
                 path: "/",
                 httpOnly: true,
                 secure: config.server.https,
