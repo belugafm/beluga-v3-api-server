@@ -112,6 +112,7 @@ export type ChannelJsonObjectT = {
     last_message_created_at: Date | null
     last_message: MessageJsonObjectT | null
     read_state: ChannelReadStateJsonObjectT | null
+    minimum_trust_rank: string
 }
 
 export type ChannelGroupJsonObjectT = {
@@ -126,6 +127,7 @@ export type ChannelGroupJsonObjectT = {
     created_at: Date
     message_count: number
     description: string | null
+    minimum_trust_rank: string
     image_url: string | null
 }
 

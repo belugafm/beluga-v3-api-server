@@ -19,6 +19,7 @@ export function toEntity(channel: Channel) {
         description: channel.description,
         statusString: channel.statusString,
         lastMessageId: channel.lastMessageId,
+        minimumTrustRank: channel.minimumTrustRank,
         lastMessageCreatedAt: channel.lastMessageCreatedAt,
     })
 }

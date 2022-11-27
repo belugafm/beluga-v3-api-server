@@ -22,6 +22,7 @@ function toEntity(channelGroup: ChannelGroup) {
         messageCount: channelGroup.messageCount,
         imageUrl: channelGroup.imageUrl,
         lastMessageId: channelGroup.lastMessageId,
+        minimumTrustRank: channelGroup.minimumTrustRank,
         lastMessageCreatedAt: channelGroup.lastMessageCreatedAt,
     })
 }

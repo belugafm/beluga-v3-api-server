@@ -70,7 +70,7 @@ export const expectedErrorSpecs = defineErrors(
     {
         do_not_have_permission: {
             description: ["このチャンネルに投稿する権限がありません"],
-            hint: ["信用レベルを上げると作れるようになります"],
+            hint: ["信用レベルを上げると投稿できるようになります"],
             code: "do_not_have_permission",
         },
         rate_limit_exceeded: {

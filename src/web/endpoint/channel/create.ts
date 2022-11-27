@@ -10,6 +10,7 @@ export default (server: TurboServer) => {
             {
                 name: req.body.name,
                 parent_channel_group_id: req.body.parent_channel_group_id,
+                minimum_trust_rank: req.body.minimum_trust_rank,
             },
             remoteIpAddress,
             params["authUser"],

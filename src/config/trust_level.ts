@@ -1,12 +1,20 @@
+export const TrustRank = {
+    RiskyUser: "RiskyUser",
+    Visitor: "Visitor",
+    AuthorizedUser: "AuthorizedUser",
+    Moderator: "Moderator",
+} as const
+
 export const TrustLevel = {
-    RiskyUser: 0,
-    Visitor: 10,
-    AuthorizedUser: 20,
-    Moderator: 30,
-}
-export const TrustLevelDescription = {
-    [TrustLevel.RiskyUser]: "不審ユーザー",
-    [TrustLevel.Visitor]: "ビジター",
-    [TrustLevel.AuthorizedUser]: "認証ユーザー",
-    [TrustLevel.Moderator]: "モデレーター",
-}
+    [TrustRank.RiskyUser]: 0,
+    [TrustRank.Visitor]: 10,
+    [TrustRank.AuthorizedUser]: 20,
+    [TrustRank.Moderator]: 30,
+} as const
+
+export const TrustRankDescription = {
+    [TrustRank.RiskyUser]: "不審ユーザー",
+    [TrustRank.Visitor]: "ビジター",
+    [TrustRank.AuthorizedUser]: "認証ユーザー",
+    [TrustRank.Moderator]: "モデレーター",
+} as const

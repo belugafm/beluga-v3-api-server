@@ -19,6 +19,7 @@ export function has_changed(a: ChannelGroup, b: ChannelGroup) {
         a.description === b.description &&
         a.lastMessageId === b.lastMessageId &&
         a.lastMessageCreatedAt === b.lastMessageCreatedAt &&
+        a.minimumTrustRank === b.minimumTrustRank &&
         a.messageCount === b.messageCount
     )
 }
@@ -50,6 +51,7 @@ export class ChannelGroupCommandRepository extends ChangeEventHandler implements
                     description: channelGroup.description,
                     imageUrl: channelGroup.imageUrl,
                     lastMessageId: channelGroup.lastMessageId,
+                    minimumTrustRank: channelGroup.minimumTrustRank,
                     lastMessageCreatedAt: channelGroup.lastMessageCreatedAt,
                 },
             })
@@ -91,6 +93,7 @@ export class ChannelGroupCommandRepository extends ChangeEventHandler implements
                     description: channelGroup.description,
                     imageUrl: channelGroup.imageUrl,
                     lastMessageId: channelGroup.lastMessageId,
+                    minimumTrustRank: channelGroup.minimumTrustRank,
                     lastMessageCreatedAt: channelGroup.lastMessageCreatedAt,
                 },
             })

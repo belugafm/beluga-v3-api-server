@@ -14,6 +14,7 @@ import { IUserQueryRepository } from "../../domain/repository/query/User"
 export const ErrorCodes = {
     InternalError: "internal_error",
     NameNotMeetPolicy: "name_not_meet_policy",
+    MinimumTrustRankNotMeetPolicy: "minimum_trust_rank_not_meet_policy",
     ParentNotFound: "parent_not_found",
     ...ServiceErrorCodes,
 } as const
@@ -29,15 +30,28 @@ export class CreateChannelGroupApplication {
     ) {
         this.channelGroupCommandRepository = channelGroupCommandRepository
         this.channelGroupQueryRepository = channelGroupQueryRepository
-        this.checkPermissionToCreateChannelGroupService = new CreateChannelGroupPermission(userQueryRepository)
+        this.checkPermissionToCreateChannelGroupService = new CreateChannelGroupPermission(
+            userQueryRepository,
+            channelGroupQueryRepository
+        )
     }
-    async create({ createdBy, name, parentId }: { createdBy: UserId; name: string; parentId: ChannelGroupdId }) {
+    async create({
+        createdBy,
+        name,
+        parentId,
+        minimumTrustRank,
+    }: {
+        createdBy: UserId
+        name: string
+        parentId: ChannelGroupdId
+        minimumTrustRank: string
+    }) {
         const parentChannelGroup = await this.channelGroupQueryRepository.findById(parentId)
         if (parentChannelGroup == null) {
             throw new ApplicationError(ErrorCodes.ParentNotFound)
         }
         try {
-            await this.checkPermissionToCreateChannelGroupService.hasThrow(createdBy)
+            await this.checkPermissionToCreateChannelGroupService.hasThrow(createdBy, parentChannelGroup.id)
             const channelGroup = new ChannelGroupEntity({
                 id: -1,
                 name: name,
@@ -46,6 +60,7 @@ export class CreateChannelGroupApplication {
                 level: parentChannelGroup.level,
                 createdBy: createdBy,
                 createdAt: new Date(),
+                minimumTrustRank: minimumTrustRank,
             })
             channelGroup.id = await this.channelGroupCommandRepository.add(channelGroup)
             return channelGroup
@@ -53,6 +68,9 @@ export class CreateChannelGroupApplication {
             if (error instanceof DomainError) {
                 if (error.code === DomainErrorCodes.InvalidName) {
                     throw new ApplicationError(ErrorCodes.NameNotMeetPolicy)
+                }
+                if (error.code === DomainErrorCodes.InvalidMinimumTrustRank) {
+                    throw new ApplicationError(ErrorCodes.MinimumTrustRankNotMeetPolicy)
                 }
                 if (error.code === ServiceErrorCodes.DoNotHavePermission) {
                     throw new ApplicationError(ErrorCodes.DoNotHavePermission)

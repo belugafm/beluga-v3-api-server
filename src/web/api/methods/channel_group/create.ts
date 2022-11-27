@@ -16,6 +16,7 @@ import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
+import { TrustRank } from "../../../../config/trust_level"
 
 export const argumentSpecs = defineArguments(["name", "parent_id"] as const, {
     name: {
@@ -30,12 +31,19 @@ export const argumentSpecs = defineArguments(["name", "parent_id"] as const, {
         required: true,
         validator: vs.ChannelGroupIdValidator(),
     },
+    minimum_trust_rank: {
+        description: ["書き込みを許可する最低限の信用ランク"],
+        examples: [TrustRank.Visitor],
+        required: true,
+        validator: vs.TrustRankValidator(),
+    },
 })
 
 export const expectedErrorSpecs = defineErrors(
     [
         ErrorCodes.DoNotHavePermission,
         ErrorCodes.NameNotMeetPolicy,
+        ErrorCodes.MinimumTrustRankNotMeetPolicy,
         "invalid_auth",
         "internal_error",
         "unexpected_error",
@@ -52,6 +60,12 @@ export const expectedErrorSpecs = defineErrors(
             hint: ["空白は入力できません"],
             argument: "name",
             code: "name_not_meet_policy",
+        },
+        minimum_trust_rank_not_meet_policy: {
+            description: ["信用ランクの値が不正です"],
+            hint: [],
+            argument: "minimum_trust_rank",
+            code: "minimum_trust_rank_not_meet_policy",
         },
         invalid_auth: new InvalidAuth(),
         internal_error: new InternalErrorSpec(),
@@ -88,6 +102,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 name: args.name,
                 parentId: args.parent_id,
                 createdBy: authUser.id,
+                minimumTrustRank: args.minimum_trust_rank,
             })
             return channelGroup
         })

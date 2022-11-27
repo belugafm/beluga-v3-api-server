@@ -71,6 +71,7 @@ model ChannelGroup {
     imageUrl             String?   @db.VarChar(255)
     lastMessageId        Int?
     lastMessageCreatedAt DateTime?
+    minimumTrustRank     String    @default("Visitor") @db.VarChar(255)
 }
 
 model Channel {
@@ -85,6 +86,7 @@ model Channel {
     description          String?   @db.Text
     lastMessageId        Int?
     lastMessageCreatedAt DateTime?
+    minimumTrustRank     String    @default("Visitor") @db.VarChar(255)
 }
 
 model Message {

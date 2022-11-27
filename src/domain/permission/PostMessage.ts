@@ -3,6 +3,7 @@ import { ChannelId, UserId } from "../types"
 import { DomainError } from "../DomainError"
 import { IChannelQueryRepository } from "../repository/query/Channel"
 import { IUserQueryRepository } from "../repository/query/User"
+import { TrustLevel } from "../../config/trust_level"
 
 export const ErrorCodes = {
     DoNotHavePermission: "do_not_have_permission",
@@ -24,7 +25,10 @@ export class PostMessagePermission {
         if (channel == null) {
             return false
         }
-        // TODO: 書き込み制御を実装する
+        // @ts-ignore
+        if (user.trustLevel < TrustLevel[channel.minimumTrustRank]) {
+            return false
+        }
         return true
     }
     async hasThrow(userId: UserId, channelId: ChannelId) {

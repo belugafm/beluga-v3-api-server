@@ -9,6 +9,7 @@ import {
     IsInteger,
     IsMessageId,
     IsString,
+    IsTrustRank,
     IsUserId,
 } from "../validation/decorators"
 
@@ -35,6 +36,7 @@ export const ErrorCodes = {
     InvalidDescription: "invalid_description",
     InvalidLastMessageId: "invalid_last_message_id",
     InvalidLastMessageCreatedAt: "invalid_last_message_created_at",
+    InvalidMinimumTrustRank: "invalid_minimum_trust_rank",
 } as const
 
 export class ChannelEntity extends Entity {
@@ -76,6 +78,9 @@ export class ChannelEntity extends Entity {
     @IsDate({ nullable: true, errorCode: ErrorCodes.InvalidLastMessageCreatedAt })
     lastMessageCreatedAt: Date | null
 
+    @IsTrustRank({ errorCode: ErrorCodes.InvalidMinimumTrustRank })
+    minimumTrustRank: string
+
     constructor(
         params: {
             id: ChannelEntity["id"]
@@ -84,6 +89,7 @@ export class ChannelEntity extends Entity {
             parentChannelGroupId: ChannelEntity["parentChannelGroupId"]
             createdBy: ChannelEntity["createdBy"]
             createdAt: ChannelEntity["createdAt"]
+            minimumTrustRank: ChannelEntity["minimumTrustRank"]
         } & Partial<ChannelEntity>
     ) {
         super()
@@ -93,6 +99,7 @@ export class ChannelEntity extends Entity {
         this.parentChannelGroupId = params.parentChannelGroupId
         this.createdBy = params.createdBy
         this.createdAt = params.createdAt
+        this.minimumTrustRank = params.minimumTrustRank
         this.messageCount = params.messageCount != null ? params.messageCount : 0
         this.statusString = params.statusString != null ? params.statusString : "#"
         this.lastMessageId = params.lastMessageId != null ? params.lastMessageId : null
@@ -114,6 +121,7 @@ export class ChannelEntity extends Entity {
             status_string: this.statusString,
             last_message_id: this.lastMessageId,
             last_message_created_at: this.lastMessageCreatedAt,
+            minimum_trust_rank: this.minimumTrustRank,
             last_message: null,
             read_state: null,
         }

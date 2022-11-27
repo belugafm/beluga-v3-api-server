@@ -7,6 +7,7 @@ import {
     IsDate,
     IsInteger,
     IsMessageId,
+    IsTrustRank,
     IsUrl,
     IsUserId,
 } from "../validation/decorators"
@@ -35,6 +36,7 @@ export const ErrorCodes = {
     InvalidDescription: "invalid_description",
     InvalidLastMessageId: "invalid_last_message_id",
     InvalidLastMessageCreatedAt: "invalid_last_message_created_at",
+    InvalidMinimumTrustRank: "invalid_minimum_trust_rank",
 } as const
 
 export class ChannelGroupEntity extends Entity {
@@ -79,6 +81,9 @@ export class ChannelGroupEntity extends Entity {
     @IsDate({ nullable: true, errorCode: ErrorCodes.InvalidLastMessageCreatedAt })
     lastMessageCreatedAt: Date | null
 
+    @IsTrustRank({ errorCode: ErrorCodes.InvalidMinimumTrustRank })
+    minimumTrustRank: string
+
     constructor(
         params: {
             id: ChannelGroupEntity["id"]
@@ -88,6 +93,7 @@ export class ChannelGroupEntity extends Entity {
             level: ChannelGroupEntity["level"]
             createdBy: ChannelGroupEntity["createdBy"]
             createdAt: ChannelGroupEntity["createdAt"]
+            minimumTrustRank: ChannelGroupEntity["minimumTrustRank"]
         } & Partial<ChannelGroupEntity>
     ) {
         super()
@@ -98,6 +104,7 @@ export class ChannelGroupEntity extends Entity {
         this.level = params.level
         this.createdBy = params.createdBy
         this.createdAt = params.createdAt
+        this.minimumTrustRank = params.minimumTrustRank
         this.messageCount = params.messageCount != null ? params.messageCount : 0
         this.imageUrl = params.imageUrl != null ? params.imageUrl : null
         this.lastMessageId = params.lastMessageId != null ? params.lastMessageId : null
@@ -118,6 +125,7 @@ export class ChannelGroupEntity extends Entity {
             message_count: this.messageCount,
             description: this.description,
             image_url: this.imageUrl,
+            minimum_trust_rank: this.minimumTrustRank,
         }
     }
     static generateUniqueName(): string {
