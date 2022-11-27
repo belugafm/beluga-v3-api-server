@@ -1,2 +1,2 @@
-export { description } from "./description"
-export { name } from "./name"
+export { DescriptionValidator } from "./Description"
+export { NameValidator } from "./Name"

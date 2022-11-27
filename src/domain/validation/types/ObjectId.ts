@@ -13,6 +13,6 @@ function checkIsObjectId(value: any) {
     }
     throw new ValidationError(CommonErrorMessages.InvalidType)
 }
-export function objectId() {
+export function ObjectIdValidator() {
     return new PropertyValidator<EntityId>({}, [checkIsObjectId])
 }

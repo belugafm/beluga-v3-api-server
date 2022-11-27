@@ -1,6 +1,6 @@
 import { isInteger, isString } from "../../functions"
 
-import { Options } from "../string"
+import { Options } from "../String"
 import Prism from "prismjs"
 import { PropertyValidator } from "../../PropertyValidator"
 import { checkIsString } from "../../validator/string/isString"
@@ -97,7 +97,7 @@ export function checkIsValidStyleJson(jsonString: string): void {
     })
 }
 
-export function textStyle() {
+export function TextStyleValidator() {
     const options: Options = {}
     return new PropertyValidator<string>(options, [checkIsString, checkIsValidStyleJson])
 }

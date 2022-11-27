@@ -28,7 +28,7 @@ export class LoginCredentialEntity extends Entity {
         if (vn.isString(password) !== true) {
             throw new DomainError(ErrorCodes.InvaidPasswordInput)
         }
-        if (vn.password().ok(password) !== true) {
+        if (vn.PasswordValidator().ok(password) !== true) {
             throw new DomainError(ErrorCodes.PasswordNotMeetPolicy)
         }
         const passwordHash = await bcrypt.hash(password, config.user_login_credential.password.salt_rounds)

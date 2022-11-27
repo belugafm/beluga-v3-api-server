@@ -1,11 +1,11 @@
-import { Options } from "./string"
+import { Options } from "./String"
 import { PropertyValidator } from "../PropertyValidator"
 import { checkIsString } from "../validator/string/isString"
 import { checkRegexPattern } from "../validator/string/regex"
 
-export function ipAddress() {
+export function UrlValidator() {
     const options: Options = {
-        regexp: new RegExp(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/),
+        regexp: new RegExp(/^https?:\/\/.+\..+$/),
     }
     return new PropertyValidator<string>(options, [checkIsString, checkRegexPattern])
 }

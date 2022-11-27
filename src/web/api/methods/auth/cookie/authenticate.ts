@@ -21,7 +21,7 @@ export const argumentSpecs = defineArguments(["session_id"] as const, {
         description: ["セッションID"],
         examples: ["XXXXXXXXXX-XXXXXXXXXXXXX"],
         required: true,
-        validator: vs.sessionId(),
+        validator: vs.SessionIdValidator(),
     },
 })
 

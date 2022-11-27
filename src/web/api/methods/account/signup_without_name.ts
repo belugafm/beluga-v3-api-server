@@ -32,19 +32,19 @@ export const argumentSpecs = defineArguments(["password", "confirmation_password
         description: ["パスワード"],
         examples: ["do_not_use_this_password_0123"],
         required: true,
-        validator: vs.password(),
+        validator: vs.PasswordValidator(),
     },
     confirmation_password: {
         description: ["確認用のパスワード"],
         examples: ["do_not_use_this_password_0123"],
         required: true,
-        validator: vs.password(),
+        validator: vs.PasswordValidator(),
     },
     ip_address: {
         description: ["登録時のIPアドレス"],
         examples: ["192.168.1.1"],
         required: true,
-        validator: vs.ipAddress(),
+        validator: vs.IpAddressValidator(),
     },
 })
 

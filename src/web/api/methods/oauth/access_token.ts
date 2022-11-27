@@ -21,13 +21,13 @@ export const argumentSpecs = defineArguments(["request_token", "verifier"] as co
         description: [""],
         examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
         required: true,
-        validator: vs.string({ minLength: 1, maxLength: 100 }),
+        validator: vs.StringValidator({ minLength: 1, maxLength: 100 }),
     },
     verifier: {
         description: [""],
         examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
         required: true,
-        validator: vs.string({ minLength: 1, maxLength: 100 }),
+        validator: vs.StringValidator({ minLength: 1, maxLength: 100 }),
     },
 })
 

@@ -1,19 +1,25 @@
-export { boolean } from "./types/boolean"
-export { integer } from "./types/number"
-export { string } from "./types/string"
+export { BooleanValidator } from "./types/Boolean"
+export { IntegerValidator } from "./types/Number"
+export { StringValidator } from "./types/String"
 export * as user from "./types/user"
 export * as channelGroup from "./types/channel_group"
 export * as channel from "./types/channel"
 export * as message from "./types/message"
 export * as application from "./types/application"
-export { password } from "./types/password"
-export { url } from "./types/url"
-export { date } from "./types/date"
+export { PasswordValidator } from "./types/Password"
+export { UrlValidator } from "./types/Url"
+export { DateValidator } from "./types/Date"
 export * as media from "./types/file"
-export { ipAddress } from "./types/ipAddress"
-export { objectId } from "./types/objectId"
-export { entityId, channelId, channelGroupId, userId, messageId } from "./types/entityId"
-export { sessionId } from "./types/sessionId"
-export { colorCode } from "./types/colorCode"
-export { buffer } from "./types/buffer"
+export { IpAddressValidator } from "./types/IpAddress"
+export { ObjectIdValidator } from "./types/ObjectId"
+export {
+    EntityIdValidator,
+    ChannelIdValidator,
+    ChannelGroupIdValidator,
+    UserIdValidator,
+    MessageIdValidator,
+} from "./types/EntityId"
+export { SessionIdValidator } from "./types/SessionId"
+export { ColorCodeValidator } from "./types/ColorCode"
+export { BufferValidator } from "./types/Buffer"
 export { isInteger, isString, isDate, isBoolean } from "./functions"

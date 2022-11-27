@@ -23,6 +23,6 @@ export async function checkIsBuffer(value: Buffer, options: Options): Promise<vo
     //     throw new ValidationError("不正なファイルです")
     // }
 }
-export function buffer(options?: Options) {
+export function BufferValidator(options?: Options) {
     return new PropertyValidator<Buffer>(options || {}, [checkIsBuffer])
 }

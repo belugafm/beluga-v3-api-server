@@ -15,13 +15,13 @@ export const argumentSpecs = defineArguments(["sort_by", "sort_order"] as const,
         description: ["ソートの基準"],
         examples: ["message_count"],
         required: true,
-        validator: vs.string(),
+        validator: vs.StringValidator(),
     },
     sort_order: {
         description: ["ソート順"],
         examples: ["descending"],
         required: true,
-        validator: vs.string(),
+        validator: vs.StringValidator(),
     },
 })
 

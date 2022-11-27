@@ -26,25 +26,25 @@ export const argumentSpecs = defineArguments(
             description: ["oauth_token"],
             examples: ["XXXXXXXXXX-XXXXXXXXXXXXX"],
             required: true,
-            validator: vs.string(),
+            validator: vs.StringValidator(),
         },
         oauth_verifier: {
             description: ["oauth_verifier"],
             examples: ["XXXXXXXXXX-XXXXXXXXXXXXX"],
             required: true,
-            validator: vs.string(),
+            validator: vs.StringValidator(),
         },
         auth_session_id: {
             description: ["セッションID"],
             examples: ["XXXXXXXXXX-XXXXXXXXXXXXX"],
             required: true,
-            validator: vs.string(),
+            validator: vs.StringValidator(),
         },
         ip_address: {
             description: ["登録時のIPアドレス"],
             examples: ["192.168.1.1"],
             required: true,
-            validator: vs.ipAddress(),
+            validator: vs.IpAddressValidator(),
         },
     }
 )

@@ -1,9 +1,9 @@
-import { Options } from "./string"
+import { Options } from "./String"
 import { PropertyValidator } from "../PropertyValidator"
 import { checkIsString } from "../validator/string/isString"
 import { checkMaxLength } from "../validator/string/maxLength"
 
-export function sessionId() {
+export function SessionIdValidator() {
     const options: Options = {
         maxLength: 256,
     }

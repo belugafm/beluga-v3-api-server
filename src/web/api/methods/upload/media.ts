@@ -25,7 +25,7 @@ export const argumentSpecs = defineArguments(["file"] as const, {
         description: ["ファイルのBuffer"],
         examples: ["general"],
         required: true,
-        validator: vs.buffer(),
+        validator: vs.BufferValidator(),
     },
 })
 

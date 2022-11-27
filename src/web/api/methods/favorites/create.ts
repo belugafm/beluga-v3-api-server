@@ -23,7 +23,7 @@ export const argumentSpecs = defineArguments(["message_id"] as const, {
         description: ["「ふぁぼ」するメッセージのID"],
         examples: ["99999"],
         required: true,
-        validator: vs.messageId(),
+        validator: vs.MessageIdValidator(),
     },
 })
 

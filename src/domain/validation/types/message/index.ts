@@ -1,2 +1,2 @@
-export { text } from "./text"
-export { textStyle } from "./textStyle"
+export { TextValidator } from "./Text"
+export { TextStyleValidator } from "./TextStyle"

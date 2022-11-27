@@ -23,25 +23,25 @@ export const argumentSpecs = defineArguments(
             description: [""],
             examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
             required: true,
-            validator: vs.string({ minLength: 1, maxLength: 100 }),
+            validator: vs.StringValidator({ minLength: 1, maxLength: 100 }),
         },
         consumer_secret: {
             description: [""],
             examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
             required: true,
-            validator: vs.string({ minLength: 1, maxLength: 100 }),
+            validator: vs.StringValidator({ minLength: 1, maxLength: 100 }),
         },
         request_token: {
             description: [""],
             examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
             required: true,
-            validator: vs.string({ minLength: 1, maxLength: 100 }),
+            validator: vs.StringValidator({ minLength: 1, maxLength: 100 }),
         },
         request_token_secret: {
             description: [""],
             examples: ["xxxxxx-xxxxxxx-xxxxxxx"],
             required: true,
-            validator: vs.string({ minLength: 1, maxLength: 100 }),
+            validator: vs.StringValidator({ minLength: 1, maxLength: 100 }),
         },
     }
 )

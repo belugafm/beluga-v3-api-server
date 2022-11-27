@@ -15,13 +15,13 @@ export const argumentSpecs = defineArguments(["unique_name", "id"] as const, {
         description: [],
         examples: ["0TI4SjhQJLy2"],
         required: false,
-        validator: vs.channelGroup.uniqueName(),
+        validator: vs.channelGroup.UniqueNameValidator(),
     },
     id: {
         description: [],
         examples: ["123456"],
         required: false,
-        validator: vs.channelGroupId(),
+        validator: vs.ChannelGroupIdValidator(),
     },
 })
 

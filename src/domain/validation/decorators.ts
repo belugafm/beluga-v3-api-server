@@ -5,28 +5,29 @@ import * as message from "./types/message"
 import * as user from "./types/user"
 import * as application from "./types/application"
 
-import { Options as IntegerOptions, integer } from "./types/number"
-import { Options as StringOptions, string } from "./types/string"
+import { Options as IntegerOptions, IntegerValidator } from "./types/Number"
+import { Options as StringOptions, StringValidator } from "./types/String"
 import {
-    applicationId,
-    applicationTokenId,
-    channelGroupId,
-    channelId,
-    entityId,
-    fileId,
-    messageId,
-    readStateId,
-    userId,
-} from "./types/entityId"
+    ApplicationIdValidator,
+    ApplicationTokenIdValidator,
+    ChannelGroupIdValidator,
+    ChannelIdValidator,
+    EntityIdValidator,
+    FileIdValidator,
+    MessageIdValidator,
+    RreadStateIdValidator,
+    UserIdValidator,
+} from "./types/EntityId"
 
 import { DomainError } from "../DomainError"
 import { Entity } from "../entity/Entity"
 import { PropertyValidator } from "./PropertyValidator"
-import { boolean } from "./types/boolean"
-import { date } from "./types/date"
-import { ipAddress } from "./types/ipAddress"
-import { sessionId } from "./types/sessionId"
-import { url } from "./types/url"
+import { BooleanValidator } from "./types/Boolean"
+import { DateValidator } from "./types/Date"
+import { IpAddressValidator } from "./types/IpAddress"
+import { SessionIdValidator } from "./types/SessionId"
+import { UrlValidator } from "./types/Url"
+import { TrustRankValidator } from "./types/TrustRank"
 
 interface ValidationOptions {
     nullable?: boolean
@@ -38,7 +39,7 @@ const registry = new FinalizationRegistry((uuid: string) => {
     delete storage[uuid]
 })
 
-export function Validate<T>(validator: PropertyValidator<T>, options?: ValidationOptions): any {
+export function Validator<T>(validator: PropertyValidator<T>, options?: ValidationOptions): any {
     return (target: object, propertyKey: string, desc: any) => {
         const getter = function (this: Entity) {
             if (this.uuid in storage) {
@@ -71,121 +72,124 @@ export function Validate<T>(validator: PropertyValidator<T>, options?: Validatio
 
 // Comon
 export function IsEntityId(options?: ValidationOptions) {
-    return Validate(entityId(), options)
+    return Validator(EntityIdValidator(), options)
 }
 
 // Message
 export function IsMessageId(options?: ValidationOptions) {
-    return Validate(messageId(), options)
+    return Validator(MessageIdValidator(), options)
 }
 export function IsMessageText(options?: ValidationOptions) {
-    return Validate(message.text(), options)
+    return Validator(message.TextValidator(), options)
 }
 export function IsMessageTextStyle(options?: ValidationOptions) {
-    return Validate(message.textStyle(), options)
+    return Validator(message.TextStyleValidator(), options)
 }
 
 // Channel
 export function IsChannelId(options?: ValidationOptions) {
-    return Validate(channelId(), options)
+    return Validator(ChannelIdValidator(), options)
 }
 export function IsChannelName(options?: ValidationOptions) {
-    return Validate(channel.name(), options)
+    return Validator(channel.NameValidator(), options)
 }
 export function IsChannelUniqueName(options?: ValidationOptions) {
-    return Validate(channel.uniqueName(), options)
+    return Validator(channel.UniqueNameValidator(), options)
 }
 export function IsChannelDescription(options?: ValidationOptions) {
-    return Validate(channel.description(), options)
+    return Validator(channel.DescriptionValidator(), options)
 }
 
 // ChannelGroup
 export function IsChannelGroupId(options?: ValidationOptions) {
-    return Validate(channelGroupId(), options)
+    return Validator(ChannelGroupIdValidator(), options)
 }
 export function IsChannelGroupName(options?: ValidationOptions) {
-    return Validate(channelGroup.name(), options)
+    return Validator(channelGroup.NameValidator(), options)
 }
 export function IsChannelGroupUniqueName(options?: ValidationOptions) {
-    return Validate(channelGroup.uniqueName(), options)
+    return Validator(channelGroup.UniqueNameValidator(), options)
 }
 export function IsChannelGroupDescription(options?: ValidationOptions) {
-    return Validate(channelGroup.description(), options)
+    return Validator(channelGroup.DescriptionValidator(), options)
 }
 
 // User
 export function IsUserId(options?: ValidationOptions) {
-    return Validate(userId(), options)
+    return Validator(UserIdValidator(), options)
 }
 export function IsUserName(options?: ValidationOptions) {
-    return Validate(user.name(), options)
+    return Validator(user.NameValidator(), options)
 }
 export function IsUserDisplayName(options?: ValidationOptions) {
-    return Validate(user.displayName(), options)
+    return Validator(user.DisplayNameValidator(), options)
 }
 export function IsUserDescription(options?: ValidationOptions) {
-    return Validate(user.description(), options)
+    return Validator(user.DescriptionValidator(), options)
 }
 export function IsUserLocation(options?: ValidationOptions) {
-    return Validate(user.location(), options)
+    return Validator(user.LocationValidator(), options)
 }
 export function IsUserUrl(options?: ValidationOptions) {
-    return Validate(user.url(), options)
+    return Validator(user.UrlValidator(), options)
 }
 
 export function IsReadStateId(options?: ValidationOptions) {
-    return Validate(readStateId(), options)
+    return Validator(RreadStateIdValidator(), options)
 }
 
 export function IsFileId(options?: ValidationOptions) {
-    return Validate(fileId(), options)
+    return Validator(FileIdValidator(), options)
 }
 export function IsFileType(options?: ValidationOptions) {
-    return Validate(media.type(), options)
+    return Validator(media.TypeValidator(), options)
 }
 
 export function IsApplicationId(options?: ValidationOptions) {
-    return Validate(applicationId(), options)
+    return Validator(ApplicationIdValidator(), options)
 }
 export function IsApplicationName(options?: ValidationOptions) {
-    return Validate(application.name(), options)
+    return Validator(application.NameValidator(), options)
 }
 export function IsApplicationDescription(options?: ValidationOptions) {
-    return Validate(application.description(), options)
+    return Validator(application.DescriptionValidator(), options)
 }
 
 export function IsApplicationTokenId(options?: ValidationOptions) {
-    return Validate(applicationTokenId(), options)
+    return Validator(ApplicationTokenIdValidator(), options)
 }
 
 // Primitive
 export function IsSessionId(options?: ValidationOptions) {
-    return Validate(sessionId(), options)
+    return Validator(SessionIdValidator(), options)
 }
 export function IsToken(options?: ValidationOptions) {
-    return Validate(sessionId(), options)
+    return Validator(SessionIdValidator(), options)
 }
 export function IsIpAddress(options?: ValidationOptions) {
-    return Validate(ipAddress(), options)
+    return Validator(IpAddressValidator(), options)
 }
 export function IsDate(options?: ValidationOptions) {
-    return Validate(date(), options)
+    return Validator(DateValidator(), options)
 }
 export function IsAnyInteger(options?: ValidationOptions) {
-    return Validate(integer(), options)
+    return Validator(IntegerValidator(), options)
 }
 export function IsInteger(integerOptions: IntegerOptions, validationOption?: ValidationOptions) {
-    return Validate(integer(integerOptions), validationOption)
+    return Validator(IntegerValidator(integerOptions), validationOption)
 }
 export function IsString(stringOption: StringOptions, validationOption?: ValidationOptions) {
-    return Validate(string(stringOption), validationOption)
+    return Validator(StringValidator(stringOption), validationOption)
 }
 export function IsAnyString(options?: ValidationOptions) {
-    return Validate(string(), options)
+    return Validator(StringValidator(), options)
 }
 export function IsBoolean(options?: ValidationOptions) {
-    return Validate(boolean(), options)
+    return Validator(BooleanValidator(), options)
 }
 export function IsUrl(options?: ValidationOptions) {
-    return Validate(url(), options)
+    return Validator(UrlValidator(), options)
+}
+export function IsTrustRank(options?: ValidationOptions) {
+    return Validator(TrustRankValidator(), options)
 }

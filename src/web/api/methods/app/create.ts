@@ -17,31 +17,31 @@ export const argumentSpecs = defineArguments(["name", "description", "callback_u
         description: ["アプリケーション名"],
         examples: ["shooting star"],
         required: true,
-        validator: vs.application.name(),
+        validator: vs.application.NameValidator(),
     },
     description: {
         description: ["アプリケーションの説明"],
         examples: ["iPhone用クライアント"],
         required: true,
-        validator: vs.application.description(),
+        validator: vs.application.DescriptionValidator(),
     },
     callback_url: {
         description: ["コールバックURL"],
         examples: ["app://beluga"],
         required: true,
-        validator: vs.string({ minLength: 1, maxLength: 300 }),
+        validator: vs.StringValidator({ minLength: 1, maxLength: 300 }),
     },
     read: {
         description: ["読み取り権限を付与"],
         examples: ["true"],
         required: true,
-        validator: vs.boolean(),
+        validator: vs.BooleanValidator(),
     },
     write: {
         description: ["書き込み権限を付与"],
         examples: ["true"],
         required: true,
-        validator: vs.boolean(),
+        validator: vs.BooleanValidator(),
     },
 })
 

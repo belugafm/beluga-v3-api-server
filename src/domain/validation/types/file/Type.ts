@@ -13,7 +13,7 @@ export function checkType(value: string, options: Options): void {
     }
 }
 
-export function type() {
+export function TypeValidator() {
     const options: Options = {
         allowedTypes: config.file.allowed_file_types.image.concat(config.file.allowed_file_types.video),
     }

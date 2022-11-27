@@ -22,13 +22,13 @@ export const argumentSpecs = defineArguments(["name", "parent_id"] as const, {
         description: ["チャンネルグループ名"],
         examples: ["general"],
         required: true,
-        validator: vs.channelGroup.name(),
+        validator: vs.channelGroup.NameValidator(),
     },
     parent_id: {
         description: ["親のチャンネルグループID"],
         examples: ["123456"],
         required: true,
-        validator: vs.channelGroupId(),
+        validator: vs.ChannelGroupIdValidator(),
     },
 })
 

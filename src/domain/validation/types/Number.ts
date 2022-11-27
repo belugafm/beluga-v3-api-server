@@ -8,6 +8,6 @@ export type Options = {
     maxValue?: number
     regexp?: object
 }
-export function integer(options?: Options) {
+export function IntegerValidator(options?: Options) {
     return new PropertyValidator<number>(options || {}, [checkIsInteger, checkMinValue, checkMaxValue])
 }

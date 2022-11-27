@@ -25,7 +25,7 @@ export const argumentSpecs = defineArguments(["id"] as const, {
         description: ["削除するメッセージのID"],
         examples: ["99999"],
         required: true,
-        validator: vs.messageId(),
+        validator: vs.MessageIdValidator(),
     },
 })
 

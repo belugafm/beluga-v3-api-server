@@ -9,7 +9,7 @@ export type Options = {
     maxLength?: number
     regexp?: object
 }
-export function string(options?: Options) {
+export function StringValidator(options?: Options) {
     return new PropertyValidator<string>(options || {}, [
         checkIsString,
         checkMinLength,

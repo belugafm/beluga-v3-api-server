@@ -24,31 +24,31 @@ export const argumentSpecs = defineArguments(["channel_id", "since_id", "max_id"
         description: ["チャンネルID"],
         examples: ["123456"],
         required: true,
-        validator: vs.channelId(),
+        validator: vs.ChannelIdValidator(),
     },
     max_id: {
         description: ["このID以前の投稿を取得します", "`max_id`の投稿は含まれません"],
         examples: ["123456"],
         required: false,
-        validator: vs.integer(),
+        validator: vs.IntegerValidator(),
     },
     since_id: {
         description: ["このID以降の投稿を取得します", "`since_id`の投稿は含まれません"],
         examples: ["123456"],
         required: false,
-        validator: vs.integer(),
+        validator: vs.IntegerValidator(),
     },
     limit: {
         description: ["取得する投稿の上限"],
         examples: ["50"],
         required: false,
-        validator: vs.integer({ minValue: 1, maxValue: 100 }),
+        validator: vs.IntegerValidator({ minValue: 1, maxValue: 100 }),
     },
     sort_order: {
         description: ["取得する投稿のソート順"],
         examples: ["descending"],
         required: false,
-        validator: vs.string(),
+        validator: vs.StringValidator(),
     },
 })
 

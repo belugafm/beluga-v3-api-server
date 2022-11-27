@@ -24,38 +24,38 @@ export function checkIsEntityId(value: EntityId, options: {}): void {
     throw new ValidationError(CommonErrorMessages.InvalidType)
 }
 
-export function entityId() {
+export function EntityIdValidator() {
     return new PropertyValidator<EntityId>({}, [checkIsEntityId])
 }
 
-export function channelId() {
+export function ChannelIdValidator() {
     return new PropertyValidator<ChannelId>({}, [checkIsEntityId])
 }
 
-export function readStateId() {
+export function RreadStateIdValidator() {
     return new PropertyValidator<ChannelReadStateId>({}, [checkIsEntityId])
 }
 
-export function channelGroupId() {
+export function ChannelGroupIdValidator() {
     return new PropertyValidator<ChannelGroupdId>({}, [checkIsEntityId])
 }
 
-export function userId() {
+export function UserIdValidator() {
     return new PropertyValidator<UserId>({}, [checkIsEntityId])
 }
 
-export function messageId() {
+export function MessageIdValidator() {
     return new PropertyValidator<MessageId>({}, [checkIsEntityId])
 }
 
-export function fileId() {
+export function FileIdValidator() {
     return new PropertyValidator<FileId>({}, [checkIsEntityId])
 }
 
-export function applicationId() {
+export function ApplicationIdValidator() {
     return new PropertyValidator<ApplicationId>({}, [checkIsEntityId])
 }
 
-export function applicationTokenId() {
+export function ApplicationTokenIdValidator() {
     return new PropertyValidator<ApplicationTokenId>({}, [checkIsEntityId])
 }

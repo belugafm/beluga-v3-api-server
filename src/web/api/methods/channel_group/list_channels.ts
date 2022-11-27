@@ -20,7 +20,7 @@ export const argumentSpecs = defineArguments(["id"] as const, {
         description: [],
         examples: ["123456"],
         required: true,
-        validator: vs.channelGroupId(),
+        validator: vs.ChannelGroupIdValidator(),
     },
 })
 

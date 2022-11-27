@@ -31,25 +31,25 @@ export const argumentSpecs = defineArguments(["text", "text_style", "channel_id"
         description: ["投稿内容"],
         examples: ["おはよう"],
         required: true,
-        validator: vs.message.text(),
+        validator: vs.message.TextValidator(),
     },
     text_style: {
         description: ["文字装飾"],
         examples: [],
         required: false,
-        validator: vs.message.textStyle(),
+        validator: vs.message.TextStyleValidator(),
     },
     channel_id: {
         description: ["チャンネルID"],
         examples: ["123456"],
         required: false,
-        validator: vs.channelId(),
+        validator: vs.ChannelIdValidator(),
     },
     thread_id: {
         description: ["スレッドID"],
         examples: ["123456"],
         required: false,
-        validator: vs.messageId(),
+        validator: vs.MessageIdValidator(),
     },
 })
 
