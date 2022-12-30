@@ -230,3 +230,16 @@ model AccessToken {
 
     @@unique([token, secret])
 }
+
+model Invite {
+    id           Int      @id @default(autoincrement())
+    inviterId    Int
+    createdAt    DateTime @default(now())
+    expireDate   DateTime
+    verifier     String   @db.VarChar(255)
+    targetUserId Int?
+
+    @@unique([verifier])
+    @@unique([targetUserId])
+    @@index([inviterId])
+}

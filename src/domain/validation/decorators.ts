@@ -3,6 +3,7 @@ import * as channelGroup from "./types/channel_group"
 import * as media from "./types/file"
 import * as message from "./types/message"
 import * as user from "./types/user"
+import * as invite from "./types/invite"
 import * as application from "./types/application"
 
 import { Options as IntegerOptions, IntegerValidator } from "./types/Number"
@@ -14,6 +15,7 @@ import {
     ChannelIdValidator,
     EntityIdValidator,
     FileIdValidator,
+    InviteIdValidator,
     MessageIdValidator,
     RreadStateIdValidator,
     UserIdValidator,
@@ -157,6 +159,13 @@ export function IsApplicationDescription(options?: ValidationOptions) {
 
 export function IsApplicationTokenId(options?: ValidationOptions) {
     return Validator(ApplicationTokenIdValidator(), options)
+}
+
+export function IsInviteId(options?: ValidationOptions) {
+    return Validator(InviteIdValidator(), options)
+}
+export function IsInviteVerifier(options?: ValidationOptions) {
+    return Validator(invite.VerifierValidator(), options)
 }
 
 // Primitive

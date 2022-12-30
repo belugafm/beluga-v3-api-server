@@ -86,7 +86,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 new MessageCommandRepository(transactionSession),
                 new LikeQueryRepository(transactionSession),
                 new LikeCommandRepository(transactionSession)
-            ).delete({
+            ).create({
                 messageId: args.message_id,
                 requestUserId: authUser.id,
             })

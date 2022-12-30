@@ -39,7 +39,7 @@ export class CreateLikeApplication {
         this.likeCommandRepository = likeCommandRepository
         this.permissionToCreateLike = new CreateLikePermission(userQueryRepository, messageQueryRepository)
     }
-    async delete({ messageId, requestUserId }: { messageId: MessageId; requestUserId: UserId }): Promise<boolean> {
+    async create({ messageId, requestUserId }: { messageId: MessageId; requestUserId: UserId }): Promise<boolean> {
         const requestUser = await this.userQueryRepository.findById(requestUserId)
         if (requestUser == null) {
             throw new ApplicationError(ErrorCodes.RequestUserNotFound)

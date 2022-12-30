@@ -6,6 +6,7 @@ import {
     ChannelReadStateId,
     EntityId,
     FileId,
+    InviteId,
     MessageId,
     UserId,
 } from "../../types"
@@ -58,4 +59,8 @@ export function ApplicationIdValidator() {
 
 export function ApplicationTokenIdValidator() {
     return new PropertyValidator<ApplicationTokenId>({}, [checkIsEntityId])
+}
+
+export function InviteIdValidator() {
+    return new PropertyValidator<InviteId>({}, [checkIsEntityId])
 }

@@ -14,9 +14,9 @@ export const ErrorCodes = {
 export class CreateLikePermission {
     private userRepository: IUserQueryRepository
     private messageRepository: IMessageQueryRepository
-    constructor(userRepository: IUserQueryRepository, channelRepository: IMessageQueryRepository) {
+    constructor(userRepository: IUserQueryRepository, messageRepository: IMessageQueryRepository) {
         this.userRepository = userRepository
-        this.messageRepository = channelRepository
+        this.messageRepository = messageRepository
     }
     async hasThrow(requestUserId: UserId, messageId: MessageId) {
         const user = await this.userRepository.findById(requestUserId)

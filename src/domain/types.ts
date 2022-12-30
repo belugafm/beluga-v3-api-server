@@ -7,6 +7,7 @@ export type ChannelReadStateId = EntityId
 export type FileId = EntityId
 export type ApplicationId = EntityId
 export type ApplicationTokenId = EntityId
+export type InviteId = EntityId
 
 export type UserJsonObjectT = {
     id: UserId
@@ -174,4 +175,13 @@ export type ApplicationJsonObjectT = {
     callback_url: string
     read: boolean
     write: boolean
+}
+
+export type InviteJsonObjectT = {
+    id: InviteId
+    inviter_id: UserId
+    created_at: Date
+    expire_date: Date
+    verifier: string
+    target_user_id: UserId | null
 }

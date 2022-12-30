@@ -1,0 +1,1 @@
+export { VerifierValidator } from "./Verifier"
