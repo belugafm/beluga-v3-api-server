@@ -59,6 +59,7 @@ export const expectedErrorSpecs = defineErrors(
         "invalid_ip_address",
         "invalid_location",
         "invalid_device",
+        "suspended",
         "internal_error",
         "unexpected_error",
     ] as const,
@@ -93,6 +94,11 @@ export const expectedErrorSpecs = defineErrors(
             hint: [],
             argument: "device",
             code: "invalid_device",
+        },
+        suspended: {
+            description: ["このアカウントは凍結されています"],
+            hint: [],
+            code: "suspended",
         },
         internal_error: new InternalErrorSpec(),
         unexpected_error: new UnexpectedErrorSpec(),
@@ -133,6 +139,8 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 raise(errors["incorrect_password"], error)
             } else if (error.code === ErrorCodes.UserNotFound) {
                 raise(errors["incorrect_name"], error)
+            } else if (error.code === ErrorCodes.Suspended) {
+                raise(errors["suspended"], error)
             } else {
                 raise(errors["internal_error"], error)
             }

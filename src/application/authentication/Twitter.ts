@@ -15,6 +15,7 @@ import { v4 } from "uuid"
 
 export const ErrorCodes = {
     InternalError: "internal_error",
+    Suspended: "suspended",
     InvalidSession: "invalid_session",
     ApiResponseError: "api_response_error",
     ApiAuthError: "api_auth_error",
@@ -344,6 +345,9 @@ export class TwitterAuthenticationApplication {
         }
         const existingUser = await this.userQueryRepository.findByTwitterUserId(userResponse.id)
         if (existingUser) {
+            if (existingUser.suspended) {
+                throw new ApplicationError(ErrorCodes.Suspended)
+            }
             return existingUser
         }
         const name = await this.generateUserName(userResponse.screenName)

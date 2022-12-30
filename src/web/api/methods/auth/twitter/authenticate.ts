@@ -16,7 +16,7 @@ import { HttpMethods } from "../../../facts/http_method"
 import { LoginSessionEntity } from "../../../../../domain/entity/LoginSession"
 import { MethodIdentifiers } from "../../../identifier"
 import { SignInWithTwitterApplication } from "../../../../../application/signin/SignInWithTwitter"
-import { TwitterAuthenticationApplication } from "../../../../../application/authentication/Twitter"
+import { TwitterAuthenticationApplication, ErrorCodes } from "../../../../../application/authentication/Twitter"
 import { UserEntity } from "../../../../../domain/entity/User"
 
 export const argumentSpecs = defineArguments(
@@ -49,10 +49,19 @@ export const argumentSpecs = defineArguments(
     }
 )
 
-export const expectedErrorSpecs = defineErrors(["internal_error", "unexpected_error"] as const, argumentSpecs, {
-    internal_error: new InternalErrorSpec(),
-    unexpected_error: new UnexpectedErrorSpec(),
-})
+export const expectedErrorSpecs = defineErrors(
+    ["internal_error", "unexpected_error", "suspended"] as const,
+    argumentSpecs,
+    {
+        internal_error: new InternalErrorSpec(),
+        unexpected_error: new UnexpectedErrorSpec(),
+        suspended: {
+            description: ["このアカウントは凍結されています"],
+            hint: [],
+            code: "suspended",
+        },
+    }
+)
 
 export const facts: MethodFacts = {
     url: MethodIdentifiers.AuthenticateUserWithTwitter,
@@ -96,6 +105,9 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
         })
     } catch (error) {
         if (error instanceof ApplicationError) {
+            if (error.code == ErrorCodes.Suspended) {
+                raise(errors["suspended"], error)
+            }
             raise(errors["internal_error"], error)
         } else if (error instanceof Error) {
             raise(errors["unexpected_error"], error)

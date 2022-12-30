@@ -21,6 +21,9 @@ export class PostMessagePermission {
         if (user == null) {
             return false
         }
+        if (user.suspended) {
+            return false
+        }
         const channel = await this.channelRepository.findById(channelId)
         if (channel == null) {
             return false

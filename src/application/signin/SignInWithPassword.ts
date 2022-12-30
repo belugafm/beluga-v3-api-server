@@ -21,6 +21,7 @@ type Argument = {
 export const ErrorCodes = {
     InternalError: "internal_error",
     UserNotFound: "user_not_found",
+    Suspended: "suspended",
     IncorrectPassword: "incorrect_password",
 } as const
 
@@ -71,6 +72,9 @@ export class SignInWithPasswordApplication {
             const user = await this.userQueryRepository.findByName(name)
             if (user == null) {
                 throw new ApplicationError(ErrorCodes.UserNotFound)
+            }
+            if (user.suspended) {
+                throw new ApplicationError(ErrorCodes.Suspended)
             }
             const loginCredential = await this.loginCredentialsQueryRepository.findByUserId(user.id)
             if (loginCredential == null) {
