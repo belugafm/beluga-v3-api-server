@@ -7,7 +7,7 @@ import { ChannelId } from "../../../../domain/types"
 import { IChannelCommandRepository } from "../../../../domain/repository/command/Channel"
 import { prisma } from "../client"
 
-export function has_changed(a: Channel, b: Channel) {
+export function hasChanged(a: Channel, b: Channel) {
     return !(
         a.name === b.name &&
         a.uniqueName === b.uniqueName &&
@@ -92,7 +92,7 @@ export class ChannelCommandRepository extends ChangeEventHandler implements ICha
                     lastMessageCreatedAt: channel.lastMessageCreatedAt,
                 },
             })
-            if (has_changed(origChannel, updatedChannel)) {
+            if (hasChanged(origChannel, updatedChannel)) {
                 await this.emitChanges(channel.id)
                 return true
             }

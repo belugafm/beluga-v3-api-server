@@ -6,7 +6,7 @@ import { ILoginSessionCommandRepository } from "../../../../domain/repository/co
 import { LoginSessionEntity } from "../../../../domain/entity/LoginSession"
 import { prisma } from "../client"
 
-export function has_changed(a: LoginSessionEntity, b: LoginSession) {
+export function hasChanged(a: LoginSessionEntity, b: LoginSession) {
     return !(
         a.userId === b.userId &&
         a.sessionId === b.sessionId &&
@@ -73,7 +73,7 @@ export class LoginSessionCommandRepository extends ChangeEventHandler implements
                     device: session.device,
                 },
             })
-            if (has_changed(session, updatedSession)) {
+            if (hasChanged(session, updatedSession)) {
                 await this.emitChanges(session.sessionId)
                 return true
             }

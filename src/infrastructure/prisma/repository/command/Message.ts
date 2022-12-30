@@ -7,7 +7,7 @@ import { MessageEntity } from "../../../../domain/entity/Message"
 import { MessageId } from "../../../../domain/types"
 import { prisma } from "../client"
 
-export function has_changed(a: Message, b: Message) {
+export function hasChanged(a: Message, b: Message) {
     return !(
         a.channelId === b.channelId &&
         a.userId === b.userId &&
@@ -93,7 +93,7 @@ export class MessageCommandRepository extends ChangeEventHandler implements IMes
                     lastReplyMessageCreatedAt: message.lastReplyMessageCreatedAt,
                 },
             })
-            if (has_changed(origMessage, updatedMessage)) {
+            if (hasChanged(origMessage, updatedMessage)) {
                 await this.emitChanges(message.id)
                 return true
             }

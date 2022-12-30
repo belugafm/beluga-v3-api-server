@@ -7,7 +7,7 @@ import { FileId } from "../../../../domain/types"
 import { IFileCommandRepository } from "../../../../domain/repository/command/File"
 import { prisma } from "../client"
 
-export function has_changed(a: File, b: File) {
+export function hasChanged(a: File, b: File) {
     return !(
         a.refCount === b.refCount &&
         a.type === b.type &&
@@ -93,7 +93,7 @@ export class FileCommandRepository extends ChangeEventHandler implements IFileCo
                     tag: file.tag,
                 },
             })
-            if (has_changed(origFile, updatedFile)) {
+            if (hasChanged(origFile, updatedFile)) {
                 await this.emitChanges(file.id)
                 return true
             }

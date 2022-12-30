@@ -6,7 +6,7 @@ import { EntityId } from "../../../../domain/types"
 import { IFavoriteCommandRepository } from "../../../../domain/repository/command/Favorite"
 import { prisma } from "../client"
 
-export function has_changed(a: Like, b: Like) {
+export function hasChanged(a: Like, b: Like) {
     return !(a.count === b.count)
 }
 

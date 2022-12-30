@@ -7,7 +7,7 @@ import { ChannelReadStateId } from "../../../../domain/types"
 import { IChannelReadStateCommandRepository } from "../../../../domain/repository/command/ChannelReadState"
 import { prisma } from "../client"
 
-export function has_changed(a: ChannelReadState, b: ChannelReadState) {
+export function hasChanged(a: ChannelReadState, b: ChannelReadState) {
     return !(a.lastMessageId === b.lastMessageId)
 }
 
@@ -47,7 +47,7 @@ export class ChannelReadStateCommandRepository
                         lastMessageCreatedAt: state.lastMessageCreatedAt,
                     },
                 })
-                if (has_changed(origState, updatedChannel)) {
+                if (hasChanged(origState, updatedChannel)) {
                     await this.emitChanges(state.id)
                 }
                 return origState.id
@@ -114,7 +114,7 @@ export class ChannelReadStateCommandRepository
                     lastMessageCreatedAt: state.lastMessageCreatedAt,
                 },
             })
-            if (has_changed(origState, updatedChannel)) {
+            if (hasChanged(origState, updatedChannel)) {
                 await this.emitChanges(state.id)
                 return true
             }

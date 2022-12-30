@@ -7,7 +7,7 @@ import { UserEntity } from "../../../../domain/entity/User"
 import { UserId } from "../../../../domain/types"
 import { prisma } from "../client"
 
-export function has_changed(a: User, b: User) {
+export function hasChanged(a: User, b: User) {
     return !(
         a.twitterUserId === b.twitterUserId &&
         a.name === b.name &&
@@ -121,7 +121,7 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
                     registrationIpAddress: user.registrationIpAddress,
                 },
             })
-            if (has_changed(origUser, updatedUser)) {
+            if (hasChanged(origUser, updatedUser)) {
                 await this.emitChanges(user.id)
                 return true
             }

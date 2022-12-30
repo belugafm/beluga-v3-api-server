@@ -7,7 +7,7 @@ import { ChannelGroupdId } from "../../../../domain/types"
 import { IChannelGroupCommandRepository } from "../../../../domain/repository/command/ChannelGroup"
 import { prisma } from "../client"
 
-export function has_changed(a: ChannelGroup, b: ChannelGroup) {
+export function hasChanged(a: ChannelGroup, b: ChannelGroup) {
     return !(
         a.name === b.name &&
         a.uniqueName === b.uniqueName &&
@@ -97,7 +97,7 @@ export class ChannelGroupCommandRepository extends ChangeEventHandler implements
                     lastMessageCreatedAt: channelGroup.lastMessageCreatedAt,
                 },
             })
-            if (has_changed(origChannelGroup, updatedChannelGroup)) {
+            if (hasChanged(origChannelGroup, updatedChannelGroup)) {
                 await this.emitChanges(channelGroup.id)
                 return true
             }

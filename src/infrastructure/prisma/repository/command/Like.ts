@@ -6,7 +6,7 @@ import { EntityId } from "../../../../domain/types"
 import { ILikeCommandRepository } from "../../../../domain/repository/command/Like"
 import { prisma } from "../client"
 
-export function has_changed(a: Like, b: Like) {
+export function hasChanged(a: Like, b: Like) {
     return !(a.count === b.count)
 }
 
@@ -65,7 +65,7 @@ export class LikeCommandRepository implements ILikeCommandRepository {
                     updatedAt: like.updatedAt,
                 },
             })
-            if (has_changed(origLike, updatedLike)) {
+            if (hasChanged(origLike, updatedLike)) {
                 return true
             }
             return false
