@@ -318,6 +318,12 @@ const config: {
         base_dir: "media", // 最終的なパスはpath.join("https://", config.server.domain, config.file.base_dir, "hoge.png")になる
         thumbnail_sizes: [
             {
+                tag: "small_square",
+                fit: "cover", // https://sharp.pixelplumbing.com/api-resize#resize
+                width: 100,
+                height: 100,
+            },
+            {
                 tag: "square",
                 fit: "cover", // https://sharp.pixelplumbing.com/api-resize#resize
                 width: 400,

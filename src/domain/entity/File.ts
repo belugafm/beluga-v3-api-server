@@ -114,12 +114,15 @@ export class FileEntity extends Entity {
     static getPathFromUrl(url: string) {
         return url.replace(FileEntity.getProtocol() + config.server.domain, "")
     }
+    getPublicUrl(): string {
+        return FileEntity.getProtocol() + pathlib.join(config.server.domain, this.path)
+    }
     toJsonObject(): FileJsonObjectT {
         return {
             id: this.id,
             user_id: this.userId,
             group: this.group,
-            path: FileEntity.getProtocol() + pathlib.join(config.server.domain, this.path),
+            path: this.getPublicUrl(),
             original: this.original,
             type: this.type,
             bytes: this.bytes,

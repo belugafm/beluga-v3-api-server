@@ -102,6 +102,7 @@ async function startAPIServer() {
     console.log("Register endpoints")
     server.register(require("./web/endpoint/account/signup"))
     server.register(require("./web/endpoint/account/signin"))
+    server.register(require("./web/endpoint/account/update_profile_image"))
     server.register(require("./web/endpoint/app/create"))
     server.register(require("./web/endpoint/app/list_app"))
     server.register(require("./web/endpoint/auth/cookie/authenticate"))
@@ -127,6 +128,7 @@ async function startAPIServer() {
     server.register(require("./web/endpoint/oauth/request_token"))
     server.register(require("./web/endpoint/oauth/authorize"))
     server.register(require("./web/endpoint/oauth/access_token"))
+    server.register(require("./web/endpoint/invites/show"))
     // server.register(require("./web/endpoint/debug"))
 
     server.listen(config.server.port)
