@@ -184,4 +184,5 @@ export type InviteJsonObjectT = {
     expire_date: Date
     verifier: string
     target_user_id: UserId | null
+    is_valid: boolean
 }

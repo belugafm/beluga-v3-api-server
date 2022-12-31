@@ -22,6 +22,8 @@ export { ChannelGroupCommandRepository } from "../infrastructure/prisma/reposito
 export { ChannelGroupQueryRepository } from "../infrastructure/prisma/repository/query/ChannelGroup"
 export { MessageCommandRepository } from "../infrastructure/prisma/repository/command/Message"
 export { MessageQueryRepository } from "../infrastructure/prisma/repository/query/Message"
+export { InviteCommandRepository } from "../infrastructure/prisma/repository/command/Invite"
+export { InviteQueryRepository } from "../infrastructure/prisma/repository/query/Invite"
 export { ApplicationCommandRepository } from "../infrastructure/prisma/repository/command/Application"
 export { ApplicationQueryRepository } from "../infrastructure/prisma/repository/query/Application"
 export { FileCommandRepository } from "../infrastructure/prisma/repository/command/File"

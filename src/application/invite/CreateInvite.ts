@@ -10,8 +10,6 @@ import { InviteEntity } from "../../domain/entity/Invite"
 export const ErrorCodes = {
     InternalError: "internal_error",
     RequestUserNotFound: "request_user_not_found",
-    MessageNotFound: "message_not_found",
-    ReachedMaxCount: "reached_max_count",
     ...PermissionErrorCodes,
 } as const
 
@@ -24,7 +22,7 @@ export class CreateInviteApplication {
         this.inviteCommandRepository = inviteCommandRepository
         this.permissionToCreateInvite = new CreateInvitePermission(userQueryRepository)
     }
-    async create({ requestUserId }: { messageId: MessageId; requestUserId: UserId }): Promise<boolean> {
+    async create(requestUserId: UserId): Promise<InviteEntity> {
         const requestUser = await this.userQueryRepository.findById(requestUserId)
         if (requestUser == null) {
             throw new ApplicationError(ErrorCodes.RequestUserNotFound)
@@ -47,8 +45,8 @@ export class CreateInviteApplication {
                 createdAt: new Date(),
                 expireDate: new Date(Date.now() + expireSeconds * 1000),
             })
-            await this.inviteCommandRepository.add(invite)
-            return true
+            invite.id = await this.inviteCommandRepository.add(invite)
+            return invite
         } catch (error) {
             throw new ApplicationError(ErrorCodes.InternalError)
         }

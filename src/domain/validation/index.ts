@@ -2,6 +2,7 @@ export { BooleanValidator } from "./types/Boolean"
 export { IntegerValidator } from "./types/Number"
 export { StringValidator } from "./types/String"
 export * as user from "./types/user"
+export * as invite from "./types/invite"
 export * as channelGroup from "./types/channel_group"
 export * as channel from "./types/channel"
 export * as message from "./types/message"
@@ -19,6 +20,7 @@ export {
     ChannelGroupIdValidator,
     UserIdValidator,
     MessageIdValidator,
+    InviteIdValidator,
 } from "./types/EntityId"
 export { SessionIdValidator } from "./types/SessionId"
 export { ColorCodeValidator } from "./types/ColorCode"

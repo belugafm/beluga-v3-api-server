@@ -61,6 +61,13 @@ export class InviteEntity extends Entity {
             expire_date: this.expireDate,
             verifier: this.verifier,
             target_user_id: this.targetUserId,
+            is_valid: this.isValid(),
         }
+    }
+    isValid(): boolean {
+        if (this.expireDate.getTime() < Date.now()) {
+            return false
+        }
+        return this.targetUserId === null
     }
 }
