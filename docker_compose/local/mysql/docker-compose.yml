@@ -33,3 +33,4 @@ services:
       - ../../../nginx/conf.d/app.conf:/etc/nginx/conf.d/app.conf
       - ../../../nginx/key.pem:/etc/nginx/key.pem
       - ../../../nginx/cert.pem:/etc/nginx/cert.pem
+      - ${MEDIA_STORAGE_PATH}:/var/www/media
