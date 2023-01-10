@@ -1,6 +1,7 @@
 import {
     ApplicationId,
     ApplicationTokenId,
+    AttachmentId,
     ChannelGroupdId,
     ChannelId,
     ChannelReadStateId,
@@ -55,6 +56,10 @@ export function FileIdValidator() {
 
 export function ApplicationIdValidator() {
     return new PropertyValidator<ApplicationId>({}, [checkIsEntityId])
+}
+
+export function AttachmentIdValidator() {
+    return new PropertyValidator<AttachmentId>({}, [checkIsEntityId])
 }
 
 export function ApplicationTokenIdValidator() {

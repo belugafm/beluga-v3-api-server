@@ -1,4 +1,4 @@
-import { ChannelId, MessageId, UserId } from "../../domain/types"
+import { ChannelId, FileId, MessageId, UserId } from "../../domain/types"
 import {
     ErrorCodes as CheckPermissionToPostMessageServiceErrorCodes,
     PostMessagePermission,
@@ -12,7 +12,6 @@ import { ErrorCodes as DomainErrorCodes, MessageEntity } from "../../domain/enti
 import { ApplicationError } from "../ApplicationError"
 import { ChannelEntity } from "../../domain/entity/Channel"
 import { DomainError } from "../../domain/DomainError"
-import { FileEntity } from "../../domain/entity/File"
 import { IChannelCommandRepository } from "../../domain/repository/command/Channel"
 import { IChannelGroupCommandRepository } from "../../domain/repository/command/ChannelGroup"
 import { IChannelGroupQueryRepository } from "../../domain/repository/query/ChannelGroup"
@@ -24,6 +23,9 @@ import { IMessageQueryRepository } from "../../domain/repository/query/Message"
 import { IUserCommandRepository } from "../../domain/repository/command/User"
 import { IUserQueryRepository } from "../../domain/repository/query/User"
 import { UserEntity } from "../../domain/entity/User"
+import { FindFilesInMessageTextService } from "../../domain/service/FindFilesInMessageText"
+import { IAttachmentCommandRepository } from "../../domain/repository/command/Attachment"
+import { AttachmentEntity } from "../../domain/entity/Attachment"
 
 export const ErrorCodes = {
     InternalError: "internal_error",
@@ -46,10 +48,11 @@ export class PostMessageApplication {
     private channelGroupCommandRepository: IChannelGroupCommandRepository
     private userQueryRepository: IUserQueryRepository
     private userCommandRepository: IUserCommandRepository
-    private fileQueryRepository: IFileQueryRepository
+    private attachmentCommandRepository: IAttachmentCommandRepository
     private channelGroupTimelineCommandRepository: IChannelGroupTimelineCommandRepository
     private permissionToPostMessageService: PostMessagePermission
-    private checkRateLimitForPostingMessageService: CheckRateLimitForPostingMessageService
+    private rateLimitForPostingMessageService: CheckRateLimitForPostingMessageService
+    private filesInMessageTextService: FindFilesInMessageTextService
     constructor(
         userQueryRepository: IUserQueryRepository,
         userCommandRepository: IUserCommandRepository,
@@ -59,6 +62,7 @@ export class PostMessageApplication {
         channelGroupCommandRepository: IChannelGroupCommandRepository,
         messageQueryRepository: IMessageQueryRepository,
         messageCommandRepository: IMessageCommandRepository,
+        attachmentCommandRepository: IAttachmentCommandRepository,
         fileQueryRepository: IFileQueryRepository,
         channelGroupTimelineCommandRepository: IChannelGroupTimelineCommandRepository
     ) {
@@ -70,33 +74,14 @@ export class PostMessageApplication {
         this.channelGroupCommandRepository = channelGroupCommandRepository
         this.userQueryRepository = userQueryRepository
         this.userCommandRepository = userCommandRepository
-        this.fileQueryRepository = fileQueryRepository
+        this.attachmentCommandRepository = attachmentCommandRepository
         this.channelGroupTimelineCommandRepository = channelGroupTimelineCommandRepository
         this.permissionToPostMessageService = new PostMessagePermission(userQueryRepository, channelQueryRepository)
-        this.checkRateLimitForPostingMessageService = new CheckRateLimitForPostingMessageService(
+        this.rateLimitForPostingMessageService = new CheckRateLimitForPostingMessageService(
             userQueryRepository,
             messageQueryRepository
         )
-    }
-    async findMediaUrls(text: string): Promise<FileEntity[]> {
-        const ret: FileEntity[] = []
-        const regexp = FileEntity.getMediaUrlRegexp()
-        const results = text.match(regexp)
-        if (results == null) {
-            return []
-        }
-        for (const url of results) {
-            const path = FileEntity.getPathFromUrl(url)
-            const file = await this.fileQueryRepository.findByPath(path)
-            if (file == null) {
-                continue
-            }
-            if (file.original !== true) {
-                continue
-            }
-            ret.push(file)
-        }
-        return ret
+        this.filesInMessageTextService = new FindFilesInMessageTextService(fileQueryRepository)
     }
     async _postMessage({
         text,
@@ -125,7 +110,7 @@ export class PostMessageApplication {
         })
 
         await this.permissionToPostMessageService.hasThrow(user.id, channel.id)
-        await this.checkRateLimitForPostingMessageService.hasThrow(user.id)
+        await this.rateLimitForPostingMessageService.hasThrow(user.id)
 
         message.id = await this.messageCommandRepository.add(message)
 
@@ -163,9 +148,18 @@ export class PostMessageApplication {
                 : null
         }
 
-        const attachedFiles = await this.findMediaUrls(text)
+        const attachedFiles = await this.filesInMessageTextService.find(text)
+        const uniqueAttachedFileIds = new Set<FileId>()
         for (const file of attachedFiles) {
-            console.log(file)
+            uniqueAttachedFileIds.add(file.id)
+        }
+        for (const fileId of uniqueAttachedFileIds) {
+            const attachment = new AttachmentEntity({
+                id: -1,
+                messageId: message.id,
+                fileId: fileId,
+            })
+            await this.attachmentCommandRepository.add(attachment)
         }
 
         return message

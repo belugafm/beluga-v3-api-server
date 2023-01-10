@@ -11,6 +11,7 @@ import { Options as StringOptions, StringValidator } from "./types/String"
 import {
     ApplicationIdValidator,
     ApplicationTokenIdValidator,
+    AttachmentIdValidator,
     ChannelGroupIdValidator,
     ChannelIdValidator,
     EntityIdValidator,
@@ -145,6 +146,10 @@ export function IsFileId(options?: ValidationOptions) {
 }
 export function IsFileType(options?: ValidationOptions) {
     return Validator(media.TypeValidator(), options)
+}
+
+export function IsAttachmentId(options?: ValidationOptions) {
+    return Validator(AttachmentIdValidator(), options)
 }
 
 export function IsApplicationId(options?: ValidationOptions) {

@@ -8,6 +8,7 @@ export type FileId = EntityId
 export type ApplicationId = EntityId
 export type ApplicationTokenId = EntityId
 export type InviteId = EntityId
+export type AttachmentId = EntityId
 
 export type UserJsonObjectT = {
     id: UserId
@@ -136,7 +137,7 @@ export type FileJsonObjectT = {
     id: FileId
     user_id: UserId
     group: string
-    path: string
+    url: string
     type: string
     bytes: number
     original: boolean

@@ -243,3 +243,11 @@ model Invite {
     @@unique([targetUserId])
     @@index([inviterId])
 }
+
+model Attachment {
+    id        Int @id @default(autoincrement())
+    messageId Int
+    fileId    Int
+
+    @@index([messageId])
+}

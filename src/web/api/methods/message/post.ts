@@ -11,6 +11,7 @@ import {
     TransactionRepository,
     UserCommandRepository,
     UserQueryRepository,
+    AttachmentCommandRepository,
 } from "../../../repositories"
 import { ErrorCodes, PostMessageApplication } from "../../../../application/message/PostMessage"
 import { InternalErrorSpec, InvalidAuth, UnexpectedErrorSpec, raise } from "../../error"
@@ -149,6 +150,7 @@ export default defineMethod(
                     new ChannelGroupCommandRepository(transactionSession),
                     new MessageQueryRepository(transactionSession),
                     new MessageCommandRepository(transactionSession),
+                    new AttachmentCommandRepository(transactionSession),
                     new FileQueryRepository(transactionSession),
                     new ChannelGroupTimelineCommandRepository(transactionSession)
                 ).post({

@@ -112,7 +112,7 @@ export class FileEntity extends Entity {
         return new RegExp(`${baseUrl}\\/[0-9a-zA-Z]{15}\\.(${ext})`, "g")
     }
     static getPathFromUrl(url: string) {
-        return url.replace(FileEntity.getProtocol() + config.server.domain, "")
+        return url.replace(FileEntity.getProtocol() + config.server.domain + "/", "")
     }
     getPublicUrl(): string {
         return FileEntity.getProtocol() + pathlib.join(config.server.domain, this.path)
@@ -122,7 +122,7 @@ export class FileEntity extends Entity {
             id: this.id,
             user_id: this.userId,
             group: this.group,
-            path: this.getPublicUrl(),
+            url: this.getPublicUrl(),
             original: this.original,
             type: this.type,
             bytes: this.bytes,

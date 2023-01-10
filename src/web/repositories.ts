@@ -24,6 +24,8 @@ export { MessageCommandRepository } from "../infrastructure/prisma/repository/co
 export { MessageQueryRepository } from "../infrastructure/prisma/repository/query/Message"
 export { InviteCommandRepository } from "../infrastructure/prisma/repository/command/Invite"
 export { InviteQueryRepository } from "../infrastructure/prisma/repository/query/Invite"
+export { AttachmentCommandRepository } from "../infrastructure/prisma/repository/command/Attachment"
+export { AttachmentQueryRepository } from "../infrastructure/prisma/repository/query/Attachment"
 export { ApplicationCommandRepository } from "../infrastructure/prisma/repository/command/Application"
 export { ApplicationQueryRepository } from "../infrastructure/prisma/repository/query/Application"
 export { FileCommandRepository } from "../infrastructure/prisma/repository/command/File"
