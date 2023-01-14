@@ -130,7 +130,7 @@ export class MessageQueryRepository implements IMessageQueryRepository {
     }): Promise<MessageEntity[]> {
         try {
             const where: any = {
-                text: params.text,
+                text: { search: params.text },
                 deleted: false,
             }
             if (MessageIdValidator().ok(params.sinceId)) {

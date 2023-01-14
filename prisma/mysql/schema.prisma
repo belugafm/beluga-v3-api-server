@@ -1,6 +1,6 @@
 generator client {
     provider        = "prisma-client-js"
-    previewFeatures = ["interactiveTransactions"]
+    previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -107,6 +107,7 @@ model Message {
     @@index([threadId, deleted])
     @@index([userId, deleted])
     @@index([channelId, threadId, deleted])
+    @@fulltext([text])
 }
 
 model MessageEntityUrl {

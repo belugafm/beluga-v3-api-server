@@ -123,6 +123,7 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
         }
         return messageObjs
     } catch (error) {
+        console.error(error)
         if (error instanceof Error) {
             raise(errors["unexpected_error"], error)
         } else {
