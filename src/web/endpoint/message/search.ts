@@ -6,7 +6,6 @@ import { getRemoteIpAddress } from "../../remoteIpAddress"
 export default (server: TurboServer) => {
     server.get(facts, async (req, res, params) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
-        console.log(req.query.text)
         const messages = await searchMessage(
             {
                 text: req.query.text,

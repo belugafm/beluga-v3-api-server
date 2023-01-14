@@ -32,3 +32,6 @@ env DATABASE_URL=mysql://root:root@127.0.0.1:3306/test_database GCLOUD_STORAGE_B
 ```
 ip addr show
 ```
+
+Message.text の全文検索のパーサーに ngram を手動で設定する必要がある
+WITH PARSER ngram
