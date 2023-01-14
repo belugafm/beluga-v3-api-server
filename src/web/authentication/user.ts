@@ -62,7 +62,7 @@ export class UserAuthenticator {
                     // @ts-ignore
                     signatureMethod,
                     // @ts-ignore
-                    timestamp: Math.trunc(timestamp),
+                    timestamp: Number(timestamp),
                     // @ts-ignore
                     requestToken,
                     // @ts-ignore
@@ -106,7 +106,7 @@ export class UserAuthenticator {
                         // @ts-ignore
                         signatureMethod,
                         // @ts-ignore
-                        timestamp: Math.trunc(timestamp),
+                        timestamp: Number(timestamp),
                         // @ts-ignore
                         accessToken,
                         // @ts-ignore

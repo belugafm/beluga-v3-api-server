@@ -15,7 +15,7 @@ export class PropertyValidator<T> {
         }
         return true
     }
-    ok(value: T): boolean {
+    ok(value: any): boolean {
         try {
             this.validationFuncs.forEach((check) => {
                 check(value, this.options)

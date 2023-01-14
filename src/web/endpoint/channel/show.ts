@@ -9,7 +9,7 @@ export default (server: TurboServer) => {
         const channel = await show(
             {
                 unique_name: req.query.unique_name ? req.query.unique_name : null,
-                id: req.query.id ? Math.trunc(req.query.id) : undefined,
+                id: req.query.id ? Number(req.query.id) : undefined,
             },
             remoteIpAddress,
             params["authUser"],

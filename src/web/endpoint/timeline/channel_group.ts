@@ -8,10 +8,10 @@ export default (server: TurboServer) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
         const messages = await listMessage(
             {
-                channel_group_id: Math.trunc(req.query.channel_group_id),
-                since_id: Math.trunc(req.query.since_id),
-                max_id: Math.trunc(req.query.max_id),
-                limit: Math.trunc(req.query.limit),
+                channel_group_id: Number(req.query.channel_group_id),
+                since_id: Number(req.query.since_id),
+                max_id: Number(req.query.max_id),
+                limit: Number(req.query.limit),
                 sort_order: req.query.sort_order,
             },
             remoteIpAddress,

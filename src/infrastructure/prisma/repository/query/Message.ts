@@ -1,10 +1,17 @@
 import { Message, PrismaClient } from "@prisma/client"
 import { RepositoryError, UnknownRepositoryError } from "../../../../domain/repository/RepositoryError"
 
-import { IMessageQueryRepository } from "../../../../domain/repository/query/Message"
+import { IMessageQueryRepository, SortBy, SortOrder } from "../../../../domain/repository/query/Message"
 import { MessageEntity } from "../../../../domain/entity/Message"
 import { MessageId } from "../../../../domain/types"
-import { isInteger } from "../../../../domain/validation"
+import {
+    ChannelIdValidator,
+    isDate,
+    isInteger,
+    isString,
+    MessageIdValidator,
+    UserIdValidator,
+} from "../../../../domain/validation"
 import { prisma } from "../client"
 
 export function toEntity(message: Message) {
@@ -102,6 +109,72 @@ export class MessageQueryRepository implements IMessageQueryRepository {
             }
             return toEntity(message)
         } catch (error) {
+            if (error instanceof Error) {
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
+    async search(params: {
+        text: string
+        channelId?: number
+        userId?: number
+        sinceId?: number
+        maxId?: number
+        sinceDate?: number
+        untilDate?: number
+        limit?: number
+        sortBy?: typeof SortBy[keyof typeof SortBy]
+        sortOrder?: typeof SortOrder[keyof typeof SortOrder]
+    }): Promise<MessageEntity[]> {
+        try {
+            const where: any = {
+                text: params.text,
+                deleted: false,
+            }
+            if (MessageIdValidator().ok(params.sinceId)) {
+                where["messageId"] = {
+                    gt: params.sinceId,
+                }
+            } else if (MessageIdValidator().ok(params.maxId)) {
+                where["messageId"] = {
+                    lt: params.sinceId,
+                }
+            }
+            if (isDate(params.sinceDate)) {
+                where["createdAt"] = {
+                    gt: params.sinceDate,
+                }
+            } else if (isDate(params.untilDate)) {
+                where["createdAt"] = {
+                    lt: params.untilDate,
+                }
+            }
+            if (ChannelIdValidator().ok(params.channelId)) {
+                where["channelId"] = params.channelId
+            }
+            if (UserIdValidator().ok(params.userId)) {
+                where["userId"] = params.userId
+            }
+            const orderBy: any = {}
+            if (isString(params.sortBy)) {
+                if (params.sortOrder == SortOrder.Ascending) {
+                    orderBy[params.sortBy] = "asc"
+                } else if (params.sortOrder == SortOrder.Descending) {
+                    orderBy[params.sortBy] = "desc"
+                }
+            }
+            const messages = await this._prisma.message.findMany({
+                where,
+                orderBy,
+                take: isInteger(params.limit) ? Math.min(200, params.limit) : 30,
+            })
+            return messages.map((message) => {
+                return toEntity(message)
+            })
+        } catch (error) {
+            console.error(error)
             if (error instanceof Error) {
                 throw new RepositoryError(error.message, error.stack)
             } else {

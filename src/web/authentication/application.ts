@@ -47,7 +47,7 @@ export class ApplicationAuthenticator {
                     // @ts-ignore
                     signatureMethod,
                     // @ts-ignore
-                    timestamp: Math.trunc(timestamp),
+                    timestamp: Number(timestamp),
                     // @ts-ignore
                     version,
                     // @ts-ignore

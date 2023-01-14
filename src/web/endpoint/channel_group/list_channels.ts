@@ -8,7 +8,7 @@ export default (server: TurboServer) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
         const channels = await listChannels(
             {
-                id: Math.trunc(req.query.id),
+                id: Number(req.query.id),
             },
             remoteIpAddress,
             params["authUser"],

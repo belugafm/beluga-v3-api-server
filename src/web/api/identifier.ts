@@ -25,6 +25,7 @@ export const MethodIdentifiers = {
     PostMessage: "message/post",
     DeleteMessage: "message/delete",
     ShowMessage: "message/show",
+    SearchMessage: "message/search",
     ShowInvite: "invites/show",
     CreateLike: "likes/create",
     CreateFavorite: "favorites/create",

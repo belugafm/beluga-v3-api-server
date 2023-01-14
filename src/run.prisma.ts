@@ -118,6 +118,7 @@ async function startAPIServer() {
     server.register(require("./web/endpoint/message/post"))
     server.register(require("./web/endpoint/message/delete"))
     server.register(require("./web/endpoint/message/show"))
+    server.register(require("./web/endpoint/message/search"))
     server.register(require("./web/endpoint/likes/create"))
     server.register(require("./web/endpoint/favorites/create"))
     server.register(require("./web/endpoint/favorites/destroy"))

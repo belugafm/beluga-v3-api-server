@@ -8,7 +8,7 @@ export default (server: TurboServer) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
         const succeeded = await destroyFavorite(
             {
-                message_id: Math.trunc(req.body.message_id),
+                message_id: Number(req.body.message_id),
             },
             remoteIpAddress,
             params["authUser"],

@@ -10,8 +10,8 @@ export default (server: TurboServer) => {
             {
                 text: req.body.text,
                 text_style: req.body.text_style,
-                channel_id: req.body.channel_id ? Math.trunc(req.body.channel_id) : undefined,
-                thread_id: req.body.thread_id ? Math.trunc(req.body.thread_id) : undefined,
+                channel_id: req.body.channel_id ? Number(req.body.channel_id) : undefined,
+                thread_id: req.body.thread_id ? Number(req.body.thread_id) : undefined,
             },
             remoteIpAddress,
             params["authUser"],

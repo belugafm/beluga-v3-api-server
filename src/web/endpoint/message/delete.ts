@@ -8,7 +8,7 @@ export default (server: TurboServer) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
         const succeeded = await deleteMessage(
             {
-                id: Math.trunc(req.body.id),
+                id: Number(req.body.id),
             },
             remoteIpAddress,
             params["authUser"],
