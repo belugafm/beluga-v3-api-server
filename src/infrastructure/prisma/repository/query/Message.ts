@@ -158,12 +158,15 @@ export class MessageQueryRepository implements IMessageQueryRepository {
                 where["userId"] = params.userId
             }
             const orderBy: any = {}
+            const defaultSortBy = "createdAt"
             if (isString(params.sortBy)) {
                 if (params.sortOrder == SortOrder.Ascending) {
-                    orderBy[params.sortBy] = "asc"
+                    orderBy[defaultSortBy] = "asc"
                 } else if (params.sortOrder == SortOrder.Descending) {
-                    orderBy[params.sortBy] = "desc"
+                    orderBy[defaultSortBy] = "desc"
                 }
+            } else {
+                orderBy[defaultSortBy] = "desc"
             }
             const messages = await this._prisma.message.findMany({
                 where,
