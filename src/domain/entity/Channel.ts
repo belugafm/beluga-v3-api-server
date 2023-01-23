@@ -106,6 +106,11 @@ export class ChannelEntity extends Entity {
         this.lastMessageCreatedAt = params.lastMessageCreatedAt != null ? params.lastMessageCreatedAt : null
         this.description = params.description != null ? params.description : null
     }
+    static getPublicUrlRegexp() {
+        const protocol = config.server.https ? "https://" : "http://"
+        const baseUrl = protocol.replace("/", "\\/") + config.server.domain + "\\/channel"
+        return new RegExp(`${baseUrl}\\/([0-9a-zA-Z_]{1,32})`, "g")
+    }
     toJsonObject(): ChannelJsonObjectT {
         return {
             id: this.id,

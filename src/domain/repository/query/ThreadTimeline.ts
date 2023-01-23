@@ -11,7 +11,6 @@ export const SortOrder = {
 } as const
 
 export type Parameters = {
-    sortBy: typeof SortBy[keyof typeof SortBy]
     sortOrder: typeof SortOrder[keyof typeof SortOrder]
     limit: number
     sinceId?: MessageId
@@ -19,5 +18,5 @@ export type Parameters = {
 }
 
 export interface IThreadTimelineQueryRepository {
-    listMessage(params: { threadId: MessageId } & Parameters): Promise<MessageEntity[]>
+    listMessage(params: { messageId: MessageId } & Parameters): Promise<MessageEntity[]>
 }

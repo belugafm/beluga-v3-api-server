@@ -1,3 +1,4 @@
+import { ChannelEntity } from "../../../domain/entity/Channel"
 import { FileEntity } from "../../../domain/entity/File"
 import { UserEntity } from "../../../domain/entity/User"
 import { MessageJsonObjectT } from "../../../domain/types"
@@ -30,6 +31,7 @@ export const includeMessageRelations = async (
     authUser: UserEntity | null
 ): Promise<MessageJsonObjectT> => {
     const userRepository = new UserQueryRepository()
+    const channelRepository = new ChannelQueryRepository()
     const fileRepository = new FileQueryRepository()
     const attachmentRepository = new AttachmentQueryRepository()
     if (messageObj.favorite_count > 0) {
@@ -59,17 +61,37 @@ export const includeMessageRelations = async (
     if (channel) {
         messageObj.channel = channel.toJsonObject()
     }
-    if (messageObj.text && messageObj.text?.indexOf("http") != -1) {
-        const attachments = await attachmentRepository.findByMessageId(messageObj.id)
-        let entities: MessageJsonObjectT["entities"]["files"] = []
-        for (const attachment of attachments) {
-            const file = await fileRepository.findById(attachment.fileId)
-            if (file) {
-                const entitiesForUrl = extractMediaEntitiesForUrl(messageObj.text, file)
-                entities = entities.concat(entitiesForUrl)
+    if (messageObj.text) {
+        if (messageObj.text.indexOf("http") != -1) {
+            const attachments = await attachmentRepository.findByMessageId(messageObj.id)
+            let fileEntities: MessageJsonObjectT["entities"]["files"] = []
+            for (const attachment of attachments) {
+                const file = await fileRepository.findById(attachment.fileId)
+                if (file) {
+                    const entitiesForUrl = extractMediaEntitiesForUrl(messageObj.text, file)
+                    fileEntities = fileEntities.concat(entitiesForUrl)
+                }
             }
+            messageObj.entities.files = fileEntities
+
+            let channelEntities: MessageJsonObjectT["entities"]["channels"] = []
+            const results = [...messageObj.text.matchAll(ChannelEntity.getPublicUrlRegexp())]
+            for (let k = 0; k < Math.min(results.length, 10); k++) {
+                const result = results[k]
+                const uniqueName = result[1]
+                const channel = await channelRepository.findByUniqueName(uniqueName)
+                if (channel) {
+                    console.log(channel)
+                    channelEntities.push({
+                        channel_id: channel.id,
+                        channel: channel.toJsonObject(),
+                        // @ts-ignore
+                        indices: [result.index, result.index + result[0].length - 1],
+                    })
+                }
+            }
+            messageObj.entities.channels = channelEntities
         }
-        messageObj.entities.files = entities
     }
     return messageObj
 }

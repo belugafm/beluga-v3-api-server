@@ -31,6 +31,7 @@ export { ApplicationQueryRepository } from "../infrastructure/prisma/repository/
 export { FileCommandRepository } from "../infrastructure/prisma/repository/command/File"
 export { FileQueryRepository } from "../infrastructure/prisma/repository/query/File"
 export { ChannelTimelineQueryRepository } from "../infrastructure/prisma/repository/query/ChannelTimeline"
+export { ThreadTimelineQueryRepository } from "../infrastructure/prisma/repository/query/ThreadTimeline"
 export { TransactionRepository } from "../infrastructure/prisma/repository/Transaction"
 export { IPGeolocationQueryRepository } from "../infrastructure/ipqualityscore/IPGeolocation"
 export { StorageCommandRepository } from "../infrastructure/storage/NFS"
