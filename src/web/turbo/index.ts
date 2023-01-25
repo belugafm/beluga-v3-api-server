@@ -159,10 +159,16 @@ export class TurboServer {
         this.router.get(requestBasePath, async (req, res, params) => {
             res.setHeader("Content-Type", ContentType.JSON)
             try {
-                const query = qs.parse(req.url.replace(/^.+\?/, ""), {
-                    decoder: decodeURIComponent,
-                })
-                req.query = query
+                // TODO: reqに既にパースされたクエリオブジェクトがあるかも
+                if (req.url.indexOf("?") == -1) {
+                    req.query = {}
+                } else {
+                    const query = qs.parse(req.url.replace(/^.+\?/, ""), {
+                        decoder: decodeURIComponent,
+                    })
+                    console.log(query)
+                    req.query = query
+                }
 
                 if (facts.userAuthenticationRequired) {
                     // ユーザー認証をここで行う
@@ -173,7 +179,7 @@ export class TurboServer {
                             requestBaseUrl: config.server.get_base_url() + requestBasePath,
                             headers: req.headers,
                             cookies: req.cookies || {},
-                            body: query,
+                            body: req.query,
                             httpMethod: "GET",
                         })
                         if (authUser == null) {

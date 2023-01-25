@@ -22,13 +22,35 @@ import { AuthenticateUserByAccessTokenApplication } from "./application/oauth/Au
 import { OAuthAuthenticateAppApplication } from "./application/oauth/AuthenticateApp"
 import { AuthenticateUserByRequestTokenApplication } from "./application/oauth/AuthenticateUserByRequestToken"
 
+function heartbeat() {
+    // @ts-ignore
+    this.alive = true
+}
+
 function startWebsocketServer() {
     const wss = new WebSocketServer({
         port: config.server.websocket_port,
     })
-    // wss.on("connection", (ws: any, request: any, client: any) => {
-    //     console.log(wss.clients.size)
-    // })
+    wss.on("connection", (ws: any, request: any, client: any) => {
+        ws.alive = true
+        ws.on("error", console.error)
+        ws.on("pong", heartbeat)
+    })
+    const interval = setInterval(function ping() {
+        wss.clients.forEach(function each(ws) {
+            // @ts-ignore
+            if (ws.alive === false) {
+                console.log("Terminating", ws)
+                return ws.terminate()
+            }
+            // @ts-ignore
+            ws.alive = false
+            ws.ping()
+        })
+    }, 60000)
+    wss.on("close", function close() {
+        clearInterval(interval)
+    })
     const broadcast = (data: { [key: string]: any }) => {
         wss.clients.forEach(function each(client) {
             if (client.readyState === WebSocket.OPEN) {
