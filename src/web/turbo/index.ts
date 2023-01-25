@@ -166,19 +166,24 @@ export class TurboServer {
 
                 if (facts.userAuthenticationRequired) {
                     // ユーザー認証をここで行う
-                    const authUser = await this.userAuthenticator.authenticate({
-                        facts: facts,
-                        // GETリクエストの場合requestBaseUrlは?以降を削除したもの
-                        requestBaseUrl: config.server.get_base_url() + requestBasePath,
-                        headers: req.headers,
-                        cookies: req.cookies || {},
-                        body: query,
-                        httpMethod: "GET",
-                    })
-                    if (authUser == null) {
+                    try {
+                        const authUser = await this.userAuthenticator.authenticate({
+                            facts: facts,
+                            // GETリクエストの場合requestBaseUrlは?以降を削除したもの
+                            requestBaseUrl: config.server.get_base_url() + requestBasePath,
+                            headers: req.headers,
+                            cookies: req.cookies || {},
+                            body: query,
+                            httpMethod: "GET",
+                        })
+                        if (authUser == null) {
+                            return InvalidAuthRoute(req, res)
+                        }
+                        params["authUser"] = authUser
+                    } catch (error) {
+                        console.error(error)
                         return InvalidAuthRoute(req, res)
                     }
-                    params["authUser"] = authUser
                 }
                 const data = await handler(req, res, params)
                 res.write(Buffer.from(JSON.stringify(data)))
@@ -243,15 +248,20 @@ export class TurboServer {
 
                 if (facts.url == MethodIdentifiers.GenerateRequestToken) {
                     // アプリケーションの認証
-                    const authApp = await this.appAuthenticator.authenticate({
-                        requestBaseUrl: config.server.get_base_url() + requestBasePath,
-                        headers: req.headers,
-                        body: body,
-                    })
-                    if (authApp == null) {
+                    try {
+                        const authApp = await this.appAuthenticator.authenticate({
+                            requestBaseUrl: config.server.get_base_url() + requestBasePath,
+                            headers: req.headers,
+                            body: body,
+                        })
+                        if (authApp == null) {
+                            return InvalidAuthRoute(req, res)
+                        }
+                        params["authApp"] = authApp
+                    } catch (error) {
+                        console.error(error)
                         return InvalidAuthRoute(req, res)
                     }
-                    params["authApp"] = authApp
                 } else if (facts.url == MethodIdentifiers.GenerateAccessToken) {
                     // リクエストトークンによるユーザー認証
                     const [authApp, authUser] = await this.userAuthenticator.authenticateByRequestToken({
