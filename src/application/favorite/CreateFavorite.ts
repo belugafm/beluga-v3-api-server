@@ -39,7 +39,7 @@ export class CreateFavoriteApplication {
         this.favoriteCommandRepository = favoriteCommandRepository
         this.permissionToCreateFavorite = new CreateFavoritePermission(userQueryRepository, messageQueryRepository)
     }
-    async delete({ messageId, requestUserId }: { messageId: MessageId; requestUserId: UserId }): Promise<boolean> {
+    async create({ messageId, requestUserId }: { messageId: MessageId; requestUserId: UserId }): Promise<boolean> {
         const requestUser = await this.userQueryRepository.findById(requestUserId)
         if (requestUser == null) {
             throw new ApplicationError(ErrorCodes.RequestUserNotFound)

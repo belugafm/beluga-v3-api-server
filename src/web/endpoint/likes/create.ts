@@ -6,7 +6,7 @@ import { getRemoteIpAddress } from "../../remoteIpAddress"
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
-        const succeeded = await createLike(
+        const message = await createLike(
             {
                 message_id: Number(req.body.message_id),
             },
@@ -15,7 +15,8 @@ export default (server: TurboServer) => {
             null
         )
         return {
-            ok: succeeded,
+            ok: true,
+            message: message,
         }
     })
 }

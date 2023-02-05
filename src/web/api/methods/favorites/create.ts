@@ -17,6 +17,7 @@ import { AuthenticationMethods } from "../../facts/authentication_method"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
+import { MessageJsonObjectT } from "../../../../domain/types"
 
 export const argumentSpecs = defineArguments(["message_id"] as const, {
     message_id: {
@@ -65,26 +66,27 @@ export const facts: MethodFacts = {
     description: ["メッセージを「ふぁぼ」します"],
 }
 
-type ReturnType = Promise<boolean>
+type ReturnType = Promise<MessageJsonObjectT>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors, authUser): ReturnType => {
-    const transaction = await TransactionRepository.new<ReturnType>()
+    const transaction = await TransactionRepository.new<Promise<boolean>>()
     if (authUser == null) {
         raise(errors["invalid_auth"])
     }
     try {
-        return await transaction.$transaction(async (transactionSession) => {
+        await transaction.$transaction(async (transactionSession) => {
             return await new CreateFavoriteApplication(
                 new UserQueryRepository(transactionSession),
                 new MessageQueryRepository(transactionSession),
                 new MessageCommandRepository(transactionSession),
                 new FavoriteQueryRepository(transactionSession),
                 new FavoriteCommandRepository(transactionSession)
-            ).delete({
+            ).create({
                 messageId: args.message_id,
                 requestUserId: authUser.id,
             })
         })
+        return (await new MessageQueryRepository().findById(args.message_id))!.toJsonObject()
     } catch (error) {
         if (error instanceof ApplicationError) {
             if (error.code === ErrorCodes.DoNotHavePermission) {

@@ -10,6 +10,7 @@ import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
 import { includeMessageRelations } from "../../relations/message"
+import { ApplicationError } from "../../../../application/ApplicationError"
 
 export const argumentSpecs = defineArguments(["id"] as const, {
     id: {
@@ -28,6 +29,7 @@ export const expectedErrorSpecs = defineErrors(
             description: ["`id`を指定してください"],
             hint: [],
             code: "missing_argument",
+            argument: "id",
         },
         not_found: {
             description: ["指定されたメッセージが見つかりませんでした"],
@@ -60,11 +62,16 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
     try {
         const message = await new MessageQueryRepository().findById(args.id)
         if (message == null) {
-            return null
+            throw new ApplicationError("not_found")
         }
         const messageObj = message.toJsonObject()
         return await includeMessageRelations(messageObj, authUser)
     } catch (error) {
+        if (error instanceof ApplicationError) {
+            if (error.code == "not_found") {
+                raise(errors["not_found"])
+            }
+        }
         if (error instanceof Error) {
             raise(errors["unexpected_error"], error)
         } else {
