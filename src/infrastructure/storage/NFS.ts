@@ -10,6 +10,7 @@ export class StorageCommandRepository implements IStorageCommandRepository {
             fs.writeFileSync(pathlib.join(config.storage.nfs.base_dir, path), buffer)
             return true
         } catch (error) {
+            console.error(error)
             throw new RepositoryError("ファイルを保存できません")
         }
         return false
