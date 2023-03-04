@@ -144,7 +144,8 @@ export function defineMethod<
         args: Args,
         errors: ExpectedErrorSpecs<ArgumentSpecs, ErrorCodes>,
         authUser: UserEntity | null,
-        authApp: ApplicationEntity | null
+        authApp: ApplicationEntity | null,
+        remoteIpAddress: string
     ) => Promise<CallbackReturnType>
 ): (
     args: Args,
@@ -217,6 +218,6 @@ export function defineMethod<
                 }
             }
         }
-        return callback(args, expectedErrorSpecs, authUser, authApp)
+        return callback(args, expectedErrorSpecs, authUser, authApp, remoteIpAddress)
     }
 }

@@ -23,6 +23,7 @@ export type UserJsonObjectT = {
     favorites_count: number
     favorited_count: number
     bot: boolean
+    bot_owner_id: UserId | null
     active: boolean
     dormant: boolean
     suspended: boolean
@@ -174,6 +175,8 @@ export type ApplicationJsonObjectT = {
     name: string
     description: string | null
     callback_url: string
+    token: string
+    secret: string
     read: boolean
     write: boolean
 }

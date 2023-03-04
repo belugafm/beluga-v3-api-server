@@ -40,6 +40,7 @@ export const ErrorCodes = {
     InvalidDate: "invalid_date",
     InvalidValue: "invalid_boolean",
     InvalidUrl: "invalid_url",
+    InvalidBotOwnerId: "invalid_bot_owner_id",
     InvalidLocation: "invalid_location",
 } as const
 
@@ -89,6 +90,9 @@ export class UserEntity extends Entity {
     @IsBoolean({ errorCode: ErrorCodes.InvalidValue })
     bot: boolean
 
+    @IsUserId({ nullable: true, errorCode: ErrorCodes.InvalidId })
+    botOwnerId: UserId | null
+
     @IsBoolean({ errorCode: ErrorCodes.InvalidValue })
     active: boolean // 登録後サイトを利用したかどうか
 
@@ -134,6 +138,7 @@ export class UserEntity extends Entity {
         this.favoritesCount = params.favoritesCount != null ? params.favoritesCount : 0
         this.favoritedCount = params.favoritedCount != null ? params.favoritedCount : 0
         this.bot = params.bot != null ? params.bot : false
+        this.botOwnerId = params.botOwnerId != null ? params.botOwnerId : null
         this.active = params.active != null ? params.active : false
         this.dormant = params.dormant != null ? params.dormant : false
         this.suspended = params.suspended != null ? params.suspended : false
@@ -159,6 +164,7 @@ export class UserEntity extends Entity {
             favorites_count: this.favoritedCount,
             favorited_count: this.favoritedCount,
             bot: this.bot,
+            bot_owner_id: this.botOwnerId,
             active: this.active,
             dormant: this.dormant,
             suspended: this.suspended,

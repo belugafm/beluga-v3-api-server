@@ -1,254 +1,257 @@
 generator client {
-    provider        = "prisma-client-js"
-    previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model LoginCredential {
-    id           Int    @id @default(autoincrement())
-    userId       Int    @unique
-    passwordHash String @db.VarChar(255)
+  id           Int    @id @default(autoincrement())
+  userId       Int    @unique
+  passwordHash String @db.VarChar(255)
 }
 
 model LoginSession {
-    id           Int      @id @default(autoincrement())
-    userId       Int
-    sessionId    String   @unique @db.VarChar(255)
-    ipAddress    String
-    expireDate   DateTime
-    expired      Boolean
-    createdAt    DateTime @default(now())
-    lastLocation String?  @db.VarChar(255)
-    device       String?  @db.VarChar(255)
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  sessionId    String   @unique @db.VarChar(255)
+  ipAddress    String
+  expireDate   DateTime
+  expired      Boolean
+  createdAt    DateTime @default(now())
+  lastLocation String?  @db.VarChar(255)
+  device       String?  @db.VarChar(255)
 }
 
 // CSRF対策
 model AuthenticityToken {
-    id        Int    @id @default(autoincrement())
-    sessionId String @unique @db.VarChar(255)
-    token     String @unique @db.VarChar(255)
+  id        Int    @id @default(autoincrement())
+  sessionId String @unique @db.VarChar(255)
+  token     String @unique @db.VarChar(255)
 }
 
 model User {
-    id                             Int       @id @default(autoincrement())
-    name                           String    @unique
-    twitterUserId                  String?   @unique @db.VarChar(255)
-    displayName                    String?   @db.VarChar(255)
-    profileImageUrl                String?   @db.VarChar(255)
-    location                       String?   @db.VarChar(255)
-    url                            String?   @db.VarChar(255)
-    description                    String?   @db.Text
-    messageCount                   Int // 全投稿数
-    favoritesCount                 Int // ふぁぼった投稿数
-    favoritedCount                 Int // ふぁぼられた投稿数
-    createdAt                      DateTime  @default(now())
-    bot                            Boolean
-    active                         Boolean   @default(false) // 登録後サイトを利用したかどうか
-    dormant                        Boolean   @default(false) // サイトを長期間利用しなかったかどうか
-    suspended                      Boolean   @default(false) // 凍結されたかどうか
-    trustLevel                     Int // 信用レベル
-    lastActivityDate               DateTime? // 最後に活動した日
-    termsOfServiceAgreementDate    DateTime? // 利用規約に同意した日
-    termsOfServiceAgreementVersion String?   @db.VarChar(255) // 同意した利用規約のバージョン
-    registrationIpAddress          String // 登録時のIPアドレス
+  id                             Int       @id @default(autoincrement())
+  name                           String    @unique
+  twitterUserId                  String?   @unique @db.VarChar(255)
+  displayName                    String?   @db.VarChar(255)
+  profileImageUrl                String?   @db.VarChar(255)
+  location                       String?   @db.VarChar(255)
+  url                            String?   @db.VarChar(255)
+  description                    String?   @db.Text
+  messageCount                   Int // 全投稿数
+  favoritesCount                 Int // ふぁぼった投稿数
+  favoritedCount                 Int // ふぁぼられた投稿数
+  createdAt                      DateTime  @default(now())
+  bot                            Boolean
+  botOwnerId                     Int?
+  active                         Boolean   @default(false) // 登録後サイトを利用したかどうか
+  dormant                        Boolean   @default(false) // サイトを長期間利用しなかったかどうか
+  suspended                      Boolean   @default(false) // 凍結されたかどうか
+  trustLevel                     Int // 信用レベル
+  lastActivityDate               DateTime? // 最後に活動した日
+  termsOfServiceAgreementDate    DateTime? // 利用規約に同意した日
+  termsOfServiceAgreementVersion String?   @db.VarChar(255) // 同意した利用規約のバージョン
+  registrationIpAddress          String // 登録時のIPアドレス
+
+  @@index([botOwnerId])
 }
 
 model ChannelGroup {
-    id                   Int       @id @default(autoincrement())
-    name                 String    @db.VarChar(255)
-    uniqueName           String    @unique @db.VarChar(255)
-    parentId             Int?
-    createdBy            Int
-    createdAt            DateTime  @default(now())
-    level                Int // 階層の深さ 0が最上位
-    channelCount         Int       @default(0)
-    messageCount         Int       @default(0)
-    description          String?   @db.Text
-    imageUrl             String?   @db.VarChar(255)
-    lastMessageId        Int?
-    lastMessageCreatedAt DateTime?
-    minimumTrustRank     String    @default("Visitor") @db.VarChar(255)
+  id                   Int       @id @default(autoincrement())
+  name                 String    @db.VarChar(255)
+  uniqueName           String    @unique @db.VarChar(255)
+  parentId             Int?
+  createdBy            Int
+  createdAt            DateTime  @default(now())
+  level                Int // 階層の深さ 0が最上位
+  channelCount         Int       @default(0)
+  messageCount         Int       @default(0)
+  description          String?   @db.Text
+  imageUrl             String?   @db.VarChar(255)
+  lastMessageId        Int?
+  lastMessageCreatedAt DateTime?
+  minimumTrustRank     String    @default("Visitor") @db.VarChar(255)
 }
 
 model Channel {
-    id                   Int       @id @default(autoincrement())
-    name                 String    @db.VarChar(255)
-    uniqueName           String    @unique @db.VarChar(255)
-    parentChannelGroupId Int
-    createdBy            Int
-    createdAt            DateTime  @default(now())
-    messageCount         Int       @default(0)
-    statusString         String    @default("#") @db.VarChar(1)
-    description          String?   @db.Text
-    lastMessageId        Int?
-    lastMessageCreatedAt DateTime?
-    minimumTrustRank     String    @default("Visitor") @db.VarChar(255)
+  id                   Int       @id @default(autoincrement())
+  name                 String    @db.VarChar(255)
+  uniqueName           String    @unique @db.VarChar(255)
+  parentChannelGroupId Int
+  createdBy            Int
+  createdAt            DateTime  @default(now())
+  messageCount         Int       @default(0)
+  statusString         String    @default("#") @db.VarChar(1)
+  description          String?   @db.Text
+  lastMessageId        Int?
+  lastMessageCreatedAt DateTime?
+  minimumTrustRank     String    @default("Visitor") @db.VarChar(255)
 }
 
 model Message {
-    id                        Int       @id @default(autoincrement())
-    channelId                 Int
-    userId                    Int
-    createdAt                 DateTime  @default(now())
-    text                      String    @db.Text
-    textStyle                 String?   @db.Text
-    favoriteCount             Int       @default(0)
-    likeCount                 Int       @default(0)
-    replyCount                Int       @default(0)
-    threadId                  Int?
-    lastReplyMessageId        Int?
-    lastReplyMessageCreatedAt DateTime?
-    deleted                   Boolean   @default(false)
+  id                        Int       @id @default(autoincrement())
+  channelId                 Int
+  userId                    Int
+  createdAt                 DateTime  @default(now())
+  text                      String    @db.Text
+  textStyle                 String?   @db.Text
+  favoriteCount             Int       @default(0)
+  likeCount                 Int       @default(0)
+  replyCount                Int       @default(0)
+  threadId                  Int?
+  lastReplyMessageId        Int?
+  lastReplyMessageCreatedAt DateTime?
+  deleted                   Boolean   @default(false)
 
-    @@index([threadId, deleted])
-    @@index([userId, deleted])
-    @@index([channelId, threadId, deleted])
-    @@fulltext([text])
+  @@index([threadId, deleted])
+  @@index([userId, deleted])
+  @@index([channelId, threadId, deleted])
+  @@fulltext([text])
 }
 
 model MessageEntityUrl {
-    id            Int      @id @default(autoincrement())
-    channelId     Int
-    userId        Int
-    createdAt     DateTime @default(now())
-    text          String   @db.Text
-    favoriteCount Int      @default(0)
-    likeCount     Int      @default(0)
-    replyCount    Int      @default(0)
-    threadId      Int?
-    deleted       Boolean  @default(false)
+  id            Int      @id @default(autoincrement())
+  channelId     Int
+  userId        Int
+  createdAt     DateTime @default(now())
+  text          String   @db.Text
+  favoriteCount Int      @default(0)
+  likeCount     Int      @default(0)
+  replyCount    Int      @default(0)
+  threadId      Int?
+  deleted       Boolean  @default(false)
 
-    // entity
-    textStyle               String? @db.Text
-    associatedFiles         String? @db.Text
-    associatedMessages      String? @db.Text
-    associatedChannels      String? @db.Text
-    associatedChannelGroups String? @db.Text
-    associatedUrlContents   String? @db.Text
+  // entity
+  textStyle               String? @db.Text
+  associatedFiles         String? @db.Text
+  associatedMessages      String? @db.Text
+  associatedChannels      String? @db.Text
+  associatedChannelGroups String? @db.Text
+  associatedUrlContents   String? @db.Text
 
-    @@index([threadId, deleted])
-    @@index([userId, deleted])
-    @@index([channelId, threadId, deleted])
+  @@index([threadId, deleted])
+  @@index([userId, deleted])
+  @@index([channelId, threadId, deleted])
 }
 
 model ChannelGroupTimeline {
-    id             Int      @id @default(autoincrement())
-    channelGroupId Int
-    createdAt      DateTime @default(now())
-    messageId      Int
+  id             Int      @id @default(autoincrement())
+  channelGroupId Int
+  createdAt      DateTime @default(now())
+  messageId      Int
 
-    @@index([channelGroupId])
-    @@index([messageId])
+  @@index([channelGroupId])
+  @@index([messageId])
 }
 
 model ChannelReadState {
-    id                   Int      @id @default(autoincrement())
-    channelId            Int
-    userId               Int
-    lastMessageId        Int
-    lastMessageCreatedAt DateTime
+  id                   Int      @id @default(autoincrement())
+  channelId            Int
+  userId               Int
+  lastMessageId        Int
+  lastMessageCreatedAt DateTime
 
-    @@unique([channelId, userId])
+  @@unique([channelId, userId])
 }
 
 model File {
-    id        Int      @id @default(autoincrement())
-    userId    Int
-    group     String   @db.VarChar(255)
-    path      String   @db.VarChar(255)
-    type      String   @db.VarChar(6)
-    bytes     Int
-    original  Boolean
-    refCount  Int      @default(0) // 使用頻度（userIdのユーザーのみカウント）
-    createdAt DateTime
-    width     Int?
-    height    Int?
-    tag       String?  @db.VarChar(255)
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  group     String   @db.VarChar(255)
+  path      String   @db.VarChar(255)
+  type      String   @db.VarChar(6)
+  bytes     Int
+  original  Boolean
+  refCount  Int      @default(0) // 使用頻度（userIdのユーザーのみカウント）
+  createdAt DateTime
+  width     Int?
+  height    Int?
+  tag       String?  @db.VarChar(255)
 
-    @@unique([path])
-    @@index([userId, original])
-    @@index([group])
+  @@unique([path])
+  @@index([userId, original])
+  @@index([group])
 }
 
 model Like {
-    id        Int      @id @default(autoincrement())
-    messageId Int
-    userId    Int
-    count     Int      @default(0)
-    updatedAt DateTime
+  id        Int      @id @default(autoincrement())
+  messageId Int
+  userId    Int
+  count     Int      @default(0)
+  updatedAt DateTime
 
-    @@unique([messageId, userId])
-    @@index([messageId])
+  @@unique([messageId, userId])
+  @@index([messageId])
 }
 
 model Favorite {
-    id        Int      @id @default(autoincrement())
-    messageId Int
-    userId    Int
-    createdAt DateTime
+  id        Int      @id @default(autoincrement())
+  messageId Int
+  userId    Int
+  createdAt DateTime
 
-    @@unique([messageId, userId])
-    @@index([messageId])
+  @@unique([messageId, userId])
+  @@index([messageId])
 }
 
 model Application {
-    id          Int      @id @default(autoincrement())
-    userId      Int
-    createdAt   DateTime @default(now())
-    name        String   @db.VarChar(255)
-    description String?  @db.Text
-    callbackUrl String
-    read        Boolean  @default(true)
-    write       Boolean  @default(false)
-    token       String   @unique @db.VarChar(255)
-    secret      String   @unique @db.VarChar(255)
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  createdAt   DateTime @default(now())
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  callbackUrl String
+  read        Boolean  @default(true)
+  write       Boolean  @default(false)
+  token       String   @unique @db.VarChar(255)
+  secret      String   @unique @db.VarChar(255)
 
-    @@unique([token, secret])
+  @@unique([token, secret])
 }
 
 model RequestToken {
-    id             Int      @id @default(autoincrement())
-    token          String   @unique @db.VarChar(255)
-    secret         String   @unique @db.VarChar(255)
-    applicationId  Int
-    expireDate     DateTime
-    verifier       String?  @db.VarChar(255)
-    verifiedUserId Int?
+  id             Int      @id @default(autoincrement())
+  token          String   @unique @db.VarChar(255)
+  secret         String   @unique @db.VarChar(255)
+  applicationId  Int
+  expireDate     DateTime
+  verifier       String?  @db.VarChar(255)
+  verifiedUserId Int?
 
-    @@unique([token, secret])
+  @@unique([token, secret])
 }
 
 model AccessToken {
-    id            Int    @id @default(autoincrement())
-    token         String @unique @db.VarChar(255)
-    secret        String @unique @db.VarChar(255)
-    userId        Int
-    applicationId Int
+  id            Int    @id @default(autoincrement())
+  token         String @unique @db.VarChar(255)
+  secret        String @unique @db.VarChar(255)
+  userId        Int
+  applicationId Int
 
-    @@unique([token, secret])
+  @@unique([token, secret])
 }
 
 model Invite {
-    id           Int      @id @default(autoincrement())
-    inviterId    Int
-    createdAt    DateTime @default(now())
-    expireDate   DateTime
-    verifier     String   @db.VarChar(255)
-    targetUserId Int?
+  id           Int      @id @default(autoincrement())
+  inviterId    Int
+  createdAt    DateTime @default(now())
+  expireDate   DateTime
+  verifier     String   @db.VarChar(255)
+  targetUserId Int?
 
-    @@unique([verifier])
-    @@unique([targetUserId])
-    @@index([inviterId])
+  @@unique([verifier])
+  @@unique([targetUserId])
+  @@index([inviterId])
 }
 
 model Attachment {
-    id        Int @id @default(autoincrement())
-    messageId Int
-    fileId    Int
+  id        Int @id @default(autoincrement())
+  messageId Int
+  fileId    Int
 
-    @@index([messageId])
+  @@index([messageId])
 }

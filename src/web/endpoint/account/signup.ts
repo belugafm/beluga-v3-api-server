@@ -11,7 +11,6 @@ export default (server: TurboServer) => {
             {
                 password: req.body.password,
                 confirmation_password: req.body.confirmation_password,
-                ip_address: remoteIpAddress,
             },
             remoteIpAddress,
             null,

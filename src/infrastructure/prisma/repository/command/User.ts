@@ -21,6 +21,7 @@ export function hasChanged(a: User, b: User) {
         a.favoritedCount === b.favoritedCount &&
         a.createdAt?.getTime() === b.createdAt?.getTime() &&
         a.bot === b.bot &&
+        a.botOwnerId === b.botOwnerId &&
         a.active === b.active &&
         a.dormant === b.dormant &&
         a.suspended === b.suspended &&
@@ -61,6 +62,7 @@ export class UserCommandRepository extends ChangeEventHandler implements IUserCo
                     favoritedCount: user.favoritedCount,
                     createdAt: user.createdAt,
                     bot: user.bot,
+                    botOwnerId: user.botOwnerId,
                     active: user.active,
                     dormant: user.dormant,
                     suspended: user.suspended,

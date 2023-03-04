@@ -27,7 +27,7 @@ import { MethodIdentifiers } from "../../identifier"
 import { SignInWithPasswordApplication } from "../../../../application/signin/SignInWithPassword"
 import config from "../../../../config/app"
 
-export const argumentSpecs = defineArguments(["password", "confirmation_password", "ip_address"] as const, {
+export const argumentSpecs = defineArguments(["password", "confirmation_password"] as const, {
     password: {
         description: ["パスワード"],
         examples: ["do_not_use_this_password_0123"],
@@ -40,12 +40,12 @@ export const argumentSpecs = defineArguments(["password", "confirmation_password
         required: true,
         validator: vs.PasswordValidator(),
     },
-    ip_address: {
-        description: ["登録時のIPアドレス"],
-        examples: ["192.168.1.1"],
-        required: true,
-        validator: vs.IpAddressValidator(),
-    },
+    // ip_address: {
+    //     description: ["登録時のIPアドレス"],
+    //     examples: ["192.168.1.1"],
+    //     required: true,
+    //     validator: vs.IpAddressValidator(),
+    // },
 })
 
 export const expectedErrorSpecs = defineErrors(
@@ -96,50 +96,56 @@ export const facts: MethodFacts = {
 
 type ReturnType = Promise<[UserEntity, LoginCredentialEntity, LoginSessionEntity, AuthenticityTokenEntity]>
 
-export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors): ReturnType => {
-    if (args.password !== args.confirmation_password) {
-        raise(errors["confirmation_password_not_match"])
-    }
-    const transaction = await TransactionRepository.new<ReturnType>()
-    try {
-        return await transaction.$transaction(async (transactionSession) => {
-            const name = generateRandomName((config.user.name.max_length - config.user.name.min_length) / 2)
-            await new RegisterPasswordBasedUserApplication(
-                new UserQueryRepository(transactionSession),
-                new UserCommandRepository(transactionSession),
-                new LoginCredentialCommandRepository(transactionSession)
-            ).register({
-                name: name,
-                password: args.password,
-                ipAddress: args.ip_address,
+export default defineMethod(
+    facts,
+    argumentSpecs,
+    expectedErrorSpecs,
+    async (args, errors, _, __, remoteIpAddress): ReturnType => {
+        if (args.password !== args.confirmation_password) {
+            raise(errors["confirmation_password_not_match"])
+        }
+        const transaction = await TransactionRepository.new<ReturnType>()
+        try {
+            return await transaction.$transaction(async (transactionSession) => {
+                const name = generateRandomName((config.user.name.max_length - config.user.name.min_length) / 2)
+                await new RegisterPasswordBasedUserApplication(
+                    new UserQueryRepository(transactionSession),
+                    new UserCommandRepository(transactionSession),
+                    new LoginCredentialCommandRepository(transactionSession)
+                ).register({
+                    name: name,
+                    password: args.password,
+                    ipAddress: remoteIpAddress,
+                })
+                const [user, loginCredential, loginSession, authenticityToken] =
+                    await new SignInWithPasswordApplication(
+                        new UserQueryRepository(transactionSession),
+                        new LoginCredentialQueryRepository(transactionSession),
+                        new LoginSessionCommandRepository(transactionSession),
+                        new AuthenticityTokenCommandRepository(transactionSession)
+                    ).signin({
+                        name: name,
+                        password: args.password,
+                        ipAddress: remoteIpAddress,
+                        lastLocation: null,
+                        device: null,
+                    })
+                return [user, loginCredential, loginSession, authenticityToken]
             })
-            const [user, loginCredential, loginSession, authenticityToken] = await new SignInWithPasswordApplication(
-                new UserQueryRepository(transactionSession),
-                new LoginCredentialQueryRepository(transactionSession),
-                new LoginSessionCommandRepository(transactionSession),
-                new AuthenticityTokenCommandRepository(transactionSession)
-            ).signin({
-                name: name,
-                password: args.password,
-                ipAddress: args.ip_address,
-                lastLocation: null,
-                device: null,
-            })
-            return [user, loginCredential, loginSession, authenticityToken]
-        })
-    } catch (error) {
-        if (error instanceof ApplicationError) {
-            if (error.code === ErrorCodes.NameTaken) {
-                raise(errors["internal_error"], error)
-            } else if (error.code === ErrorCodes.TooManyRequests) {
-                raise(errors["too_many_requests"], error)
+        } catch (error) {
+            if (error instanceof ApplicationError) {
+                if (error.code === ErrorCodes.NameTaken) {
+                    raise(errors["internal_error"], error)
+                } else if (error.code === ErrorCodes.TooManyRequests) {
+                    raise(errors["too_many_requests"], error)
+                } else {
+                    raise(errors["internal_error"], error)
+                }
+            } else if (error instanceof Error) {
+                raise(errors["unexpected_error"], error)
             } else {
-                raise(errors["internal_error"], error)
+                raise(errors["unexpected_error"], new Error("unexpected_error"))
             }
-        } else if (error instanceof Error) {
-            raise(errors["unexpected_error"], error)
-        } else {
-            raise(errors["unexpected_error"], new Error("unexpected_error"))
         }
     }
-})
+)

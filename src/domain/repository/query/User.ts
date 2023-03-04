@@ -19,4 +19,5 @@ export interface IUserQueryRepository {
         sortBy: typeof SortBy[keyof typeof SortBy],
         sortOrder: typeof SortOrder[keyof typeof SortOrder]
     ): Promise<UserEntity[]>
+    listBots(ownerId: UserId): Promise<UserEntity[]>
 }

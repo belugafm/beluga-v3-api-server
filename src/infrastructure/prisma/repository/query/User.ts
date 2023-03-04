@@ -121,4 +121,20 @@ export class UserQueryRepository implements IUserQueryRepository {
             }
         }
     }
+    async listBots(ownerId: UserId): Promise<UserEntity[]> {
+        try {
+            const bots = await this._prisma.user.findMany({
+                where: {
+                    botOwnerId: ownerId,
+                },
+            })
+            return bots.map((bot) => toEntity(bot))
+        } catch (error) {
+            if (error instanceof Error) {
+                throw new RepositoryError(error.message, error.stack)
+            } else {
+                throw new UnknownRepositoryError()
+            }
+        }
+    }
 }

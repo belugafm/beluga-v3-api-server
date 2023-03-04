@@ -16,6 +16,8 @@ export const MethodIdentifiers = {
     UploadFile: "upload/media",
     CreateApp: "app/create",
     ListApps: "app/list_apps",
+    CreateBot: "bot/create",
+    ListBots: "bot/list_bots",
     CreateChannel: "channel/create",
     DeleteChannel: "channel/delete",
     FollowChannel: "channel/follow/create",

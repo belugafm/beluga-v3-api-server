@@ -89,6 +89,8 @@ export class ApplicationEntity extends Entity {
             name: this.name,
             description: this.description,
             callback_url: this.callbackUrl,
+            token: this.token,
+            secret: this.secret,
             read: this.read,
             write: this.write,
         }
