@@ -20,6 +20,7 @@ function toEntity(user: User) {
         favoritesCount: user.favoritesCount,
         favoritedCount: user.favoritedCount,
         createdAt: user.createdAt,
+        bot: user.bot,
         active: user.active,
         dormant: user.dormant,
         suspended: user.suspended,
