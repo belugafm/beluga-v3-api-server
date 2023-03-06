@@ -9,6 +9,7 @@ export default (server: TurboServer) => {
         const file = await update(
             {
                 file: req.body.file,
+                user_id: req.body.user_id ? Number(req.body.user_id) : undefined,
             },
             remoteIpAddress,
             params["authUser"],

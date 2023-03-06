@@ -20,12 +20,18 @@ import { UpdateProfileImageApplication } from "../../../../application/account/U
 import { UpdateProfileImagePermission } from "../../../../domain/permission/UpdateProfileImage"
 import { FileJsonObjectT } from "../../../../domain/types"
 
-export const argumentSpecs = defineArguments(["file"] as const, {
+export const argumentSpecs = defineArguments(["file", "user_id"] as const, {
     file: {
         description: ["ファイルのBuffer"],
         examples: ["general"],
         required: true,
         validator: vs.BufferValidator(),
+    },
+    user_id: {
+        description: ["プロフィール画像を変更したいユーザーのID", "指定しない場合は認証されたユーザーが対象になる"],
+        examples: ["123"],
+        required: false,
+        validator: vs.EntityIdValidator(),
     },
 })
 
@@ -72,7 +78,8 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 new MediaRepository(),
                 new UpdateProfileImagePermission(new UserQueryRepository(transactionSession))
             ).upload({
-                userId: authUser.id,
+                userIdToChange: args.user_id ? args.user_id : authUser.id,
+                authUserId: authUser.id,
                 buffer: args.file,
             })
             return file.toJsonObject()

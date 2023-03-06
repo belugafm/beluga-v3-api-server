@@ -36,14 +36,22 @@ export class UpdateProfileImageApplication {
         this.mediaRepository = mediaRepository
         this.permission = permission
     }
-    async upload({ userId, buffer }: { userId: UserId; buffer: Buffer }): Promise<FileEntity> {
+    async upload({
+        userIdToChange,
+        buffer,
+        authUserId,
+    }: {
+        userIdToChange: UserId
+        buffer: Buffer
+        authUserId: UserId
+    }): Promise<FileEntity> {
         try {
-            await this.permission.hasThrow(userId)
-            const user = await this.userQueryRepository.findById(userId)
+            await this.permission.hasThrow(userIdToChange, authUserId)
+            const user = await this.userQueryRepository.findById(userIdToChange)
             if (user == null) {
                 throw new ApplicationError(ErrorCodes.InternalError)
             }
-            const itemList = await this.mediaRepository.prepareFilesToUpload(userId, buffer)
+            const itemList = await this.mediaRepository.prepareFilesToUpload(userIdToChange, buffer)
             for (const item of itemList) {
                 const { file, buffer } = item
                 if (file.tag == "small_square") {
