@@ -18,6 +18,7 @@ import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
 import { MessageJsonObjectT } from "../../../../domain/types"
+import { includeMessageRelations } from "../../relations/message"
 
 export const argumentSpecs = defineArguments(["message_id"] as const, {
     message_id: {
@@ -86,7 +87,11 @@ export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (arg
                 requestUserId: authUser.id,
             })
         })
-        return (await new MessageQueryRepository().findById(args.message_id))!.toJsonObject()
+        const message = await new MessageQueryRepository().findById(args.message_id)
+        if (message == null) {
+            raise(errors["unexpected_error"])
+        }
+        return includeMessageRelations(message.toJsonObject(), authUser)
     } catch (error) {
         if (error instanceof ApplicationError) {
             if (error.code === ErrorCodes.DoNotHavePermission) {
