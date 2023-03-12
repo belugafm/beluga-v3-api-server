@@ -56,6 +56,8 @@ export type MessageJsonObjectT = {
     favorited: boolean
     like_count: number
     reply_count: number
+    last_reply_message_id: number | null
+    last_reply_message: MessageJsonObjectT | null
     thread_id: MessageId | null
     deleted: boolean
     entities: {

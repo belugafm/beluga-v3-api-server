@@ -8,6 +8,7 @@ import {
     ChannelQueryRepository,
     FileQueryRepository,
     AttachmentQueryRepository,
+    MessageQueryRepository,
 } from "../../repositories"
 
 const extractMediaEntitiesForUrl = (text: string, file: FileEntity) => {
@@ -91,6 +92,12 @@ export const includeMessageRelations = async (
                 }
             }
             messageObj.entities.channels = channelEntities
+        }
+    }
+    if (messageObj.last_reply_message_id) {
+        const reply = await new MessageQueryRepository().findById(messageObj.last_reply_message_id)
+        if (reply) {
+            messageObj.last_reply_message = reply.toJsonObject()
         }
     }
     return messageObj

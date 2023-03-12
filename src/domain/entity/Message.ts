@@ -111,6 +111,8 @@ export class MessageEntity extends Entity {
             favorited: false,
             like_count: this.likeCount,
             reply_count: this.replyCount,
+            last_reply_message_id: this.lastReplyMessageId,
+            last_reply_message: null,
             thread_id: this.threadId,
             deleted: this.deleted,
             entities: {
