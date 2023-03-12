@@ -115,9 +115,12 @@ export class PostMessageApplication {
         message.id = await this.messageCommandRepository.add(message)
 
         channel.messageCount += 1
-        channel.lastMessageId = message.id
-        channel.lastMessageCreatedAt = message.createdAt
-        await this.channelCommandRepository.update(channel)
+        if (message.threadId == null) {
+            // スレッド内の投稿は新着にカウントしない
+            channel.lastMessageId = message.id
+            channel.lastMessageCreatedAt = message.createdAt
+            await this.channelCommandRepository.update(channel)
+        }
 
         user.messageCount += 1
         await this.userCommandRepository.update(user)

@@ -97,7 +97,11 @@ export const includeMessageRelations = async (
     if (messageObj.last_reply_message_id) {
         const reply = await new MessageQueryRepository().findById(messageObj.last_reply_message_id)
         if (reply) {
-            messageObj.last_reply_message = reply.toJsonObject()
+            const user = await new UserQueryRepository().findById(reply.userId)
+            if (user) {
+                messageObj.last_reply_message = reply.toJsonObject()
+                messageObj.user = user.toJsonObject()
+            }
         }
     }
     return messageObj
