@@ -82,7 +82,6 @@ export const includeMessageRelations = async (
                 const uniqueName = result[1]
                 const channel = await channelRepository.findByUniqueName(uniqueName)
                 if (channel) {
-                    console.log(channel)
                     channelEntities.push({
                         channel_id: channel.id,
                         channel: channel.toJsonObject(),

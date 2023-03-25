@@ -18,8 +18,8 @@ export class ValidateOAuthHeader {
     validateSignature(signature: string, params: ValidationInputT): boolean {
         try {
             const true_signature = this.tryCreateSignature(params)
-            console.log(params)
-            console.log(signature, true_signature)
+            // console.log(params)
+            // console.log(signature, true_signature)
             if (signature === true_signature) {
                 return true
             }

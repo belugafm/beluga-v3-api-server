@@ -5,11 +5,11 @@ import { MethodFacts, defineArguments, defineErrors, defineMethod } from "../../
 import { SortBy, SortOrder } from "../../../../domain/repository/query/ChannelGroup"
 
 import { AuthenticationMethods } from "../../facts/authentication_method"
-import { ChannelGroupEntity } from "../../../../domain/entity/ChannelGroup"
 import { ChannelGroupQueryRepository } from "../../../repositories"
 import { ContentTypes } from "../../facts/content_type"
 import { HttpMethods } from "../../facts/http_method"
 import { MethodIdentifiers } from "../../identifier"
+import { ChannelGroupJsonObjectT } from "../../../../domain/types"
 
 export const argumentSpecs = defineArguments(["id"] as const, {
     id: {
@@ -49,11 +49,16 @@ export const facts: MethodFacts = {
     ],
 }
 
-type ReturnType = Promise<ChannelGroupEntity[]>
+type ReturnType = Promise<ChannelGroupJsonObjectT[]>
 
 export default defineMethod(facts, argumentSpecs, expectedErrorSpecs, async (args, errors): ReturnType => {
     try {
-        return await new ChannelGroupQueryRepository().listChannelGroups(args.id, SortBy.CreatedAt, SortOrder.Ascending)
+        const channelGroups = await new ChannelGroupQueryRepository().listChannelGroups(
+            args.id,
+            SortBy.CreatedAt,
+            SortOrder.Ascending
+        )
+        return channelGroups.map((channelGroup) => channelGroup.toJsonObject())
     } catch (error) {
         if (error instanceof Error) {
             raise(errors["unexpected_error"], error)

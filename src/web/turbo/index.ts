@@ -141,7 +141,6 @@ export class TurboServer {
             const res = new Response(_res)
             const { host } = req.headers
             if (host == null) {
-                console.log(req.headers)
                 return AccessDeniedRoute(req, res)
             }
             const domain = host.split(":")[0]
@@ -166,10 +165,8 @@ export class TurboServer {
                     const query = qs.parse(req.url.replace(/^.+\?/, ""), {
                         decoder: decodeURIComponent,
                     })
-                    console.log(query)
                     req.query = query
                 }
-
                 if (facts.userAuthenticationRequired) {
                     // ユーザー認証をここで行う
                     try {

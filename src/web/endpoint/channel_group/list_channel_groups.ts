@@ -16,7 +16,7 @@ export default (server: TurboServer) => {
         )
         return {
             ok: true,
-            channel_groups: channelGroups.map((channelGroup) => channelGroup.toJsonObject()),
+            channel_groups: channelGroups,
         }
     })
 }
