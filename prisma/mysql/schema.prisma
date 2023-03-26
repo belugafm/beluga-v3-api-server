@@ -85,7 +85,7 @@ model Channel {
   createdBy            Int
   createdAt            DateTime  @default(now())
   messageCount         Int       @default(0)
-  statusString         String    @default("#") @db.VarChar(1)
+  statusString         String    @default("#") @db.VarChar(8)
   description          String?   @db.Text
   lastMessageId        Int?
   lastMessageCreatedAt DateTime?

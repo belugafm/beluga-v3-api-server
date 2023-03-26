@@ -99,6 +99,9 @@ export function IsChannelName(options?: ValidationOptions) {
 export function IsChannelUniqueName(options?: ValidationOptions) {
     return Validator(channel.UniqueNameValidator(), options)
 }
+export function IsChannelStatusString(options?: ValidationOptions) {
+    return Validator(channel.StatusStringValidator(), options)
+}
 export function IsChannelDescription(options?: ValidationOptions) {
     return Validator(channel.DescriptionValidator(), options)
 }

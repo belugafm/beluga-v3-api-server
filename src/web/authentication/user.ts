@@ -123,6 +123,9 @@ export class UserAuthenticator {
         if (facts.acceptedAuthenticationMethods.includes("Cookie")) {
             // Cookieを使ったログインセッション
             const sessionId = cookies["session_id"]
+            if (sessionId == null) {
+                return null
+            }
             const [user] = await this.cookieAuthentication.authenticate({ sessionId })
             return user
         }

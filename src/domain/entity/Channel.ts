@@ -4,11 +4,11 @@ import {
     IsChannelGroupId,
     IsChannelId,
     IsChannelName,
+    IsChannelStatusString,
     IsChannelUniqueName,
     IsDate,
     IsInteger,
     IsMessageId,
-    IsString,
     IsTrustRank,
     IsUserId,
 } from "../validation/decorators"
@@ -66,7 +66,7 @@ export class ChannelEntity extends Entity {
     @IsInteger({ minValue: 0 }, { errorCode: ErrorCodes.InvalidMessageCount })
     messageCount: number
 
-    @IsString({ minLength: 1, maxLength: 1 }, { errorCode: ErrorCodes.InvalidStatusString })
+    @IsChannelStatusString({ errorCode: ErrorCodes.InvalidStatusString })
     statusString: string
 
     @IsChannelDescription({ nullable: true, errorCode: ErrorCodes.InvalidDescription })
