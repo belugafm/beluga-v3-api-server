@@ -21,6 +21,17 @@ import { UserId } from "../src/domain/types"
 import { AuthenticateUserByAccessTokenApplication } from "./application/oauth/AuthenticateUserByAccessToken"
 import { OAuthAuthenticateAppApplication } from "./application/oauth/AuthenticateApp"
 import { AuthenticateUserByRequestTokenApplication } from "./application/oauth/AuthenticateUserByRequestToken"
+import v8 from "v8"
+import fs from "fs"
+
+process.on("SIGWINCH", () => {
+    console.log("Recieved SIGWINCH")
+    const fileName = `./heapdump_${Date.now()}.heapsnapshot`
+    const snapshotStream = v8.getHeapSnapshot()
+    const fileStream = fs.createWriteStream(fileName)
+    snapshotStream.pipe(fileStream)
+    console.log("Heap snapshot was saved to " + fileName)
+})
 
 function heartbeat() {
     // @ts-ignore
