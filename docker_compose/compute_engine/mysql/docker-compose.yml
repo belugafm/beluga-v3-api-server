@@ -22,8 +22,8 @@ services:
             - 6379:6379
         volumes:
             - ./docker/redis/data:/data
+            - ./docker/inspect:/inspect
             - ./redis.conf:/etc/redis.conf
-            - ./inspect:/inspect
     api:
         image: beluga-v3-api-server:latest
         depends_on:
