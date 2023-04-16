@@ -58,7 +58,7 @@
     },
     "scripts": {
         "test": "jest --clearCache && node --allow-natives-syntax ./node_modules/.bin/jest --runInBand",
-        "start": "env NODE_OPTIONS='--max-old-space-size=512' npx ts-node --transpileOnly src/run.prisma.ts"
+        "start": "env NODE_OPTIONS='--max-old-space-size=512' node --inspect --expose-gc -r ts-node/register src/run.prisma.ts"
     },
     "jest": {
         "testEnvironment": "node",
