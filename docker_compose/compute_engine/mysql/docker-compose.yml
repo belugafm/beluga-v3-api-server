@@ -35,7 +35,6 @@ services:
         ports:
             - 8080:8080
             - 6000:6000
-            - 9229:9229
     # client:
     #   image: beluga-v3-browser-client:latest
     #   depends_on:
