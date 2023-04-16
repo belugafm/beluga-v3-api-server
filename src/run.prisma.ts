@@ -26,7 +26,7 @@ import fs from "fs"
 
 process.on("SIGWINCH", () => {
     console.log("Recieved SIGWINCH")
-    const fileName = `./heapdump_${Date.now()}.heapsnapshot`
+    const fileName = `/inspect/heapdump_${Date.now()}.heapsnapshot`
     const snapshotStream = v8.getHeapSnapshot()
     const fileStream = fs.createWriteStream(fileName)
     snapshotStream.pipe(fileStream)
