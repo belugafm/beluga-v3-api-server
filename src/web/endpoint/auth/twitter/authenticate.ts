@@ -8,8 +8,6 @@ export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
         const remoteIpAddress = getRemoteIpAddress(req.headers)
         const authSessionId = req.cookies["tw_auth_session_id"]
-        console.log("callback token", req.body.oauth_token)
-        console.log("callback verifier", req.body.oauth_verifier)
         const [user, loginSession] = await authenticate(
             {
                 oauth_token: req.body.oauth_token,

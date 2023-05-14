@@ -156,6 +156,9 @@ const config: {
     twitter: {
         api_key: string
         api_key_secret: string
+        client_id: string
+        client_secret: string
+        bearer_token: string
         callback_url: string
     }
 } = {
@@ -309,6 +312,9 @@ const config: {
     twitter: {
         api_key: "YOUR_API_KEY",
         api_key_secret: "YOUR_API_KEY_SCRET",
+        client_id: "YOUR_CLIENT_ID",
+        client_secret: "YOUR_CLIENT_SECRET",
+        bearer_token: "YOUR_BEARER_TOKEN",
         callback_url: "CALLBACK_URL",
     },
     file: {
