@@ -6,6 +6,9 @@ import { getRemoteIpAddress } from "../../remoteIpAddress"
 
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
+        return {
+            ok: true,
+        }
         const remoteIpAddress = getRemoteIpAddress(req.headers)
         const [user, _, loginSession] = await signupWithoutName(
             {
