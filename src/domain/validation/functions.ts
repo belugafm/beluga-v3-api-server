@@ -11,5 +11,5 @@ export function isDate(value: any): value is Date {
 }
 
 export function isBoolean(value: any): value is Boolean {
-    return value instanceof Boolean
+    return typeof value == "boolean"
 }
