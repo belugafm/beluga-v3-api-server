@@ -10,7 +10,7 @@ import { URLSearchParams } from "url"
 import axios from "axios"
 import config from "../../config/app"
 import crypto from "crypto"
-import { isString } from "../../domain/validation"
+import { isString, isDate, isBoolean } from "../../domain/validation"
 import { v4 } from "uuid"
 
 export const ErrorCodes = {
@@ -107,7 +107,7 @@ export class UserResponse {
     verified: boolean
     suspended: boolean
 
-    constructor(params: NullableStringParams<UserResponse>) {
+    constructor(params: UserResponse) {
         if (isString(params.id)) {
             this.id = params.id
         } else {
@@ -123,18 +123,18 @@ export class UserResponse {
         } else {
             throw new ResponseError("screenName")
         }
-        if (isString(params.createdAt)) {
+        if (isDate(params.createdAt)) {
             this.createdAt = new Date(params.createdAt)
         } else {
             throw new ResponseError("createdAt")
         }
-        if (isString(params.verified)) {
-            this.verified = params.verified === "true"
+        if (isBoolean(params.verified)) {
+            this.verified = params.verified
         } else {
             throw new ResponseError("verified")
         }
-        if (isString(params.suspended)) {
-            this.suspended = params.suspended === "true"
+        if (isBoolean(params.suspended)) {
+            this.suspended = params.suspended
         } else {
             throw new ResponseError("suspended")
         }
@@ -251,13 +251,8 @@ export class TwitterAuthenticationApplication {
         accessTokenSecret: string,
         userId: string
     ): Promise<UserResponse | null> {
-        const baseUrl = "https://api.twitter.com/1.1/users/show.json"
-        const url =
-            baseUrl +
-            "?" +
-            new URLSearchParams({
-                user_id: userId,
-            }).toString()
+        const baseUrl = "https://api.twitter.com/2/users/me"
+        const url = baseUrl + "?user.fields=created_at,name,username,verified,withheld"
         const oauth = getOAuth()
         const authHeader = oauth.toHeader(
             oauth.authorize(
@@ -278,14 +273,14 @@ export class TwitterAuthenticationApplication {
                     Authorization: authHeader["Authorization"],
                 },
             })
-            const params = new URLSearchParams(res.data)
+            const params = res.data["data"]
             return new UserResponse({
-                id: getParam(params, "id"),
-                name: getParam(params, "name"),
-                screenName: getParam(params, "screen_name"),
-                createdAt: getParam(params, "created_at"),
-                verified: getParam(params, "verified"),
-                suspended: getParam(params, "suspended"),
+                id: params["id"],
+                name: params["name"],
+                screenName: params["username"],
+                createdAt: new Date(params["created_at"]),
+                verified: params["verified"],
+                suspended: params["withheld"] != null,
             })
         } catch (error) {
             console.error(error)
