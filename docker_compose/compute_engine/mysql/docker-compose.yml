@@ -11,9 +11,15 @@ services:
             - MYSQL_USER
             - MYSQL_PASSWORD
         volumes:
-            - ./docker/mysql/data:/var/lib/mysql
-            - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
-            - ./docker/mysql/sql:/docker-entrypoint-initdb.d
+            - type: bind
+              source: ./docker/mysql/data
+              target: /var/lib/mysql
+            - type: bind
+              source: ./docker/mysql/my.cnf
+              target: /etc/mysql/conf.d/my.cnf
+            - type: bind
+              source: ./docker/mysql/sql
+              target: /docker-entrypoint-initdb.d
         ports:
             - 3306:3306
     redis:
@@ -35,8 +41,6 @@ services:
         ports:
             - 8080:8080
             - 6000:6000
-        volumes:
-            - ./docker/inspect:/inspect
     # client:
     #   image: beluga-v3-browser-client:latest
     #   depends_on:
