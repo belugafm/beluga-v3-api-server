@@ -6,9 +6,11 @@ import { getRemoteIpAddress } from "../../remoteIpAddress"
 
 export default (server: TurboServer) => {
     server.post(facts, async (req, res, params) => {
-        // return {
-        //     ok: true,
-        // }
+        return {
+            ok: false,
+            error_code: "not_available",
+            description: ["現在新規登録の受付を停止しています"],
+        }
         const remoteIpAddress = getRemoteIpAddress(req.headers)
         const [user, _, loginSession] = await signupWithoutName(
             {
