@@ -8,7 +8,7 @@ interface FormData {
 function parse(body_buffer: Buffer, boundary: string): FormData[] {
     let last_line = ""
     let content_disposition = ""
-    let conent_type = undefined
+    let content_type = undefined
     let state = 0
     let buffer = []
     const ret: FormData[] = []
@@ -38,7 +38,7 @@ function parse(body_buffer: Buffer, boundary: string): FormData[] {
             }
             last_line = ""
         } else if (state === 2 && newline_detected) {
-            conent_type = last_line
+            content_type = last_line
             state = 3
             last_line = ""
         } else if (state === 3 && newline_detected) {
@@ -46,6 +46,13 @@ function parse(body_buffer: Buffer, boundary: string): FormData[] {
             buffer = []
             last_line = ""
         } else if (state === 4) {
+            if (newline_detected) {
+                // Skip first \r\n
+                state = 5
+                buffer = []
+                last_line = ""
+            }
+        } else if (state === 5) {
             if (last_line.length > boundary.length + 4) {
                 last_line = ""
             }
@@ -53,20 +60,20 @@ function parse(body_buffer: Buffer, boundary: string): FormData[] {
                 // boundaryを除くデータを取得
                 const body_length = buffer.length - last_line.length
                 const bytes = buffer.slice(0, body_length - 1)
-                const part = { content_disposition, conent_type, bytes }
+                const part = { content_disposition, content_type, bytes }
                 ret.push(process(part))
                 buffer = []
                 last_line = ""
-                state = 5
+                state = 6
                 content_disposition = ""
-                conent_type = undefined
+                content_type = undefined
             } else {
                 buffer.push(byte)
             }
             if (newline_detected) {
                 last_line = ""
             }
-        } else if (state === 5) {
+        } else if (state === 6) {
             if (newline_detected) {
                 state = 1
             }
@@ -75,7 +82,7 @@ function parse(body_buffer: Buffer, boundary: string): FormData[] {
     return ret
 }
 
-function process(part: { content_disposition: string; conent_type: string | undefined; bytes: number[] }): FormData {
+function process(part: { content_disposition: string; content_type: string | undefined; bytes: number[] }): FormData {
     const content_disposition = part.content_disposition.split(";")
     // content_dispositionは以下のようになっている
     // [
@@ -85,7 +92,7 @@ function process(part: { content_disposition: string; conent_type: string | unde
     // ]
     const name = content_disposition[1].split("=")[1].replace(/"/g, "") // 送信時のformのinputタグのname属性
     const data = Buffer.from(part.bytes)
-    const type = part.conent_type ? part.conent_type.split(":")[1].trim() : undefined
+    const type = part.content_type ? part.content_type.split(":")[1].trim() : undefined
     const filename_field = content_disposition[2]
     if (filename_field) {
         const raw_filename = filename_field.split("=")[1]
