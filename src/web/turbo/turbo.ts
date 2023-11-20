@@ -87,7 +87,7 @@ export function read_body(req: Request): Promise<{ [key: string]: Buffer | strin
                     const items = multipart.parse(buffer, boundary)
                     const data: { [key: string]: Buffer | string | number } = {}
                     items.forEach((item) => {
-                        if (item.filename) {
+                        if (item.name == "file") {
                             // ファイルアップロードの場合バイナリデータを直接格納
                             data[item.name] = item.data
                         } else {
