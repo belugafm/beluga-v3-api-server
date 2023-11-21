@@ -5,69 +5,71 @@ interface FormData {
     data: Buffer
 }
 
-function parse(body_buffer: Buffer, boundary: string): FormData[] {
-    let last_line = ""
-    let content_disposition = ""
-    let content_type = undefined
+function parse(bodyBuffer: Buffer, boundary: string): FormData[] {
+    let lastLine = ""
+    let contentDisposition = ""
+    let contentType = undefined
     let state = 0
     let buffer = []
     const ret: FormData[] = []
-    for (let k = 0; k < body_buffer.length; k++) {
-        const byte = body_buffer[k]
-        const prev_byte = k > 0 ? body_buffer[k - 1] : null
-        const newline_detected = byte === 0x0a && prev_byte === 0x0d ? true : false
-        const is_newline_char = byte === 0x0a || byte === 0x0d ? true : false
-        if (is_newline_char === false) {
-            last_line += String.fromCharCode(byte)
+    for (let k = 0; k < bodyBuffer.length; k++) {
+        const byte = bodyBuffer[k]
+        const prevByte = k > 0 ? bodyBuffer[k - 1] : null
+        const newlineDetected = byte === 0x0a && prevByte === 0x0d ? true : false
+        const isNewlineChar = byte === 0x0a || byte === 0x0d ? true : false
+        if (isNewlineChar === false) {
+            lastLine += String.fromCharCode(byte)
         }
-        if (state === 0 && newline_detected) {
-            if ("--" + boundary === last_line) {
+        if (state === 0 && newlineDetected) {
+            if ("--" + boundary === lastLine) {
                 state = 1
             }
-            last_line = ""
-        } else if (state === 1 && newline_detected) {
-            content_disposition = last_line
+            lastLine = ""
+        } else if (state === 1 && newlineDetected) {
+            contentDisposition = lastLine
             // input typeがtextやpasswordのときは↓
             // Content-Disposition: form-data; name="hoge
             // input typeがfileのときは↓
             // Content-Disposition: orm-data; name="hoge"; filename="beluga.jpg"
             // のようになっている
+            // fileの場合はfilenameを指定する必要があり、指定されていない場合parseできない
             state = 2
-            if (content_disposition.indexOf("filename") === -1) {
+            if (contentDisposition.indexOf("filename") === -1) {
+                // Content-Typeが存在しないのでスキップ
                 state = 3
             }
-            last_line = ""
-        } else if (state === 2 && newline_detected) {
-            content_type = last_line
+            lastLine = ""
+        } else if (state === 2 && newlineDetected) {
+            contentType = lastLine
             state = 3
-            last_line = ""
-        } else if (state === 3 && newline_detected) {
+            lastLine = ""
+        } else if (state === 3 && newlineDetected) {
             state = 4
             buffer = []
-            last_line = ""
+            lastLine = ""
         } else if (state === 4) {
-            if (last_line.length > boundary.length + 4) {
-                last_line = ""
+            if (lastLine.length > boundary.length + 4) {
+                lastLine = ""
             }
-            if (last_line === "--" + boundary) {
+            if (lastLine === "--" + boundary) {
                 // boundaryを除くデータを取得
-                const body_length = buffer.length - last_line.length
-                const bytes = buffer.slice(0, body_length - 1)
-                const part = { content_disposition, content_type, bytes }
+                const bodyLength = buffer.length - lastLine.length
+                const bytes = buffer.slice(0, bodyLength - 1)
+                const part = { contentDisposition, contentType, bytes }
                 ret.push(process(part))
                 buffer = []
-                last_line = ""
+                lastLine = ""
                 state = 5
-                content_disposition = ""
-                content_type = undefined
+                contentDisposition = ""
+                contentType = undefined
             } else {
                 buffer.push(byte)
             }
-            if (newline_detected) {
-                last_line = ""
+            if (newlineDetected) {
+                lastLine = ""
             }
         } else if (state === 5) {
-            if (newline_detected) {
+            if (newlineDetected) {
                 state = 1
             }
         }
@@ -75,21 +77,22 @@ function parse(body_buffer: Buffer, boundary: string): FormData[] {
     return ret
 }
 
-function process(part: { content_disposition: string; content_type: string | undefined; bytes: number[] }): FormData {
-    const content_disposition = part.content_disposition.split(";")
+function process(part: { contentDisposition: string; contentType: string | undefined; bytes: number[] }): FormData {
+    const contentDisposition = part.contentDisposition.split(";")
     // content_dispositionは以下のようになっている
     // [
     //   'Content-Disposition: form-data',
     //   ' name="hoge"',
     //   ' filename="beluga.jpg"'
     // ]
-    const name = content_disposition[1].split("=")[1].replace(/"/g, "") // 送信時のformのinputタグのname属性
+    const name = contentDisposition[1].split("=")[1].replace(/"/g, "") // 送信時のformのinputタグのname属性
     const data = Buffer.from(part.bytes)
-    const type = part.content_type ? part.content_type.split(":")[1].trim() : undefined
-    const filename_field = content_disposition[2]
-    if (filename_field) {
-        const raw_filename = filename_field.split("=")[1]
-        const filename = JSON.parse(raw_filename.trim())
+    console.log("data:", data)
+    const type = part.contentType ? part.contentType.split(":")[1].trim() : undefined
+    const filenameField = contentDisposition[2]
+    if (filenameField) {
+        const rawFilename = filenameField.split("=")[1]
+        const filename = JSON.parse(rawFilename.trim())
         return {
             name,
             filename,
