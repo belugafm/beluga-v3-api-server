@@ -46,13 +46,6 @@ function parse(body_buffer: Buffer, boundary: string): FormData[] {
             buffer = []
             last_line = ""
         } else if (state === 4) {
-            if (newline_detected) {
-                // Skip first \r\n
-                state = 5
-                buffer = []
-                last_line = ""
-            }
-        } else if (state === 5) {
             if (last_line.length > boundary.length + 4) {
                 last_line = ""
             }
@@ -64,7 +57,7 @@ function parse(body_buffer: Buffer, boundary: string): FormData[] {
                 ret.push(process(part))
                 buffer = []
                 last_line = ""
-                state = 6
+                state = 5
                 content_disposition = ""
                 content_type = undefined
             } else {
@@ -73,7 +66,7 @@ function parse(body_buffer: Buffer, boundary: string): FormData[] {
             if (newline_detected) {
                 last_line = ""
             }
-        } else if (state === 6) {
+        } else if (state === 5) {
             if (newline_detected) {
                 state = 1
             }
