@@ -191,6 +191,11 @@ export class UserEntity extends Entity {
             // ここを通ったらバグっている
             return TrustLevel.RiskyUser
         }
+        // 作成から1週間経ってなかったら荒らし
+        const riskPeriod = 1 * 7 * 24 * 60 * 60 * 1000
+        if (condition.twitterAccountCreatedAt.getTime() + riskPeriod <= new Date().getTime()) {
+            return TrustLevel.RiskyUser
+        }
         // とりあえず作成から１年経ってたら信頼する
         const period = 1 * 365 * 24 * 60 * 60 * 1000
         if (condition.twitterAccountCreatedAt.getTime() + period <= new Date().getTime()) {
